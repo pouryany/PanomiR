@@ -88,6 +88,65 @@ for(func in func_list){
 Reduce(rbind,pathway.clusters)
 ```
 
+Next for each miRNA background, the individual pathway targeting scores
+are calculated. This is a key step for calculating targeting in groups
+of pathways. We will provide pre-calculated miRNA-Pathway associations
+so the users can skip this step.
+
+``` r
+# This file is Tarbase interactions. It is not provided. 
+# Users who need it need to contact Tarbase development team
+mir.sets         <- readRDS('../Data/preprocessed/NORMALIZED_MIRSETS.rds')
+
+# The list of processed targetScan targets. Freely available. 
+
+mir.sets.list    <- list.files("../Data/preprocessed/",
+                              pattern = "TargetScan",
+                              full.names = T)
+
+
+
+pathways.sets   <- readRDS('../Data/GeneSets/MSigDB.RDS')
+
+# background genes and miRNAs for tissue costumization
+genes.selection <- rownames(genes.counts)
+mirna.counts    <- readRDS('../Data/TCGA-LIHC-miRNAs_residuals.RDS')
+mir.selection   <- names(mir.sets)
+
+
+# Calculating tarbase enrichment
+ enriches0 <- miRNAPathwayEnrichment(mir.sets,
+                                     pathways.sets,
+                                     genes.selection = genes.selection,
+                                     mir.selection = mir.selection,
+                                     save.RDS.name = 'LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS',
+                                     out.dir= data.dir)
+ 
+
+
+
+
+# Calculating TargetScan enrichment.
+for (mirs in mir.sets.list){
+    
+  
+    tag       <- tail(unlist(stringr::str_split(mirs,pattern = "_")),1)
+    mir.sets  <- readRDS(mirs)
+    name.tag  <- paste0("LIHCGenesLIHCMirsENRICHMENT_",tag)
+    
+    mir.selection2 <- names(mir.sets)
+    
+    print(paste0("performing: ", tag))
+    enriches0 <- miRNAPathwayEnrichment(mir.sets,
+                                        pathways.sets,
+                                        genes.selection = genes.selection,
+                                        mir.selection = mir.selection2,
+                                        save.RDS.name = name.tag,
+                                        out.dir= data.dir)
+    
+}
+```
+
 Next for each miRNA background and for each clustering algorithm, the
 miRNA targeting scores are calculated. Choice of appropriate algorithms
 are left to users.
@@ -170,7 +229,5 @@ for(func in func_list){
                                         top.clust=3)
         
     }
-
-    
 }
 ```
