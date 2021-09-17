@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## PanomiR Walkthrough
+### Under-development version. Unauthorized use of code not permitted. 
+### For inquiries contact pouryany@gmail.com
 
 PanomiR is a package to detect miRNAs that target groups of pathways from gene expression data. Here, we describe the work flow of PanomiR along with different steps of the package. The working directory should be set to the `R` folder.
 
