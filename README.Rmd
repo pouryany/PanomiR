@@ -107,8 +107,7 @@ Next for each miRNA background and for each clustering algorithm, the miRNA targ
 
 
 
-enriches0 <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
-  
+
 func_list <- c("cluster_edge_betweenness",
                "cluster_infomap",
                "cluster_fast_greedy",
@@ -116,139 +115,20 @@ func_list <- c("cluster_edge_betweenness",
 
 
 
+# Calculating miRNA targeting scores for  miRNA-pathway interaction from Tarbase
 for(func in func_list){
     
    
-    
-    
-     method <- c('AggInv')
-    
-    top.clusters <- pathway.clusters[[func]]
-    enriches0    <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
-    
-        print(paste0("performing: ", func))
-        
-        output2 <- miRNAPrioritization2(enriches0,
-                                        top.clusters,
-                                        method,
-                                        out.dir=paste0(out.dir,func,
-                                                       '_Prioritization_',
-                                                       "Tarbase",
-                                                       '/'),
-                                        data.dir=data.dir,
-                                        samp.rate=1000,
-                                        prefix=paste0('x2_LIHCGene_',"Tarbase"),
-                                        save.jack.knife=F,
-                                        save.csv=T,
-                                        num.cores = 8,
-                                        top.clust=3)
 
-}
-
-
-
-
-
-
-for(func in func_list){
-    
-    method       <- c('AggInv')
-    top.clusters <- pathway.clusters[[func]]
-    
-    for (mirs in mir.sets.list){
-        
-        tag       <- tail(unlist(stringr::str_split(mirs,pattern = "_")),1)
-        mir.sets  <- readRDS(mirs)
-        name.tag  <- paste0("LIHCGenesLIHCMirsENRICHMENT_",tag)
-        
-        tag       <- gsub(".rds","",tag)
-        
-        enriches0 <- readRDS(paste0(data.dir,name.tag))
-        
-        print(paste0("performing: ", tag))
-        output2 <- miRNAPrioritization2(enriches0,
-                                        top.clusters,
-                                        method,
-                                        out.dir=paste0(out.dir,func,
-                                                       '_Prioritization_',
-                                                       tag,
-                                                       '/'),
-                                        data.dir=data.dir,
-                                        samp.rate=1000,
-                                        prefix=paste0('x2_LIHCGene_',tag),
-                                        save.jack.knife=F,
-                                        save.csv=T,
-                                        num.cores = 8,
-                                        top.clust=3)
-        
-    }
-
-    
-}
-
-
-
-
-```
-
-
-For miRNA prioritization it is important to have a precalculated list of miRNA-pathway association for all possible pairs. While in the distributed package we will provide some tables. Here, I will demonstrate how to generate such tables using miRNA-target lists.
-
-```{r , eval=FALSE}
-
-
-
-  enriches0 <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
-# enriches0 <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_TargetScan01.RDS"))
-
-# top.clusters <- names(sort(table(pathway.clusters$cluster),decreasing = T))[1:2]
-
-# top.clusters <- names(sort(table(pathway.clusters$cluster_louvain$cluster),decreasing = T))[1:2]
-# top.clusters <- pathway.clusters$cluster_louvain[pathway.clusters$cluster_louvain$cluster %in% top.clusters,]
-# 
-# # method <- c('AggInv')
-# # output <- miRNAPrioritization(enriches0,
-# #                               top.clusters,
-# #                               method,
-# #                               out.dir=paste0(out.dir, 'Prioritization/'),
-# #                               data.dir=data.dir,
-# #                               samp.rate=1000,
-# #                               prefix='x2_all_LIHCGenesLIHCMirs_NEW_',
-# #                               save.jack.knife=T,
-# #                               save.csv=T)
-# # 
-# # 
-# 
-# method <- c('AggInv')
-# output2 <- miRNAPrioritization2(enriches0,
-#                               top.clusters,
-#                               method,
-#                               out.dir=paste0(out.dir, 'Prioritization/'),
-#                               data.dir=data.dir,
-#                               samp.rate=2000,
-#                               prefix='x2_all_LIHCGenesLIHCMirs_NEW_',
-#                               save.jack.knife=T,
-#                               save.csv=T,num.cores = 8)
-# 
-
-
-  enriches0 <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
-  
-func_list <- c("cluster_edge_betweenness",
-               "cluster_infomap",
-               "cluster_fast_greedy",
-               "cluster_louvain")
-
-
-
-for(func in func_list){
-    
+    # While we have prepared several scoring methods. We only use AggInv.
+    # Other scoring options will be discussed in future developments.
     method <- c('AggInv')
     
     top.clusters <- pathway.clusters[[func]]
     enriches0    <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
     
         print(paste0("performing: ", func))
+        
         output2 <- miRNAPrioritization2(enriches0,
                                         top.clusters,
                                         method,
@@ -264,14 +144,14 @@ for(func in func_list){
                                         num.cores = 8,
                                         top.clust=3)
 
-    
-    
 }
 
 
 
 
 
+# Calculating miRNA targeting scores for different miRNA-pathway interaction 
+# background from TargetScan
 
 for(func in func_list){
     
@@ -314,4 +194,3 @@ for(func in func_list){
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
