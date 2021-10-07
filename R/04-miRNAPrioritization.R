@@ -116,28 +116,37 @@ miRNAPrioritization2 <- function(enriches0,
         if(!dir.exists(sampling.data.dir))dir.create(sampling.data.dir,recursive = T)
       }
       
+      
+
       sampling.data.filename  <- paste0(prefix, m, "_", samp.rate, "_samples.RDS")
       sampling.data.file <- paste0(sampling.data.dir, '/', sampling.data.filename)
-      
-      # perform sampling
-      sampling.data <- sampling.data.base2(enrich.null,
-                                           m.selector,
-                                           samp.rate,
-                                           fn,
-                                           n_paths,
-                                           sampling.data.file,
-                                           jack.knife=FALSE,
-                                           save.sampling = save.sampling,
-                                           num.cores = 8)
-      
-      m.selector    <- method.prob.base2(sampling.data = sampling.data[[paste0("SampSize_",100)]],
-                                         selector      = m.selector,
-                                         m             = m,
-                                         n_paths       = n_paths,
-                                         cover.fn      = cover.fn)
+     
       
       
-      
+       if(m %in% c("AggInv","AggLog")){
+         # perform sampling
+         sampling.data <- sampling.data.base2(enrich.null,
+                                              m.selector,
+                                              samp.rate,
+                                              fn,
+                                              n_paths,
+                                              sampling.data.file,
+                                              jack.knife=FALSE,
+                                              save.sampling = save.sampling,
+                                              num.cores = 8)
+         
+         m.selector    <- method.prob.base2(sampling.data = sampling.data[[paste0("SampSize_",100)]],
+                                            selector      = m.selector,
+                                            m             = m,
+                                            n_paths       = n_paths,
+                                            cover.fn      = cover.fn)
+         
+         
+         
+       } else{
+         names(m.selector)[2:3] <- paste0(m, "_",names(m.selector)[2:3])
+      }
+     
       
       print(paste0(m, " Method Done"))
       
