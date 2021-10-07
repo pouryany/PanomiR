@@ -4,7 +4,7 @@ library(dplyr)
 library(tibble)
 
 
-all.res  <- list.files("../test_cases/LIHC/Output/cluster_louvain_Prioritization_Tarbase/",full.names = T)
+all.res  <- list.files("../test_cases2/LIHC/Output/cluster_louvain_Prioritization_Tarbase/",full.names = T)
 all.mirs <- readRDS("../Data/TCGA-LIHC-DEmiRNAs.RDS")
 de.mirs  <- all.mirs[all.mirs$adj.P.Val<0.01,]
 

@@ -405,7 +405,7 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   
   selector <- tibble(
     "x" = agg.p.tab[, 1],
-    "k" = signif(as.numeric(agg.p.tab[, 2]), 4),
+    "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
     "n" =  agg.p.tab[, 3]
   )
   
@@ -435,7 +435,7 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   
   selector <- tibble(
     "x" = agg.p.tab[, 1],
-    "k" = signif(as.numeric(agg.p.tab[, 2]), 4),
+    "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
     "n" =  agg.p.tab[, 3]
   )
   
@@ -478,7 +478,8 @@ AggInv.cover.fn <- function(selector, cover.name) {
 
 AggLog.cover.fn <- AggInv.cover.fn
 
-sumz.cover.fn <- AggInv.cover.fn
+sumz.cover.fn   <- AggInv.cover.fn
+sumlog.cover.fn <- AggInv.cover.fn
 
 lancaster.cover.fn <- AggInv.cover.fn
 

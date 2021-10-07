@@ -192,7 +192,7 @@ func_list <- c("cluster_edge_betweenness",
 
 for(func in func_list){
     
-    method <- c('AggInv')
+    method <- c("sumlog","sumz","AggInv")
     
     top.clusters <- pathway.clusters[[func]]
     enriches0    <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
@@ -211,7 +211,8 @@ for(func in func_list){
                                         save.jack.knife=F,
                                         save.csv=T,
                                         num.cores = 8,
-                                        top.clust=3)
+                                        top.clust=3,
+                                        run.jack.knife = F)
 
     
     
@@ -224,7 +225,7 @@ for(func in func_list){
 
 for(func in func_list){
     
-    method       <- c('AggInv')
+    method       <- c("sumlog","sumz","AggInv")
     top.clusters <- pathway.clusters[[func]]
     
     for (mirs in mir.sets.list){
@@ -251,7 +252,8 @@ for(func in func_list){
                                         save.jack.knife=F,
                                         save.csv=T,
                                         num.cores = 8,
-                                        top.clust=3)
+                                        top.clust=3,
+                                        run.jack.knife = F)
         
     }
 
