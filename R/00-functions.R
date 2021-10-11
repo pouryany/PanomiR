@@ -1,10 +1,21 @@
 
-# The function to generate a table of pathways and genes associations
-# takes a list of pathways each element is a list of genes
-# returns a table of pathway-gene members
 
-# necessary to process pathway activity profiles.
-# There would be a premade Pathway_Gene_Tab going out with the package.
+# Development notes: make compatible with direct data input
+#       check and throw errors if the address is valid
+#       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
+#       Make a  Pathway_Gene_Tab going out with the package.
+
+
+#' Generates a table of pathways and genes associations
+#' 
+#' @param path.address address to an RDS file cointaning list of pathways
+#'                     each element is a list of genes similar to GMT format.
+#' @param out.dir address to save an RDS for a table of pathway-gene association
+#' @return pathExpTab a table of pathway-gene association
+#' @importFrom  clusterProfiler bitr
+#' @importFrom  tibble as_tibble
+#' @import org.Hs.eg.db
+#' @export
 
 Pathway_Gene_Tab <- function(path.address = F,
                              out.dir  = F){
@@ -19,16 +30,34 @@ Pathway_Gene_Tab <- function(path.address = F,
                                                 pathList2[[X]])}
     )
     temp       <- do.call(rbind,(temp))
-    PathExpTab <- as_tibble(temp)
+    PathExpTab <- tibble::as_tibble(temp)
     saveRDS(PathExpTab,out.dir)
+    return(pathExpTab)
 }
 
 
 
-# The function to generate pathway summary statistics 
-# Requires an expression matrix. 
-# Pathway reference is pathGene Tab
-
+#' The function to generate pathway summary statistics 
+#' 
+#' @param exprs.mat a gene expression matrix with rownames as genes and samples
+#' as columns.
+#' @param pathway.ref a table of pathway-gene associations. Created from 
+#' \code{\link{Pathway_Gene_Tab}} function
+#' @param id the gene annotation type in the rowname of gene expression data
+#' @param z.normalize normalization of pathway summary score
+#' @param method choice of how to sumamrize gene ranks into pathway statistics.
+#' @param de.genes  a list of differentially expressed genes along with
+#' t-scores. only necessary if working on Top 50% summary method.
+#' @param trim percentage of top and bottom ranked genes to be excluded from
+#' pathway summary statistics
+#' @param t.scores argument for-top-50-percent-genes method
+#' @return PathExp a table of pathway activity profiles per sample.
+#' @importFrom  clusterProfiler bitr
+#' @importFrom tibble rownames_to_column
+#' @importFrom  tibble as_tibble
+#' @import org.Hs.eg.db
+#' @import dplyr
+#' @export
 
 Path_Summary <- function(exprs.mat, 
                          pathway.ref,
@@ -61,16 +90,16 @@ Path_Summary <- function(exprs.mat,
     if(method == "none"){
       
         exprs.mat  <- exprs.mat  %>% 
-            mutate_if(.,is.numeric,function(X){X})
+          dplyr::mutate_if(.,is.numeric,function(X){X})
         
     } else if (method == "x"){
       
-        exprs.mat      <- exprs.mat  %>% mutate_if(.,is.numeric,rank) %>%
-            mutate_if(.,is.numeric,function(X){X}) 
+        exprs.mat      <- exprs.mat  %>% dplyr::mutate_if(.,is.numeric,rank) %>%
+          dplyr::mutate_if(.,is.numeric,function(X){X}) 
         
     } else if (method == "x2"){
       
-        exprs.mat      <- exprs.mat  %>% mutate_if(.,is.numeric,rank) %>%
+        exprs.mat      <- exprs.mat  %>% dplyr::mutate_if(.,is.numeric,rank) %>%
             mutate_if(.,is.numeric,function(X){X * X})
         
     } else  {
@@ -78,14 +107,14 @@ Path_Summary <- function(exprs.mat,
     }
     
     
-    PathExpTab    <- inner_join(pathway.ref,exprs.mat,by = id)
+    PathExpTab    <- dplyr::inner_join(pathway.ref,exprs.mat,by = id)
     
-    PathExpTab    <- PathExpTab %>% group_by(., Pathway) %>% 
+    PathExpTab    <- PathExpTab %>% dplyr::group_by(., Pathway) %>% 
         dplyr::summarise_if(is.numeric,mean, na.rm=T,trim = trim)
     
     
     PathExp           <- as.data.frame(PathExpTab[,-1])
-    rownames(PathExp) <- as.character(pull(PathExpTab[,1]))
+    rownames(PathExp) <- as.character(dplyr::pull(PathExpTab[,1]))
     
     if(z.normalize){
         PathExp <- apply(PathExp, 2, function(X){(X - mean(X))/sd(X)})
@@ -105,19 +134,29 @@ Path_Summary <- function(exprs.mat,
 
 
 
+#' The function to count the number of enriched pathways for each miRNA
+#' 
+#' @param enriches a table of miRNA pathway enrichments. Universe
+#' @param pathways queried pathways. e.g. cluster pathways
+#' @param is.selector internal argument
+#' @param thresh threshold from p-value cut-off
+#' @return a p-value based scoring of miRNAs in a cluster of pathways
+#' @import dplyr
+
 pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
   
   if (is.selector==T){
-    enriches <- enriches %>% mutate(.,hit2=ifelse(pval < thresh,1,0))
+    enriches <- enriches %>% dplyr::mutate(.,hit2=ifelse(pval < thresh,1,0))
   }
   
   temp.enrich <- enriches[enriches$y %in% pathways, ]
-  selector <- temp.enrich %>% group_by(x)  %>% 
+  selector <- temp.enrich %>% 
+              dplyr::group_by(x)  %>% 
               dplyr::summarise(n = n(),k = sum(hit2)) %>% 
-              arrange(.,x)
+              dplyr::arrange(.,x)
   
   if (is.selector==T){
-    selector <- selector %>% filter(.,k > thresh * length(pathways))
+    selector <- selector %>% dplyr::filter(.,k > thresh * length(pathways))
     return(list('selector'=selector, 'enriches0'=enriches))
   } else {
     return(selector)
@@ -126,7 +165,14 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
 
 
 
-
+#' The function calculate targeting score of miRNA w.r.t to a cluster 
+#' of pathways via inverse normal method
+#' @param enriches a table of miRNA pathway enrichments. Universe
+#' @param pathways queried pathways. e.g. cluster pathways
+#' @param is.selector internal argument
+#' @param thresh internal argument
+#' @return a  scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
   
   if (is.selector==T){
@@ -141,9 +187,9 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
   
   temp.enrich <- enriches[enriches$y %in% pathways, ]
   selector <- temp.enrich %>%
-    group_by(x) %>%
+    dplyr::group_by(x) %>%
     dplyr::summarise(n = n(), k = mean(ES2))%>%
-    arrange(., x)
+    dplyr::arrange(., x)
   
   if (is.selector==T){
     return(list('selector'=selector, 'enriches0'=enriches))
@@ -154,21 +200,28 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
 
 
 
-
+#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' of pathways via log aggregation method.
+#' @param enriches a table of miRNA pathway enrichments. Universe
+#' @param pathways queried pathways. e.g. cluster pathways
+#' @param is.selector internal argument
+#' @param thresh internal argument
+#' @return a  scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
  
-  enriches <- enriches %>% mutate(., ES =  -log(pval))
+  enriches <- enriches %>% dplyr::mutate(., ES =  -log(pval))
   if (is.selector==T){
-    enriches <- enriches %>% mutate(., ES =  -log(pval))
+    enriches <- enriches %>% dplyr::mutate(., ES =  -log(pval))
   }
   
   temp.enrich <- enriches[enriches$y %in% pathways, ]
   selector <- temp.enrich %>%
-    group_by(x)  %>%
+    dplyr::group_by(x)  %>%
     dplyr::summarise(n = n(), k = mean(ES))
   
   if (is.selector==T){
-    selector <- selector %>% filter(.,k*n > thresh * length(pathways))
+    selector <- selector %>% dplyr::filter(.,k*n > thresh * length(pathways))
     return(list('selector'=selector, 'enriches0'=enriches))
   } else {
     return(selector)
@@ -176,7 +229,14 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 }
 
 
-
+#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' of pathways via sumz aggregation method.
+#' @param enriches a table of miRNA pathway enrichments. Universe
+#' @param pathways queried pathways. e.g. cluster pathways
+#' @param is.selector internal argument
+#' @param thresh internal argument
+#' @return a  scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
   enriches1 <- enriches1 %>% mutate(., pval =  ifelse(pval <= 1.0e-16, 1.0e-16, pval))
@@ -207,9 +267,19 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 
 
 
+#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' of pathways via sumlog aggregation method.
+#' @param enriches a table of miRNA pathway enrichments. Universe
+#' @param pathways queried pathways. e.g. cluster pathways
+#' @param is.selector internal argument
+#' @param thresh internal argument
+#' @return a  scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
-  enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
-  enriches1 <- enriches1 %>% mutate(., pval =  ifelse(pval <= 1.0e-16, 1.0e-16, pval))
+  enriches1 <- enriches %>% dplyr::mutate(., pval =  ifelse(pval >= 0.999,
+                                                            0.999, pval))
+  enriches1 <- enriches1 %>% dplyr::mutate(., pval =  ifelse(pval <= 1.0e-16,
+                                                             1.0e-16, pval))
   
   temp.enrich <- enriches1[enriches1$y %in% pathways,]
   agg.p.tab <- vector()
@@ -235,6 +305,14 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 
 
 
+#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' of pathways via lancaster aggregation method.
+#' @param enriches a table of miRNA pathway enrichments. Universe
+#' @param pathways queried pathways. e.g. cluster pathways
+#' @param is.selector internal argument
+#' @param thresh internal argument
+#' @return a  scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 lancaster.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   temp.enrich <- enriches[enriches$y %in% pathways, ]
   selector <- temp.enrich %>%
@@ -251,23 +329,56 @@ lancaster.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 
 
 
+#' Internal function for modification of prioritization.
+#' @param selector a prioritzation table 
+#' @param cover.name a new column name 
+#' @return an updated scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 pCut.cover.fn <- function(selector, cover.name) {
   selector <- selector %>%
     dplyr::mutate(., !!cover.name := k/n)
   return(selector)
 }
 
+
+#' Internal function for modification of prioritization.
+#' @param selector a prioritzation table 
+#' @param cover.name a new column name 
+#' @return an updated scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 AggInv.cover.fn <- function(selector, cover.name) {
   selector <- selector %>%
     dplyr::mutate(., !!cover.name := k)
   return(selector)
 }
 
+#' Internal function for modification of prioritization.
+#' @param selector a prioritzation table 
+#' @param cover.name a new column name 
+#' @return an updated scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 AggLog.cover.fn <- AggInv.cover.fn
 
+#' Internal function for modification of prioritization.
+#' @param selector a prioritzation table 
+#' @param cover.name a new column name 
+#' @return an updated scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 sumz.cover.fn   <- AggInv.cover.fn
+
+#' Internal function for modification of prioritization.
+#' @param selector a prioritzation table 
+#' @param cover.name a new column name 
+#' @return an updated scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 sumlog.cover.fn <- AggInv.cover.fn
 
+
+#' Internal function for modification of prioritization.
+#' @param selector a prioritzation table 
+#' @param cover.name a new column name 
+#' @return an updated scoring of miRNAs in a cluster of pathways
+#' @import dplyr
 lancaster.cover.fn <- AggInv.cover.fn
 
 #### Working
@@ -287,7 +398,7 @@ lancaster.cover.fn <- AggInv.cover.fn
 
 
 
-sampling.data.base2 <- function(enrich.null,
+samplingDataBase <- function(enrich.null,
                                selector,
                                samp.rate,
                                fn,
@@ -312,7 +423,7 @@ sampling.data.base2 <- function(enrich.null,
     out.list <- list()
     for (temp.n_paths in samp.size.vec){
       
-      temp   <- mclapply(1:(samp.rate), function(Y){
+      temp   <- parallel::mclapply(1:(samp.rate), function(Y){
         set.seed(Y)        
         null.paths <- sample(all.paths,temp.n_paths,replace = F)
         sel.null   <- fn(enriches=enrich.null, pathways=null.paths, is.selector=F)
@@ -351,15 +462,18 @@ sampling.data.base2 <- function(enrich.null,
 
 
 
-#' Outputs a table with col x (miRNA), probability of observing k (depending on methodology) against a random distribution and cover of methodology
+#' Outputs a table with col x (miRNA), probability of
+#' observing k (depending on methodology)
+#' against a random distribution and cover of methodology
 #' 
 #' @param sampling.data Random distribution data
-#' @param selector Table with x(miRNA) in pathway cluster and observed k (depending on methodology).
+#' @param selector Table with x(miRNA) in pathway cluster and observed
+#' k (depending on methodology).
 #' @param m method name.
 #' @param cover.fn Cover of methodology function.
 #' @return Outputs a new selector table with col x, pval and cover.
 
-method.prob.base2 <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NULL)
+methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NULL)
   {
   
   if(!all(hasName(selector,c("x","k"))))
@@ -385,7 +499,9 @@ method.prob.base2 <- function(sampling.data, selector,m, n_paths = 100,cover.fn=
 
 
 
-#' Outputs a table with col x (miRNA), probability of observing k (depending on methodology) against a random distribution with jack-knifing of the pathway cluster (removing a pathway at a time)
+#' Outputs a table with col x (miRNA), probability of observing
+#' k (depending on methodology) against a random distribution with
+#' jack-knifing of the pathway cluster (removing a pathway at a time)
 #' 
 #' @param selector Table with x(miRNA) in pathway cluster and observed k (depending on methodology).
 #' @param pathways Pathways in pathway cluster.
@@ -398,7 +514,7 @@ method.prob.base2 <- function(sampling.data, selector,m, n_paths = 100,cover.fn=
 #' refer to 05-02-test.R
 
 
-jack.knife.base2 <- function(selector, pathways, enrich.null, fn, jack.knife.data, m, num.cores=1){
+jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, m, num.cores=1){
   
   # obtain means and sds for distribution, assume CLT
   n_paths      <- length(pathways)
@@ -407,7 +523,7 @@ jack.knife.base2 <- function(selector, pathways, enrich.null, fn, jack.knife.dat
   sample.sds   <- sample.sds *10/sqrt(n_paths-1)
   
   # remove one pathway at a time and obtain K for each miRNA 
-  temp1 <- mclapply(1:length(pathways), function(X){
+  temp1 <- parallel::mclapply(1:length(pathways), function(X){
     temp.pathways  <- pathways[-X]
     temp.selector   <- fn(enriches=enrich.null, pathways=temp.pathways, is.selector=F)
     # obtain p-values using the means and sds obtain above

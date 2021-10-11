@@ -19,13 +19,14 @@ library(dplyr)
 #' @param save.sampling if T, saves sampling data as RDS for each cluster in top.clust in data.dir 
 #' @param save.jack.knife if T, saves jack-knifed sampling data as RDS for each cluster in top.clust in data.dir 
 #' @param prefix prefix for all saved data 
+#' @import dplyr
 #' @return table of miRNA and p-values, each row contains a mirna and its associated p-values from the methods
 
 #### Alternative Prioritzation root
 # Name to be updated
 # Need to make sure it uses direct bootstrapping for small n instead of approximation
 
-miRNAPrioritization2 <- function(enriches0,
+PrioritizeMicroRNA <- function(enriches0,
                                 pathway.clusters,
                                 method='AggInv',
                                 method.thresh=NULL,
@@ -125,7 +126,7 @@ miRNAPrioritization2 <- function(enriches0,
       
        if(m %in% c("AggInv","AggLog")){
          # perform sampling
-         sampling.data <- sampling.data.base2(enrich.null,
+         sampling.data <- samplingDataBase(enrich.null,
                                               m.selector,
                                               samp.rate,
                                               fn,
@@ -135,7 +136,7 @@ miRNAPrioritization2 <- function(enriches0,
                                               save.sampling = save.sampling,
                                               num.cores = 8)
          
-         m.selector    <- method.prob.base2(sampling.data = sampling.data[[paste0("SampSize_",100)]],
+         m.selector    <- methodProbBase(sampling.data = sampling.data[[paste0("SampSize_",100)]],
                                             selector      = m.selector,
                                             m             = m,
                                             n_paths       = n_paths,
@@ -159,7 +160,7 @@ miRNAPrioritization2 <- function(enriches0,
         #                                       sampling.data.file=jack.knife.data.file, jack.knife=TRUE, save.sampling = save.jack.knife)
         # 
         
-        sampling.data <- sampling.data.base2(enrich.null,
+        sampling.data <- samplingDataBase(enrich.null,
                                              m.selector,
                                              samp.rate,
                                              fn,
@@ -168,7 +169,7 @@ miRNAPrioritization2 <- function(enriches0,
                                              jack.knife=FALSE,
                                              save.sampling = save.sampling,
                                              num.cores = 8)
-        m.selector <- jack.knife.base2(selector    = m.selector,
+        m.selector <- jackKnifeBase(selector    = m.selector,
                                        pathways    = pathways,
                                        enrich.null = enrich.null,
                                        fn = fn,
@@ -189,7 +190,7 @@ miRNAPrioritization2 <- function(enriches0,
       met      <- paste0(m,"_pval")
       selector <- selector %>% dplyr::arrange(.,!!sym(met))
       met2     <- paste0(m,"_fdr")
-      selector <- selector %>% mutate(.,
+      selector <- selector %>% dplyr::mutate(.,
                                       !!met2 := p.adjust(p = !!sym(met)
                                                          ,method = "fdr")
                                       )
