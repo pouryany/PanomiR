@@ -3,7 +3,7 @@ source('01-DifferentialPathwayAnalysis.R')
 source('02-MappingPathwaysClusters.R')
 source('03-miRNAPathwayEnrichment.R')
 source('04-miRNAPrioritization.R')
-source('05-miRNAPathwayCorrelation.R')
+#source('05-miRNAPathwayCorrelation.R')
 
 
 library(ggplot2)
@@ -80,7 +80,7 @@ for(func in func_list){
 Reduce(rbind,pathway.clusters)
 
 
-mir.sets        <- readRDS('../Data/preprocessed/NORMALIZED_MIRSETS.rds')
+#mir.sets        <- readRDS('../Data/preprocessed/NORMALIZED_MIRSETS.rds')
 #mir.sets        <- readRDS('../../Data/preprocessed/NORMALIZED_MIRSETS_TargetScan01.rds')
 mir.sets.list    <- list.files("../Data/preprocessed/",
                               pattern = "TargetScan",
@@ -91,7 +91,7 @@ pathways.sets   <- readRDS('../Data/GeneSets/MSigDB.RDS')
 genes.selection <- rownames(genes.counts)
 mirna.counts    <- readRDS('../Data/TCGA-LIHC-miRNAs_residuals.RDS')
 # mir.selection   <- rownames(mirna.counts)
-mir.selection   <- names(mir.sets)
+#mir.selection   <- names(mir.sets)
 
 # Set up default enrichment results if detail are not provided. 
 
@@ -169,7 +169,7 @@ for (mirs in mir.sets.list){
 # # 
 # 
 # method <- c('AggInv')
-# output2 <- miRNAPrioritization2(enriches0,
+# output2 <- PrioritizeMicroRNA(enriches0,
 #                               top.clusters,
 #                               method,
 #                               out.dir=paste0(out.dir, 'Prioritization/'),
@@ -192,13 +192,13 @@ func_list <- c("cluster_edge_betweenness",
 
 for(func in func_list){
     
-    method <- c("sumlog","sumz","AggInv")
+    method <- c("AggInv")
     
     top.clusters <- pathway.clusters[[func]]
     enriches0    <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
     
         print(paste0("performing: ", func))
-        output2 <- miRNAPrioritization2(enriches0,
+        output2 <- PrioritizeMicroRNA(enriches0,
                                         top.clusters,
                                         method,
                                         out.dir=paste0(out.dir,func,
@@ -225,7 +225,7 @@ for(func in func_list){
 
 for(func in func_list){
     
-    method       <- c("sumlog","sumz","AggInv")
+    method       <- c("AggInv")
     top.clusters <- pathway.clusters[[func]]
     
     for (mirs in mir.sets.list){
@@ -239,7 +239,7 @@ for(func in func_list){
         enriches0 <- readRDS(paste0(data.dir,name.tag))
         
         print(paste0("performing: ", tag))
-        output2 <- miRNAPrioritization2(enriches0,
+        output2 <- PrioritizeMicroRNA(enriches0,
                                         top.clusters,
                                         method,
                                         out.dir=paste0(out.dir,func,

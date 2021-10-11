@@ -207,7 +207,7 @@ for(func in func_list){
     enriches0    <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
     
         print(paste0("performing: ", func))
-        output2 <- miRNAPrioritization2(enriches0,
+        output2 <- PrioritizeMicroRNA(enriches0,
                                         top.clusters,
                                         method,
                                         out.dir=paste0(out.dir,func,
@@ -243,7 +243,7 @@ for(func in func_list){
         enriches0 <- readRDS(paste0(data.dir,name.tag))
         
         print(paste0("performing: ", tag))
-        output2 <- miRNAPrioritization2(enriches0,
+        output2 <- PrioritizeMicroRNA(enriches0,
                                         top.clusters,
                                         method,
                                         out.dir=paste0(out.dir,func,
