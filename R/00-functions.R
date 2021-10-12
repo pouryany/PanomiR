@@ -559,9 +559,15 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
 
 
 
-# Function imported from https://github.com/pouryany/CovariateAnalysis/blob/master/R/getDesignMatrix.R
 
-# Function to optain desing matrix (modified from covairates pipeline of Menachem Former)
+#' Function imported from https://github.com/th1vairam/CovariateAnalysis
+#' Function to obtain desing matrix (modified from covairates pipeline of Menachem Former)
+#' 
+#' @param covariatesDataFrame a datadframe of covariates.
+#' @param pathways Pathways in pathway cluster.
+#' @param Intercept intercept in the linear model
+#' @param RELEVELS TBA
+#' @return a list containing a design matrix
 getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list()) {
   
   ROWNAMES = rownames(covariatesDataFrame)
@@ -621,8 +627,15 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
 
 
 # Function imported from https://github.com/pouryany/CovariateAnalysis
-# Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
-# Function to find linearly dependednt columns of a matrix
+# 
+
+
+
+#' Function imported from https://github.com/th1vairam/CovariateAnalysis
+#' Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
+#' Function to find linearly dependednt columns of a matrix
+#' @param mat an input design matrix.
+#' @return a list of independent columns
 linColumnFinder <- function(mat){
   
   mat[is.na(mat)] = 0
