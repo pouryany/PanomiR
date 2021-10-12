@@ -25,7 +25,9 @@ source('00-functions.R')
 #' @param trim filter pathways with mean less than trim threshold in pathway summary statistics  
 #' @param genes.counts.log if T, log(genes.counts)  
 #' @return list contain differentially expressed pathways as DEP and pathway summary statistics as pathwaySummaryStats
-
+#' @import dplyr
+#' @import limma
+#' @export
 DifferentialPathwayAnalysis <- function(genes.counts, 
                                         pathways, 
                                         covariates, 
@@ -87,9 +89,10 @@ DifferentialPathwayAnalysis <- function(genes.counts,
   pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X){(X - mean(X))/sd(X)})
   
   # perform quantile normalization if needed
+  # Add importing
   if (quantile.norm == T){
     pathways.names <- rownames(pathwaySummaryStats)
-    pathwaySummaryStats <- normalize.quantiles(pathwaySummaryStats)
+    pathwaySummaryStats <- preprocessCore::normalize.quantiles(pathwaySummaryStats)
     rownames(pathwaySummaryStats) <- pathways.names
     colnames(pathwaySummaryStats) <- rownames(covariates)
   }

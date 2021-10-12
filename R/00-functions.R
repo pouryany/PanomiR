@@ -16,7 +16,6 @@
 #' @importFrom  tibble as_tibble
 #' @import org.Hs.eg.db
 #' @export
-
 Pathway_Gene_Tab <- function(path.address = F,
                              out.dir  = F){
     pathList  <- readRDS(path.address)
@@ -394,10 +393,9 @@ lancaster.cover.fn <- AggInv.cover.fn
 #' @param save.sampling If TRUE, data is saved.
 #' @param jack.knife If TRUE, conduct sampling with one less pathway, used for jack knifing
 #' @param num.cores number of cores used
+#' @import dplyr
+#' @importFrom parallel mclapply
 #' @return Outputs of sampling data.
-
-
-
 samplingDataBase <- function(enrich.null,
                                selector,
                                samp.rate,
@@ -471,8 +469,8 @@ samplingDataBase <- function(enrich.null,
 #' k (depending on methodology).
 #' @param m method name.
 #' @param cover.fn Cover of methodology function.
+#' @import dplyr
 #' @return Outputs a new selector table with col x, pval and cover.
-
 methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NULL)
   {
   
@@ -511,9 +509,6 @@ methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NUL
 #' @param m method name
 #' @param num.cores number of cores
 #' @return Outputs a new selector table with col x, pval_jk
-#' refer to 05-02-test.R
-
-
 jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, m, num.cores=1){
   
   # obtain means and sds for distribution, assume CLT
@@ -568,6 +563,7 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
 #' @param Intercept intercept in the linear model
 #' @param RELEVELS TBA
 #' @return a list containing a design matrix
+#' @export
 getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list()) {
   
   ROWNAMES = rownames(covariatesDataFrame)
@@ -636,6 +632,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
 #' Function to find linearly dependednt columns of a matrix
 #' @param mat an input design matrix.
 #' @return a list of independent columns
+#' @export
 linColumnFinder <- function(mat){
   
   mat[is.na(mat)] = 0
