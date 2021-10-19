@@ -2,10 +2,6 @@ library(dplyr)
 library(tibble)
 library(preprocessCore)
 library(limma)
-#library(CovariateAnalysis)
-source('00-functions.R')
-#source('00-revised_functions.R')
-#source('10-CovariatesCorrelationCorrection.R')
 
 #' Performs differential expression analysis for pathways using LIMMA package with gene counts 
 #' 
