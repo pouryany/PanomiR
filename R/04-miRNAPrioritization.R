@@ -1,4 +1,3 @@
-source('00-functions.R')
 library(parallel)
 library(metap)
 library(dplyr)
