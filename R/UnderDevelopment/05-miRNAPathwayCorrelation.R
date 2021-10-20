@@ -3,8 +3,6 @@ library(limma)
 library(dplyr)
 library(stringr)
 library(parallel)
-source('00-functions.R')
-#source('00-revised_functions.R')
 
 #' Outputs a table of miRNA-pathway correlation
 #'
