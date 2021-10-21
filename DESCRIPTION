@@ -13,3 +13,16 @@ RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+biocViews:
+Imports: 
+    clusterProfiler,
+    dplyr,
+    igraph,
+    metap,
+    limma,
+    multtest,
+    org.Hs.eg.db,
+    parallel,
+    preprocessCore,
+    RColorBrewer,
+    tibble
