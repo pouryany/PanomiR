@@ -4,7 +4,7 @@ author: "Pourya Naderi (Hide Lab)"
 date: "9/16/2021"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
 ---
 
 ```{r setup, include=FALSE}

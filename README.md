@@ -1,9 +1,8 @@
-PanomiR Walkthrough
--------------------
+## PanomiR Walkthrough
 
 ### Under-development version. Unauthorized use of code not permitted.
 
-### For inquiries contact <a href="mailto:pouryany@gmail.com" class="email">pouryany@gmail.com</a>
+### For inquiries contact <pouryany@gmail.com>
 
 PanomiR is a package to detect miRNAs that target groups of pathways
 from gene expression data. Here, we describe the work flow of PanomiR
