@@ -37,8 +37,8 @@ covariates   <- read.csv('../Data/TCGA-LIHC-COV.csv', row.names = 1)
 
 
 condition = 'shortLetterCode'
-out.dir   = '../test_cases2/LIHC/Output/'
-data.dir  = '../test_cases2/LIHC/Data/'
+out.dir   = 'output/'
+data.dir  = 'data/'
 
 output0 <- DifferentialPathwayAnalysis(genes.counts,
                                        pathways,
