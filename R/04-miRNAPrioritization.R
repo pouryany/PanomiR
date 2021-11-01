@@ -20,6 +20,7 @@ library(dplyr)
 #' @param prefix prefix for all saved data 
 #' @import dplyr
 #' @return table of miRNA and p-values, each row contains a mirna and its associated p-values from the methods
+#' @export
 
 #### Alternative Prioritzation root
 # Name to be updated

@@ -18,6 +18,7 @@ library(RColorBrewer)
 #' @param save.csv.name if not NULL, saves output as csv using save name 
 #' @param prefix add prefix to plots
 #' @return a table with each row containing a pathway and its respective cluster
+#' @export
 
 MappingPathwaysClusters <- function(pcxn,
                             de.paths,
