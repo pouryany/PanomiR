@@ -20,6 +20,7 @@
 #' @import igraph
 #' @import RColorBrewer
 #' @return a table with each row containing a pathway and its respective cluster
+#' @export
 
 MappingPathwaysClusters <- function(pcxn,
                             de.paths,

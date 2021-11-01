@@ -1,7 +1,7 @@
-library(dplyr)
-library(parallel)
-library(clusterProfiler)
-library(org.Hs.eg.db)
+# library(dplyr)
+# library(parallel)
+# library(clusterProfiler)
+# library(org.Hs.eg.db)
 
 #' Outputs enrichment probability of miRNAs based on pathway clusters
 #'
@@ -20,6 +20,7 @@ library(org.Hs.eg.db)
 #' @import clusterProfiler
 #' @import org.Hs.eg.db
 #' @return table of enrichment, each row contains mirna-pathway and its enrichment p-values
+#' @export
 
 miRNAPathwayEnrichment <- function(mir.sets, 
                                    pathways.sets, 
