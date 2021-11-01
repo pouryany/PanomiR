@@ -15,6 +15,10 @@ library(org.Hs.eg.db)
 #' @param num.cores number of cores available
 #' @param out.dir output directory
 #' @param save.RDS.name if not NULL, saves output as RDS using save name 
+#' @import dplyr
+#' @import parallel
+#' @import clusterProfiler
+#' @import org.Hs.eg.db
 #' @return table of enrichment, each row contains mirna-pathway and its enrichment p-values
 
 miRNAPathwayEnrichment <- function(mir.sets, 

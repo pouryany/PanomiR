@@ -1,6 +1,6 @@
-library(parallel)
-library(metap)
-library(dplyr)
+# library(parallel)
+# library(metap)
+# library(dplyr)
 
 #' Outputs a table of miRNA (ordered) with respective p-values derived from method for prioritization
 #'
@@ -19,6 +19,9 @@ library(dplyr)
 #' @param save.jack.knife if T, saves jack-knifed sampling data as RDS for each cluster in top.clust in data.dir 
 #' @param prefix prefix for all saved data 
 #' @import dplyr
+#' @import metap
+#' @import dplyr
+#' @import parallel
 #' @return table of miRNA and p-values, each row contains a mirna and its associated p-values from the methods
 
 #### Alternative Prioritzation root

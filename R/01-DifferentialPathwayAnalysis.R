@@ -1,7 +1,7 @@
-library(dplyr)
-library(tibble)
-library(preprocessCore)
-library(limma)
+# library(dplyr)
+# library(tibble)
+# library(preprocessCore)
+# library(limma)
 
 #' Performs differential expression analysis for pathways using LIMMA package with gene counts 
 #' 
@@ -22,6 +22,7 @@ library(limma)
 #' @param genes.counts.log if T, log(genes.counts)  
 #' @return list contain differentially expressed pathways as DEP and pathway summary statistics as pathwaySummaryStats
 #' @import dplyr
+#' @import tibble
 #' @import limma
 #' @export
 DifferentialPathwayAnalysis <- function(genes.counts, 

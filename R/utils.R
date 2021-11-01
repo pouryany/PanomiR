@@ -141,7 +141,6 @@ Path_Summary <- function(exprs.mat,
 #' @param thresh threshold from p-value cut-off
 #' @return a p-value based scoring of miRNAs in a cluster of pathways
 #' @import dplyr
-
 pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
   
   if (is.selector==T){
@@ -235,6 +234,7 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
+#' @import metap
 #' @import dplyr
 sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
@@ -273,6 +273,7 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
+#' @import metap
 #' @import dplyr
 sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% dplyr::mutate(., pval =  ifelse(pval >= 0.999,
@@ -302,29 +303,6 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   }
 }
 
-
-
-#'  The function calculate targeting score of miRNA w.r.t to a cluster 
-#' of pathways via lancaster aggregation method.
-#' @param enriches a table of miRNA pathway enrichments. Universe
-#' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
-#' @param thresh internal argument
-#' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-lancaster.fn <- function(enriches, pathways, is.selector, thresh=NULL){
-  temp.enrich <- enriches[enriches$y %in% pathways, ]
-  selector <- temp.enrich %>%
-    group_by(x) %>%
-    dplyr::summarise(n = n(), k = lancaster(pval,weight)/n())%>%
-    arrange(., x)
-  
-  if (is.selector==T){
-    return(list('selector'=selector, 'enriches0'=enriches))
-  } else {
-    return(selector)
-  }
-}
 
 
 

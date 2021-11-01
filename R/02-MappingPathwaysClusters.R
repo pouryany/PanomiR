@@ -1,5 +1,5 @@
-library(igraph)
-library(RColorBrewer)
+# library(igraph)
+# library(RColorBrewer)
 
 #' Outputs a table with pathways and their respective clusters
 #'
@@ -17,6 +17,8 @@ library(RColorBrewer)
 #' @param out.dir output directory
 #' @param save.csv.name if not NULL, saves output as csv using save name 
 #' @param prefix add prefix to plots
+#' @import igraph
+#' @import RColorBrewer
 #' @return a table with each row containing a pathway and its respective cluster
 
 MappingPathwaysClusters <- function(pcxn,
