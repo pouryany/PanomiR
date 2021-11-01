@@ -3,11 +3,11 @@
 #' @param mir.sets a table of miRNAs and a list of their interactions with
 #'  genes in ENTREZ ID 
 #' @param pathways.sets a table of pathways and a list of their interactions
-#'       with genes in ENTREZ ID
+#'   with genes in ENTREZ ID
 #' @param gene.selection a table of genes with dtype; if not NULL, select only
-#'        genes from a given table
+#'   genes from a given table
 #' @param mir.selection a table of miRNA names; if not NULL, select only miRNAs
-#'        from given table
+#'   from given table
 #' @param from.id id of genes in genes.selection
 #' @param to.id id of genes used in pcxn and pathways set
 #' @param min.path.size filter out pathways with sets less than given value
@@ -19,7 +19,7 @@
 #' @import clusterProfiler
 #' @import org.Hs.eg.db
 #' @return table of enrichment, each row contains mirna-pathway and its 
-#'        enrichment p-values
+#'   enrichment p-values
 #' @export
 
 miRNAPathwayEnrichment <- function(mir.sets, 

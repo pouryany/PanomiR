@@ -1,6 +1,6 @@
 #' @description Generates a table of pathways and genes associations
 #' @param path.address address to an RDS file cointaning list of pathways
-#'                     each element is a list of genes similar to GMT format.
+#'    each element is a list of genes similar to GMT format.
 #' @param out.dir address to save an RDS for a table of pathway-gene association
 #' @return pathExpTab a table of pathway-gene association
 #' @importFrom  clusterProfiler bitr
@@ -34,16 +34,16 @@ Pathway_Gene_Tab <- function(path.address = F,
 
 #' @description The function to generate pathway summary statistics 
 #' @param exprs.mat a gene expression matrix with rownames as genes and samples
-#' as columns.
+#'   as columns.
 #' @param pathway.ref a table of pathway-gene associations. Created from 
-#' \code{\link{Pathway_Gene_Tab}} function
+#'   \code{\link{Pathway_Gene_Tab}} function
 #' @param id the gene annotation type in the rowname of gene expression data
 #' @param z.normalize normalization of pathway summary score
 #' @param method choice of how to sumamrize gene ranks into pathway statistics.
 #' @param de.genes  a list of differentially expressed genes along with
-#' t-scores. only necessary if working on Top 50% summary method.
+#'   t-scores. only necessary if working on Top 50% summary method.
 #' @param trim percentage of top and bottom ranked genes to be excluded from
-#' pathway summary statistics
+#'   pathway summary statistics
 #' @param t.scores argument for-top-50-percent-genes method
 #' @return PathExp a table of pathway activity profiles per sample.
 #' @importFrom  clusterProfiler bitr
@@ -129,7 +129,7 @@ Path_Summary <- function(exprs.mat,
 
 
 #' @description The function to count the number of enriched pathways
-#'  for each miRNA
+#'   for each miRNA
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
 #' @param is.selector internal argument
@@ -194,7 +194,7 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
 
 
 
-#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' The function calculate targeting score of miRNA w.r.t to a cluster 
 #' of pathways via log aggregation method.
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
@@ -223,7 +223,7 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 }
 
 
-#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' The function calculate targeting score of miRNA w.r.t to a cluster 
 #' of pathways via sumz aggregation method.
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
@@ -262,7 +262,7 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 
 
 
-#'  The function calculate targeting score of miRNA w.r.t to a cluster 
+#' The function calculate targeting score of miRNA w.r.t to a cluster 
 #' of pathways via sumlog aggregation method.
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
@@ -350,14 +350,16 @@ sumlog.cover.fn <- AggInv.cover.fn
 
 #' Outputs a table of sampling data(rows are miRNA and cols are samples)
 #' 
-#' @param enrich.null Enrichment dataset with x (miRNA), y (pathway) and pval (probability of observing x in pathway cluster).
+#' @param enrich.null Enrichment dataset with x (miRNA), y (pathway) and pval
+#'   (probability of observing x in pathway cluster).
 #' @param selector Table with x(miRNA) in pathway cluster.
 #' @param samp.rate Sampling rate.
 #' @param fn Methodology function.
 #' @param n_paths Number of pathways in pathway cluster.
 #' @param sampling.data.file If file exists, load file. Else, perform random sampling
 #' @param save.sampling If TRUE, data is saved.
-#' @param jack.knife If TRUE, conduct sampling with one less pathway, used for jack knifing
+#' @param jack.knife If TRUE, conduct sampling with one less pathway, used for
+#'   jack knifing
 #' @param num.cores number of cores used
 #' @import dplyr
 #' @importFrom parallel mclapply
@@ -432,7 +434,7 @@ samplingDataBase <- function(enrich.null,
 #' 
 #' @param sampling.data Random distribution data
 #' @param selector Table with x(miRNA) in pathway cluster and observed
-#' k (depending on methodology).
+#'   k (depending on methodology).
 #' @param m method name.
 #' @param cover.fn Cover of methodology function.
 #' @import dplyr
@@ -467,11 +469,14 @@ methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NUL
 #' k (depending on methodology) against a random distribution with
 #' jack-knifing of the pathway cluster (removing a pathway at a time)
 #' 
-#' @param selector Table with x(miRNA) in pathway cluster and observed k (depending on methodology).
+#' @param selector Table with x(miRNA) in pathway cluster and observed k
+#'   (depending on methodology).
 #' @param pathways Pathways in pathway cluster.
-#' @param enrich.null Enrichment dataset with x (miRNA), y (pathway) and pval (probability of observing x in pathway cluster).
+#' @param enrich.null Enrichment dataset with x (miRNA), y (pathway) and pval
+#'   (probability of observing x in pathway cluster).
 #' @param fn Methodology function.
-#' @param jack.knife.data Random distribution data with jack-knifing (i.e. one less pathway)
+#' @param jack.knife.data Random distribution data with jack-knifing
+#'   (i.e. one less pathway)
 #' @param m method name
 #' @param num.cores number of cores
 #' @return Outputs a new selector table with col x, pval_jk

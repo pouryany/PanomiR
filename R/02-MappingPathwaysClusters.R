@@ -1,18 +1,20 @@
-library(igraph)
-library(RColorBrewer)
-
 #' Outputs a table with pathways and their respective clusters
 #'
 #' @param pcxn pathways network (edge list of pathways)
-#' @param de.paths differential expressed pathways, obtained from *DifferentialPathwayAnalysis*
+#' @param de.paths differential expressed pathways, obtained from
+#'   *DifferentialPathwayAnalysis*
 #' @param clust.fn clustering algorithm
-#' @param edge.fdr.thresh FDR threshold for pathway-pathway adjusted p-values ; filter edges with adjusted p-values less than given threshold
-#' @param cor.thresh correlation threshold for pathway-pathway correlation; filter pathways with correlation less than given threshold
-#' @param path.fdr.thresh FDR threshold for DE pathways adjusted p-values; filter pathways with adjusted p-values less than given threshold
+#' @param edge.fdr.thresh FDR threshold for pathway-pathway adjusted p-values;
+#'   filter edges with adjusted p-values less than given threshold
+#' @param cor.thresh correlation threshold for pathway-pathway correlation;
+#'   filter pathways with correlation less than given threshold
+#' @param path.fdr.thresh FDR threshold for DE pathways adjusted p-values;
+#'   filter pathways with adjusted p-values less than given threshold
 #' @param top.paths  use only top x paths; if NULL, use all paths
 #' @param seed set seed
 #' @param plot if T, store graph plot in Figures directory of plots
-#' @param subplot if T, store inidividual clusters plots and connected plots in Figures directory of plots
+#' @param subplot if T, store inidividual clusters plots and connected plots
+#'   in Figures directory of plots
 #' @param top.clusts plot figures for top x clusters
 #' @param out.dir output directory
 #' @param save.csv.name if not NULL, saves output as csv using save name 

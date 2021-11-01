@@ -1,21 +1,32 @@
 #' Performs differential expression analysis for pathways using LIMMA package with gene counts 
 #' 
 #' @param genes.counts gene counts, rows refer to genes and columns to samples
-#' @param pathways pathways table, containing pathway names and genes with id specified
-#' @param covariates covariates/metadata file; rows matches the columns of gene.counts 
-#' @param condition to be examined (tumor vs normal etc); must exist in covariates column
-#' @param adjust.covars adjustment covariates like batch; if NULL, no adjustments performed
-#' @param covariates.correction if T, performs covariates detection and correction; requires **adjust.covars**; (limma)
-#' @param quantile.norm if T, performs quantile normalization on pathway summary statistics; from *preprocess* package
+#' @param pathways pathways table, containing pathway names and genes with id
+#'   specified
+#' @param covariates covariates/metadata file; rows matches the columns of
+#'   gene.counts 
+#' @param condition to be examined (tumor vs normal etc); must exist in
+#'   covariates column
+#' @param adjust.covars adjustment covariates like batch; if NULL,
+#'   no adjustments performed
+#' @param covariates.correction if T, performs covariates detection and
+#'   correction; requires **adjust.covars**; (limma)
+#' @param quantile.norm if T, performs quantile normalization on pathway
+#'   summary statistics; from *preprocess* package
 #' @param out.dir output directory
-#' @param save.RDS.name if not NULL, saves output as RDS using save name, if NULL, does not save output 
+#' @param save.RDS.name if not NULL, saves output as RDS using save name,
+#'   if NULL, does not save output 
 #' @param id id matching genes to pathways; rownames of gene.counts 
-#' @param de.genes if not NULL, add t-scores to pathways summary statistics; filter by genes t-scores
+#' @param de.genes if not NULL, add t-scores to pathways summary statistics;
+#'   filter by genes t-scores
 #' @param min.path.size minimum pathway size 
-#' @param method define method to use for pathway summary statistics; specifications in documentations 
-#' @param trim filter pathways with mean less than trim threshold in pathway summary statistics  
+#' @param method define method to use for pathway summary statistics;
+#'   specifications in documentations 
+#' @param trim filter pathways with mean less than trim threshold
+#'   in pathway summary statistics  
 #' @param genes.counts.log if T, log(genes.counts)  
-#' @return list contain differentially expressed pathways as DEP and pathway summary statistics as pathwaySummaryStats
+#' @return list contain differentially expressed pathways as DEP and pathway
+#'   summary statistics as pathwaySummaryStats
 #' @import dplyr
 #' @import limma
 #' @import tibble
