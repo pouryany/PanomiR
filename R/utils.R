@@ -1,13 +1,4 @@
-
-
-# Development notes: make compatible with direct data input
-#       check and throw errors if the address is valid
-#       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
-#       Make a  Pathway_Gene_Tab going out with the package.
-
-
-#' Generates a table of pathways and genes associations
-#' 
+#' @description Generates a table of pathways and genes associations
 #' @param path.address address to an RDS file cointaning list of pathways
 #'                     each element is a list of genes similar to GMT format.
 #' @param out.dir address to save an RDS for a table of pathway-gene association
@@ -18,6 +9,11 @@
 #' @export
 Pathway_Gene_Tab <- function(path.address = F,
                              out.dir  = F){
+  # Development notes: make compatible with direct data input
+  #       check and throw errors if the address is valid
+  #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
+  #       Make a  Pathway_Gene_Tab going out with the package.
+  
     pathList  <- readRDS(path.address)
     pathList2 <- lapply(pathList,
                         function(X){clusterProfiler::bitr(X,"ENTREZID",
@@ -36,8 +32,7 @@ Pathway_Gene_Tab <- function(path.address = F,
 
 
 
-#' The function to generate pathway summary statistics 
-#' 
+#' @description The function to generate pathway summary statistics 
 #' @param exprs.mat a gene expression matrix with rownames as genes and samples
 #' as columns.
 #' @param pathway.ref a table of pathway-gene associations. Created from 
@@ -133,8 +128,8 @@ Path_Summary <- function(exprs.mat,
 
 
 
-#' The function to count the number of enriched pathways for each miRNA
-#' 
+#' @description The function to count the number of enriched pathways
+#'  for each miRNA
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
 #' @param is.selector internal argument
@@ -236,6 +231,7 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
 #' @import dplyr
+#' @import metap
 sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
   enriches1 <- enriches1 %>% mutate(., pval =  ifelse(pval <= 1.0e-16, 1.0e-16, pval))
@@ -274,6 +270,7 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
 #' @import dplyr
+#' @import metap
 sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% dplyr::mutate(., pval =  ifelse(pval >= 0.999,
                                                             0.999, pval))
@@ -294,30 +291,6 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
     "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
     "n" =  agg.p.tab[, 3]
   )
-  
-  if (is.selector==T){
-    return(list('selector'=selector, 'enriches0'=enriches))
-  } else {
-    return(selector)
-  }
-}
-
-
-
-#'  The function calculate targeting score of miRNA w.r.t to a cluster 
-#' of pathways via lancaster aggregation method.
-#' @param enriches a table of miRNA pathway enrichments. Universe
-#' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
-#' @param thresh internal argument
-#' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-lancaster.fn <- function(enriches, pathways, is.selector, thresh=NULL){
-  temp.enrich <- enriches[enriches$y %in% pathways, ]
-  selector <- temp.enrich %>%
-    group_by(x) %>%
-    dplyr::summarise(n = n(), k = lancaster(pval,weight)/n())%>%
-    arrange(., x)
   
   if (is.selector==T){
     return(list('selector'=selector, 'enriches0'=enriches))
@@ -372,13 +345,6 @@ sumz.cover.fn   <- AggInv.cover.fn
 #' @import dplyr
 sumlog.cover.fn <- AggInv.cover.fn
 
-
-#' Internal function for modification of prioritization.
-#' @param selector a prioritzation table 
-#' @param cover.name a new column name 
-#' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-lancaster.cover.fn <- AggInv.cover.fn
 
 #### Working
 
@@ -622,10 +588,6 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
 
 
 
-# Function imported from https://github.com/pouryany/CovariateAnalysis
-# 
-
-
 
 #' Function imported from https://github.com/th1vairam/CovariateAnalysis
 #' Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
@@ -639,7 +601,8 @@ linColumnFinder <- function(mat){
   
   # If the matrix is full rank then we're done
   if(qr(mat)$rank == ncol(mat)){
-    return(list(indepCols = seq(1,ncol(mat),1), relations = "Matrix is of full rank"))
+    return(list(indepCols = seq(1,ncol(mat),1),
+                relations = "Matrix is of full rank"))
   }
   
   m <- ncol(mat)
@@ -650,7 +613,8 @@ linColumnFinder <- function(mat){
     ids <- c(cols, i)
     mymat <- mat[, ids]
     if(qr(mymat)$rank != length(ids)){
-      # Regression the column of interest on the previous columns to figure out the relationship
+      # Regression the column of interest on the previous columns to figure
+      # out the relationship
       o <- lm(mat[,i] ~ as.matrix(mat[,cols]) + 0)
       # Construct the output message
       start <- paste0(colnames(mat)[i], " = ")

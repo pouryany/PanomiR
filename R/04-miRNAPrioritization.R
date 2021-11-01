@@ -1,31 +1,27 @@
-library(parallel)
-library(metap)
-library(dplyr)
-
-#' Outputs a table of miRNA (ordered) with respective p-values derived from method for prioritization
-#'
+#' @description Outputs a table of miRNA (ordered) with respective p-values 
+#' derived from method for prioritization
 #' @param enriches miRNA-pathway enrichment dataset, obtained from miRNAPathwayEnrichment
 #' @param pathway.clusters pathway clusters, obtained from MappingPathwaysClusters
 #' @param method a vector of methods (pCut, AggInv, AggLog, sumz, sumlog)
-#' @param method.thresh a vector of methods threshold for each method in method, if NULL use default thresh values in method
-#' @param mir.path.fdr.selection FDR threshold for mir-pathway adjusted p-values ; filter edges with adjusted p-values less than given threshold
+#' @param method.thresh a vector of methods threshold for each method in method,
+#'  if NULL use default thresh values in method
+#' @param mir.path.fdr.selection FDR threshold for mir-pathway adjusted p-values
+#'  ; filter edges with adjusted p-values less than given threshold
 #' @param top.clust top x clusters to perform miRNA prioritization on
 #' @param samp.rate sampling rate for CLT
 #' @param num.cores number of cores available
 #' @param out.dir output directory 
 #' @param data.dir data directory
 #' @param save.csv if T, saves csv file for each cluster in top.clust in out.dir 
-#' @param save.sampling if T, saves sampling data as RDS for each cluster in top.clust in data.dir 
-#' @param save.jack.knife if T, saves jack-knifed sampling data as RDS for each cluster in top.clust in data.dir 
+#' @param save.sampling if T, saves sampling data as RDS for each cluster in
+#'  top.clust in data.dir 
+#' @param save.jack.knife if T, saves jack-knifed sampling data as RDS for each
+#'  cluster in top.clust in data.dir 
 #' @param prefix prefix for all saved data 
 #' @import dplyr
-#' @return table of miRNA and p-values, each row contains a mirna and its associated p-values from the methods
+#' @return table of miRNA and p-values, each row contains a mirna and its
+#'  associated p-values from the methods
 #' @export
-
-#### Alternative Prioritzation root
-# Name to be updated
-# Need to make sure it uses direct bootstrapping for small n instead of approximation
-
 PrioritizeMicroRNA <- function(enriches0,
                                 pathway.clusters,
                                 method='AggInv',
