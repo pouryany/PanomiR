@@ -222,29 +222,3 @@ get.cor.dif.pval <- function(df1,df2,lab.vec, df.name1 = "Pathway",
 # Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
 # Function to find linearly dependednt columns of a matrix
 
-
-
-#' #'  The function calculate targeting score of miRNA w.r.t to a cluster 
-#' #' of pathways via lancaster aggregation method.
-#' #' @param enriches a table of miRNA pathway enrichments. Universe
-#' #' @param pathways queried pathways. e.g. cluster pathways
-#' #' @param is.selector internal argument
-#' #' @param thresh internal argument
-#' #' @return a  scoring of miRNAs in a cluster of pathways
-#' #' @import metap
-#' #' @import dplyr
-#' lancaster.fn <- function(enriches, pathways, is.selector, thresh=NULL){
-#'   temp.enrich <- enriches[enriches$y %in% pathways, ]
-#'   selector <- temp.enrich %>%
-#'     group_by(x) %>%
-#'     dplyr::summarise(n = n(), k = lancaster(pval,weight)/n())%>%
-#'     arrange(., x)
-#'   
-#'   if (is.selector==T){
-#'     return(list('selector'=selector, 'enriches0'=enriches))
-#'   } else {
-#'     return(selector)
-#'   }
-#' }
-
-
