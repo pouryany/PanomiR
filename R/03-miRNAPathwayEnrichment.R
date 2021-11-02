@@ -1,21 +1,26 @@
-library(dplyr)
-library(parallel)
-library(clusterProfiler)
-library(org.Hs.eg.db)
-
-#' Outputs enrichment probability of miRNAs based on pathway clusters
-#'
-#' @param mir.sets a table of miRNAs and a list of their interactions with genes in ENTREZ ID 
-#' @param pathways.sets a table of pathways and a list of their interactions with genes in ENTREZ ID
-#' @param gene.selection a table of genes with dtype; if not NULL, select only genes from given table
-#' @param mir.selection a table of miRNA names; if not NULL, select only miRNAs from given table
+#' @description Outputs enrichment probability of miRNAs based on 
+#' pathway clusters
+#' @param mir.sets a table of miRNAs and a list of their interactions with
+#'  genes in ENTREZ ID 
+#' @param pathways.sets a table of pathways and a list of their interactions
+#'   with genes in ENTREZ ID
+#' @param gene.selection a table of genes with dtype; if not NULL, select only
+#'   genes from a given table
+#' @param mir.selection a table of miRNA names; if not NULL, select only miRNAs
+#'   from given table
 #' @param from.id id of genes in genes.selection
 #' @param to.id id of genes used in pcxn and pathways set
 #' @param min.path.size filter out pathways with sets less than given value
 #' @param num.cores number of cores available
 #' @param out.dir output directory
 #' @param save.RDS.name if not NULL, saves output as RDS using save name 
-#' @return table of enrichment, each row contains mirna-pathway and its enrichment p-values
+#' @import dplyr
+#' @import parallel
+#' @import clusterProfiler
+#' @import org.Hs.eg.db
+#' @return table of enrichment, each row contains mirna-pathway and its 
+#'   enrichment p-values
+#' @export
 
 miRNAPathwayEnrichment <- function(mir.sets, 
                                    pathways.sets, 
@@ -98,4 +103,3 @@ miRNAPathwayEnrichment <- function(mir.sets,
   }
   return (iterator)
 }
-
