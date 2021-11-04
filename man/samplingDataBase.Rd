@@ -17,7 +17,8 @@ samplingDataBase(
 )
 }
 \arguments{
-\item{enrich.null}{Enrichment dataset with x (miRNA), y (pathway) and pval (probability of observing x in pathway cluster).}
+\item{enrich.null}{Enrichment dataset with x (miRNA), y (pathway) and pval
+(probability of observing x in pathway cluster).}
 
 \item{selector}{Table with x(miRNA) in pathway cluster.}
 
@@ -29,7 +30,8 @@ samplingDataBase(
 
 \item{sampling.data.file}{If file exists, load file. Else, perform random sampling}
 
-\item{jack.knife}{If TRUE, conduct sampling with one less pathway, used for jack knifing}
+\item{jack.knife}{If TRUE, conduct sampling with one less pathway, used for
+jack knifing}
 
 \item{save.sampling}{If TRUE, data is saved.}
 

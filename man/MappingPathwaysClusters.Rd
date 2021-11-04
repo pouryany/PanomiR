@@ -25,15 +25,19 @@ MappingPathwaysClusters(
 \arguments{
 \item{pcxn}{pathways network (edge list of pathways)}
 
-\item{de.paths}{differential expressed pathways, obtained from *DifferentialPathwayAnalysis*}
+\item{de.paths}{differential expressed pathways, obtained from
+*DifferentialPathwayAnalysis*}
 
 \item{clust.fn}{clustering algorithm}
 
-\item{edge.fdr.thresh}{FDR threshold for pathway-pathway adjusted p-values ; filter edges with adjusted p-values less than given threshold}
+\item{edge.fdr.thresh}{FDR threshold for pathway-pathway adjusted p-values;
+filter edges with adjusted p-values less than given threshold}
 
-\item{cor.thresh}{correlation threshold for pathway-pathway correlation; filter pathways with correlation less than given threshold}
+\item{cor.thresh}{correlation threshold for pathway-pathway correlation;
+filter pathways with correlation less than given threshold}
 
-\item{path.fdr.thresh}{FDR threshold for DE pathways adjusted p-values; filter pathways with adjusted p-values less than given threshold}
+\item{path.fdr.thresh}{FDR threshold for DE pathways adjusted p-values;
+filter pathways with adjusted p-values less than given threshold}
 
 \item{top.paths}{use only top x paths; if NULL, use all paths}
 
@@ -41,7 +45,8 @@ MappingPathwaysClusters(
 
 \item{plot}{if T, store graph plot in Figures directory of plots}
 
-\item{subplot}{if T, store inidividual clusters plots and connected plots in Figures directory of plots}
+\item{subplot}{if T, store inidividual clusters plots and connected plots
+in Figures directory of plots}
 
 \item{top.clusts}{plot figures for top x clusters}
 

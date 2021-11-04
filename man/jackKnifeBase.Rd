@@ -17,15 +17,18 @@ jackKnifeBase(
 )
 }
 \arguments{
-\item{selector}{Table with x(miRNA) in pathway cluster and observed k (depending on methodology).}
+\item{selector}{Table with x(miRNA) in pathway cluster and observed k
+(depending on methodology).}
 
 \item{pathways}{Pathways in pathway cluster.}
 
-\item{enrich.null}{Enrichment dataset with x (miRNA), y (pathway) and pval (probability of observing x in pathway cluster).}
+\item{enrich.null}{Enrichment dataset with x (miRNA), y (pathway) and pval
+(probability of observing x in pathway cluster).}
 
 \item{fn}{Methodology function.}
 
-\item{jack.knife.data}{Random distribution data with jack-knifing (i.e. one less pathway)}
+\item{jack.knife.data}{Random distribution data with jack-knifing
+(i.e. one less pathway)}
 
 \item{m}{method name}
 
