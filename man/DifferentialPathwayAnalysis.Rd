@@ -26,36 +26,47 @@ DifferentialPathwayAnalysis(
 \arguments{
 \item{genes.counts}{gene counts, rows refer to genes and columns to samples}
 
-\item{pathways}{pathways table, containing pathway names and genes with id specified}
+\item{pathways}{pathways table, containing pathway names and genes with id
+specified}
 
-\item{covariates}{covariates/metadata file; rows matches the columns of gene.counts}
+\item{covariates}{covariates/metadata file; rows matches the columns of
+gene.counts}
 
-\item{condition}{to be examined (tumor vs normal etc); must exist in covariates column}
+\item{condition}{to be examined (tumor vs normal etc); must exist in
+covariates column}
 
-\item{adjust.covars}{adjustment covariates like batch; if NULL, no adjustments performed}
+\item{adjust.covars}{adjustment covariates like batch; if NULL,
+no adjustments performed}
 
-\item{covariates.correction}{if T, performs covariates detection and correction; requires **adjust.covars**; (limma)}
+\item{covariates.correction}{if T, performs covariates detection and
+correction; requires **adjust.covars**; (limma)}
 
-\item{quantile.norm}{if T, performs quantile normalization on pathway summary statistics; from *preprocess* package}
+\item{quantile.norm}{if T, performs quantile normalization on pathway
+summary statistics; from *preprocess* package}
 
 \item{out.dir}{output directory}
 
-\item{save.RDS.name}{if not NULL, saves output as RDS using save name, if NULL, does not save output}
+\item{save.RDS.name}{if not NULL, saves output as RDS using save name,
+if NULL, does not save output}
 
 \item{id}{id matching genes to pathways; rownames of gene.counts}
 
-\item{de.genes}{if not NULL, add t-scores to pathways summary statistics; filter by genes t-scores}
+\item{de.genes}{if not NULL, add t-scores to pathways summary statistics;
+filter by genes t-scores}
 
 \item{min.path.size}{minimum pathway size}
 
-\item{method}{define method to use for pathway summary statistics; specifications in documentations}
+\item{method}{define method to use for pathway summary statistics;
+specifications in documentations}
 
-\item{trim}{filter pathways with mean less than trim threshold in pathway summary statistics}
+\item{trim}{filter pathways with mean less than trim threshold
+in pathway summary statistics}
 
 \item{genes.counts.log}{if T, log(genes.counts)}
 }
 \value{
-list contain differentially expressed pathways as DEP and pathway summary statistics as pathwaySummaryStats
+list contain differentially expressed pathways as DEP and pathway
+  summary statistics as pathwaySummaryStats
 }
 \description{
 Performs differential expression analysis for pathways using LIMMA package with gene counts
