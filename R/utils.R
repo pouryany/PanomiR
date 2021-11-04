@@ -7,27 +7,38 @@
 #' @importFrom  tibble as_tibble
 #' @import org.Hs.eg.db
 #' @export
-Pathway_Gene_Tab <- function(path.address = F,
-                             out.dir  = F){
+Pathway_Gene_Tab <- function(path.address = NA,
+                             pathway.list = NA,
+                             out.dir  = NA){
   # Development notes: make compatible with direct data input
   #       check and throw errors if the address is valid
   #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
   #       Make a  Pathway_Gene_Tab going out with the package.
   
+  if(!is.na(path.address))
     pathList  <- readRDS(path.address)
-    pathList2 <- lapply(pathList,
-                        function(X){clusterProfiler::bitr(X,"ENTREZID",
-                                                          "ENSEMBL",
-                                                          OrgDb =  org.Hs.eg.db)})
     
-    temp       <- lapply(names(pathList2),
-                         function(X){data.frame(Pathway = (X), 
-                                                pathList2[[X]])}
-    )
-    temp       <- do.call(rbind,(temp))
-    PathExpTab <- tibble::as_tibble(temp)
+  if(is.na(path.address) && !is.na(pathway.list))
+    pathList  <- pathway.list
+  
+  if(!is.na(path.address) && !is.na(pathway.list))
+    stop("provide a valid input list.")
+      
+  pathList2 <- lapply(pathList,
+                      function(X){clusterProfiler::bitr(X,"ENTREZID",
+                                                        "ENSEMBL",
+                                                        OrgDb = org.Hs.eg.db)})
+    
+  temp      <- lapply(names(pathList2),
+                        function(X){data.frame(Pathway = (X), 
+                                              pathList2[[X]])})
+  temp       <- do.call(rbind,(temp))
+  PathExpTab <- tibble::as_tibble(temp)
+  
+  if(!is.na(out.dir))
     saveRDS(PathExpTab,out.dir)
-    return(pathExpTab)
+  
+  return(PathExpTab)
 }
 
 
@@ -55,7 +66,7 @@ Pathway_Gene_Tab <- function(path.address = F,
 
 Path_Summary <- function(exprs.mat, 
                          pathway.ref,
-                         id, 
+                         id = "ENSEMBL", 
                          z.normalize=F,
                          method = F,
                          de.genes = NULL,
@@ -65,7 +76,7 @@ Path_Summary <- function(exprs.mat,
     # There is a confusion about the data format here. 
     # Make sure it is consistent.
     # Current version only works with ENSEMBL.
-    exprs.mat  <- rownames_to_column(as.data.frame(exprs.mat), var = id)
+    exprs.mat  <- tibble::rownames_to_column(as.data.frame(exprs.mat), var = id)
     
     if (!is.null(de.genes)) {
       
@@ -94,7 +105,7 @@ Path_Summary <- function(exprs.mat,
     } else if (method == "x2"){
       
         exprs.mat      <- exprs.mat  %>% dplyr::mutate_if(.,is.numeric,rank) %>%
-            mutate_if(.,is.numeric,function(X){X * X})
+          dplyr::mutate_if(.,is.numeric,function(X){X * X})
         
     } else  {
         stop("invalid choice of summarization function")
