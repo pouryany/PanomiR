@@ -77,5 +77,5 @@ test_that("Pathway summary generates correct activity scores", {
     res <- Path_Summary(exprs.mat, path_tab, method = "x2")
     
     expect_equal(res[1,1], 2.5)
-    xpect_equal(res[2,1], 12.5)
+    expect_equal(res[2,1], 12.5)
 })
