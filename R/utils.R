@@ -18,10 +18,10 @@ Pathway_Gene_Tab <- function(path.address = NA,
   if(!is.na(path.address))
     pathList  <- readRDS(path.address)
     
-  if(is.na(path.address) && !is.na(pathway.list))
+  if(is.na(path.address) && !any(is.na(pathway.list)))
     pathList  <- pathway.list
   
-  if(!is.na(path.address) && !is.na(pathway.list))
+  if(!is.na(path.address) && !any(is.na(pathway.list)))
     stop("provide a valid input list.")
       
   pathList2 <- lapply(pathList,
