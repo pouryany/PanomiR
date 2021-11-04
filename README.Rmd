@@ -37,9 +37,9 @@ source('04-miRNAPrioritization.R')
 source('05-miRNAPathwayCorrelation.R')
 
 
-pathways     <- readRDS('../Data/preprocessed/MSigDBPathGeneTab.RDS')
-genes.counts <- readRDS('../Data/LIHC_gene.RDS')
-covariates   <- read.csv('../Data/TCGA-LIHC-COV.csv', row.names = 1)
+pathways     <- readRDS('../data/preprocessed/MSigDBPathGeneTab.RDS')
+genes.counts <- readRDS('../data/LIHC_gene.RDS')
+covariates   <- read.csv('../data/TCGA-LIHC-COV.csv', row.names = 1)
 
 
 
@@ -65,7 +65,7 @@ Next step is to Map differentially expressed pathways to a precalculated network
 de.paths <- output0$DEP
 
 # Precalculated
-pcxn      <- readRDS('../Data/GeneSets/improved_PCxN_MSigDB.RDS')
+pcxn      <- readRDS('../data/GeneSets/improved_PCxN_MSigDB.RDS')
 func_list <- c("cluster_edge_betweenness",
                "cluster_infomap",
                "cluster_fast_greedy",
@@ -109,21 +109,21 @@ Next for each miRNA background, the individual pathway targeting scores are calc
 
 # This file is Tarbase interactions. It is not provided. 
 # Users who need it need to contact Tarbase development team
-mir.sets         <- readRDS('../Data/preprocessed/NORMALIZED_MIRSETS.rds')
+mir.sets         <- readRDS('../data/preprocessed/NORMALIZED_MIRSETS.rds')
 
 # The list of processed targetScan targets. Freely available. 
 
-mir.sets.list    <- list.files("../Data/preprocessed/",
+mir.sets.list    <- list.files("../data/preprocessed/",
                               pattern = "TargetScan",
                               full.names = T)
 
 
 
-pathways.sets   <- readRDS('../Data/GeneSets/MSigDB.RDS')
+pathways.sets   <- readRDS('../data/GeneSets/MSigDB.RDS')
 
 # background genes and miRNAs for tissue costumization
 genes.selection <- rownames(genes.counts)
-mirna.counts    <- readRDS('../Data/TCGA-LIHC-miRNAs_residuals.RDS')
+mirna.counts    <- readRDS('../data/TCGA-LIHC-miRNAs_residuals.RDS')
 mir.selection   <- names(mir.sets)
 
 
@@ -135,20 +135,14 @@ mir.selection   <- names(mir.sets)
                                      save.RDS.name = 'LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS',
                                      out.dir= data.dir)
  
-
-
-
-
 # Calculating TargetScan enrichment.
 for (mirs in mir.sets.list){
-    
-  
     tag       <- tail(unlist(stringr::str_split(mirs,pattern = "_")),1)
     mir.sets  <- readRDS(mirs)
     name.tag  <- paste0("LIHCGenesLIHCMirsENRICHMENT_",tag)
-    
+
     mir.selection2 <- names(mir.sets)
-    
+
     print(paste0("performing: ", tag))
     enriches0 <- miRNAPathwayEnrichment(mir.sets,
                                         pathways.sets,
@@ -156,7 +150,6 @@ for (mirs in mir.sets.list){
                                         mir.selection = mir.selection2,
                                         save.RDS.name = name.tag,
                                         out.dir= data.dir)
-    
 }
 
 ```
@@ -172,13 +165,8 @@ func_list <- c("cluster_edge_betweenness",
                "cluster_fast_greedy",
                "cluster_louvain")
 
-
-
 # Calculating miRNA targeting scores for  miRNA-pathway interaction from Tarbase
 for(func in func_list){
-    
-   
-
     # While we have prepared several scoring methods. We only use AggInv.
     # Other scoring options will be discussed in future developments.
     method <- c('AggInv')
@@ -205,20 +193,14 @@ for(func in func_list){
 
 }
 
-
-
-
-
 # Calculating miRNA targeting scores for different miRNA-pathway interaction 
 # background from TargetScan
-
 for(func in func_list){
     
     method       <- c('AggInv')
     top.clusters <- pathway.clusters[[func]]
     
-    for (mirs in mir.sets.list){
-        
+    for (mirs in mir.sets.list) {
         tag       <- tail(unlist(stringr::str_split(mirs,pattern = "_")),1)
         mir.sets  <- readRDS(mirs)
         name.tag  <- paste0("LIHCGenesLIHCMirsENRICHMENT_",tag)
@@ -242,7 +224,6 @@ for(func in func_list){
                                         save.csv=T,
                                         num.cores = 8,
                                         top.clust=3)
-        
     }
 }
 ```
