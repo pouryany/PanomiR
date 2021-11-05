@@ -17,6 +17,7 @@ biocViews:
 Imports: 
     clusterProfiler,
     dplyr,
+    forcats,
     igraph,
     metap,
     limma,
