@@ -135,17 +135,16 @@ Path_Summary <- function(exprs.mat,
 
 
 
-#' @description The function to count the number of enriched pathways
-#'   for each miRNA
-#' @param enriches a table of miRNA pathway enrichments. Universe
-#' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
-#' @param thresh threshold from p-value cut-off
-#' @return a p-value based scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-
-pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
-  
+#' Score miRNAs In a Cluster Of Pathways
+#'
+#' The function to count the number of enriched pathways for each miRNA.
+#'
+#' @param enriches Table of miRNA pathway enrichments.
+#' @param pathways Queried pathways, e.g. cluster pathways.
+#' @param is.selector Internal argument.
+#' @param thresh Threshold from p-value cut-off.
+#' @return P-value based scoring of miRNAs in a cluster of pathways.
+pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05) {
   if (is.selector==T){
     enriches <- enriches %>% dplyr::mutate(.,hit2=ifelse(pval < thresh,1,0))
   }
@@ -163,7 +162,6 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
     return(selector)
   }
 }
-
 
 
 #' The function calculate targeting score of miRNA w.r.t to a cluster 
