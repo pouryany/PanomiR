@@ -44,10 +44,13 @@ miRNAPathwayEnrichment <- function(mir.sets,
   mir.sets <- lapply(mir.sets, function(X){X[X %in% paths.ref]})
 
   # select pathways with selected genes of interest
-  if (!is.null(genes.selection)){
-    gene.df     <- bitr(genes.selection, fromType = from.id,
-                        toType = to.id,
-                        OrgDb = org.Hs.eg.db)
+  if (!is.null(genes.selection)) {
+    gene.df <- clusterProfiler::bitr(
+      genes.selection,
+      fromType = from.id,
+      toType = to.id,
+      OrgDb = org.Hs.eg.db::org.Hs.eg.db
+    )
     pathways.sets <- lapply(pathways.sets, function(X){
       X[X %in% gene.df[,c(to.id)]]})
     
