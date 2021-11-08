@@ -42,26 +42,23 @@ Pathway_Gene_Tab <- function(path.address = NA,
 }
 
 
-
-#' @description The function to generate pathway summary statistics 
-#' @param exprs.mat a gene expression matrix with rownames as genes and samples
+#' Pathway summary statistics
+#' 
+#' Generates a table of pathway activity profiles per sample
+#' 
+#' @param exprs.mat Gene expression matrix with row names as genes and samples
 #'   as columns.
-#' @param pathway.ref a table of pathway-gene associations. Created from 
-#'   \code{\link{Pathway_Gene_Tab}} function
-#' @param id the gene annotation type in the rowname of gene expression data
-#' @param z.normalize normalization of pathway summary score
-#' @param method choice of how to sumamrize gene ranks into pathway statistics.
-#' @param de.genes  a list of differentially expressed genes along with
-#'   t-scores. only necessary if working on Top 50% summary method.
-#' @param trim percentage of top and bottom ranked genes to be excluded from
-#'   pathway summary statistics
-#' @param t.scores argument for-top-50-percent-genes method
-#' @return PathExp a table of pathway activity profiles per sample.
-#' @importFrom  clusterProfiler bitr
-#' @importFrom tibble rownames_to_column
-#' @importFrom  tibble as_tibble
-#' @import org.Hs.eg.db
-#' @import dplyr
+#' @param pathway.ref Table of pathway-gene associations. Created from 
+#'   \code{\link{Pathway_Gene_Tab}} function.
+#' @param id Gene annotation type in the row name of gene expression data.
+#' @param z.normalize Normalization of pathway summary score.
+#' @param method Choice of how to summarize gene ranks into pathway statistics.
+#' @param de.genes List of differentially expressed genes along with t-scores. 
+#'   Only necessary if working on Top 50\% summary method.
+#' @param trim Percentage of top and bottom ranked genes to be excluded from
+#'   pathway summary statistics.
+#' @param t.scores Argument for-top-50-percent-genes method.
+#' @return PathExp Table of pathway activity profiles per sample.
 #' @export
 
 Path_Summary <- function(exprs.mat, 
@@ -76,24 +73,23 @@ Path_Summary <- function(exprs.mat,
     # There is a confusion about the data format here. 
     # Make sure it is consistent.
     # Current version only works with ENSEMBL.
-    exprs.mat  <- tibble::rownames_to_column(as.data.frame(exprs.mat), var = id)
-    
+    exprs.mat <- tibble::rownames_to_column(as.data.frame(exprs.mat), var = id)
+
     if (!is.null(de.genes)) {
-      
+
         if(is.null(t.scores))
           stop("Provide tscores/pvalues")
       
-        pathway.ref  <- dplyr::inner_join(pathway.ref,t.scores, 
-                                          by = c("ENSEMBL"))
-        
+        pathway.ref <- dplyr::inner_join(pathway.ref, t.scores,
+                                         by = c("ENSEMBL"))
+
         pathway.ref  %<>%  dplyr::group_by(.,Pathway) %>%
             dplyr::filter(., abs(t) >= median(abs(t))) %>%
             dplyr::select(.,-t)  
     }
-    
-    
+
     if(method == "none"){
-      
+
         exprs.mat  <- exprs.mat  %>% 
           dplyr::mutate_if(.,is.numeric,function(X){X})
         
