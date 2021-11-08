@@ -1,20 +1,20 @@
-#' @description Generates a table of pathways and genes associations
-#' @param path.address address to an RDS file cointaning list of pathways
-#'    each element is a list of genes similar to GMT format.
-#' @param out.dir address to save an RDS for a table of pathway-gene association
-#' @return pathExpTab a table of pathway-gene association
-#' @importFrom  clusterProfiler bitr
-#' @importFrom  tibble as_tibble
-#' @import org.Hs.eg.db
+#' Pathway-Gene Associations
+#'
+#' Generates a table of pathways and genes associations.
+#'
+#' @param path.address Address to an RDS file containing list of pathways where
+#'   each element is a list of genes similar to GMT format.
+#' @param out.dir Address to save an RDS for a table of pathway-gene association
+#' @return pathExpTab Table of pathway-gene association.
 #' @export
 Pathway_Gene_Tab <- function(path.address = NA,
                              pathway.list = NA,
-                             out.dir  = NA){
+                             out.dir = NA) {
   # Development notes: make compatible with direct data input
   #       check and throw errors if the address is valid
   #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
   #       Make a  Pathway_Gene_Tab going out with the package.
-  
+
   if(!is.na(path.address))
     pathList  <- readRDS(path.address)
     
