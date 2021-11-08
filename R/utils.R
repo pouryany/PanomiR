@@ -24,11 +24,18 @@ Pathway_Gene_Tab <- function(path.address = NA,
   if(!is.na(path.address) && !any(is.na(pathway.list)))
     stop("provide a valid input list.")
       
-  pathList2 <- lapply(pathList,
-                      function(X){clusterProfiler::bitr(X,"ENTREZID",
-                                                        "ENSEMBL",
-                                                        OrgDb = org.Hs.eg.db)})
-    
+  pathList2 <- lapply(
+    pathList,
+    function(X) {
+      clusterProfiler::bitr(
+        X,
+        "ENTREZID",
+        "ENSEMBL",
+        OrgDb = org.Hs.eg.db::org.Hs.eg.db
+      )
+    }
+  )
+
   temp      <- lapply(names(pathList2),
                         function(X){data.frame(Pathway = (X), 
                                               pathList2[[X]])})
