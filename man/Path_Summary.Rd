@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{Path_Summary}
 \alias{Path_Summary}
-\title{Pathway summary statistics}
+\title{Pathway Summary Statistics}
 \usage{
 Path_Summary(
   exprs.mat,

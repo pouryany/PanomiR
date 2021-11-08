@@ -42,7 +42,7 @@ Pathway_Gene_Tab <- function(path.address = NA,
 }
 
 
-#' Pathway summary statistics
+#' Pathway Summary Statistics
 #' 
 #' Generates a table of pathway activity profiles per sample
 #' 
