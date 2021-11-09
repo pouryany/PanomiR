@@ -73,7 +73,7 @@ miRNAPathwayEnrichment <- function(mir.sets,
   all <- length(paths.ref)
   
   # find enrichment p-value of each miRNA target set and each pathway set
-  enrichs   <- mclapply(1:nrow(iterator), 
+  enrichs   <- parallel::mclapply(1:nrow(iterator), 
                         function(Y){
                           X <- iterator[Y,]
                           q <- length(intersect(unlist(pathways.sets[X[[2]]]), 
