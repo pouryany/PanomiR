@@ -3,14 +3,11 @@ test_that("multiplication works", {
 })
 
 test_that("Pathway-gene table works", {
-    
-    
     Pathway1  <- c( "125","3099","126")
     Pathway2  <- c( "5232","5230","5162")
     path.list <- list("Path1" = Pathway1, "Path2" = Pathway2) 
 
     # org.Hs.eg.db is required
-    
     res <- Pathway_Gene_Tab(pathway.list = path.list)
     expect_equal(nrow(res), 6)
 })

@@ -1,45 +1,40 @@
-#' @description Outputs enrichment probability of miRNAs based on 
-#' pathway clusters
-#' @param mir.sets a table of miRNAs and a list of their interactions with
-#'  genes in ENTREZ ID 
-#' @param pathways.sets a table of pathways and a list of their interactions
-#'   with genes in ENTREZ ID
-#' @param gene.selection a table of genes with dtype; if not NULL, select only
-#'   genes from a given table
-#' @param mir.selection a table of miRNA names; if not NULL, select only miRNAs
-#'   from given table
-#' @param from.id id of genes in genes.selection
-#' @param to.id id of genes used in pcxn and pathways set
-#' @param min.path.size filter out pathways with sets less than given value
-#' @param num.cores number of cores available
-#' @param out.dir output directory
-#' @param save.RDS.name if not NULL, saves output as RDS using save name 
-#' @import dplyr
-#' @import parallel
-#' @import clusterProfiler
-#' @import org.Hs.eg.db
-#' @return table of enrichment, each row contains mirna-pathway and its 
+#' Enrichment Probability Of miRNAs
+#' 
+#' Outputs enrichment probability of miRNAs based on pathway clusters.
+#' 
+#' @param mir.sets Table of miRNAs and a list of their interactions with
+#'   genes in ENTREZ ID.
+#' @param pathways.sets Table of pathways and a list of their interactions
+#'   with genes in ENTREZ ID.
+#' @param gene.selection Table of genes with dtype; if not NULL, select only
+#'   genes from a given table.
+#' @param mir.selection Table of miRNA names; if not NULL, select only miRNAs
+#'   from given table.
+#' @param from.id ID of genes in genes.selection.
+#' @param to.id ID of genes used in pcxn and pathways set.
+#' @param min.path.size Filter out pathways with sets less than given value.
+#' @param num.cores Number of CPU cores to use, must be at least one.
+#' @param out.dir Output directory.
+#' @param save.RDS.name If not NULL, saves output as RDS using save name.
+#' @return Table of enrichment, each row contains mirna-pathway and its 
 #'   enrichment p-values
 #' @export
-
-miRNAPathwayEnrichment <- function(mir.sets, 
-                                   pathways.sets, 
-                                   genes.selection=NULL, 
-                                   mir.selection=NULL, 
-                                   from.id='ENSEMBL', 
-                                   to.id='ENTREZID', 
-                                   min.path.size=9, 
-                                   num.cores=1, 
-                                   out.dir='', 
-                                   save.RDS.name=NULL)
-  {
-  
-  
-  if (substring(out.dir, nchar(out.dir))!='/')
+miRNAPathwayEnrichment <- function(mir.sets,
+                                   pathways.sets,
+                                   genes.selection = NULL,
+                                   mir.selection = NULL,
+                                   from.id = 'ENSEMBL',
+                                   to.id = 'ENTREZID',
+                                   min.path.size = 9,
+                                   num.cores = 1,
+                                   out.dir = '',
+                                   save.RDS.name = NULL) {
+  if (substring(out.dir, nchar(out.dir))!='/') {
     out.dir <- paste0(out.dir, '/')
-  if (!dir.exists(out.dir))
+  }
+  if (!dir.exists(out.dir)) {
     stop('Output directory does not exist.')
-  
+  }
   # select pathways with minimum set size
   paths.sel  <- sapply(pathways.sets,length)
   pathways.sets   <- pathways.sets[paths.sel > min.path.size]
@@ -47,12 +42,15 @@ miRNAPathwayEnrichment <- function(mir.sets,
 
   # select miRNAs with targets in pathways
   mir.sets <- lapply(mir.sets, function(X){X[X %in% paths.ref]})
-  
+
   # select pathways with selected genes of interest
-  if (!is.null(genes.selection)){
-    gene.df     <- bitr(genes.selection, fromType = from.id,
-                        toType = to.id,
-                        OrgDb = org.Hs.eg.db)
+  if (!is.null(genes.selection)) {
+    gene.df <- clusterProfiler::bitr(
+      genes.selection,
+      fromType = from.id,
+      toType = to.id,
+      OrgDb = org.Hs.eg.db::org.Hs.eg.db
+    )
     pathways.sets <- lapply(pathways.sets, function(X){
       X[X %in% gene.df[,c(to.id)]]})
     
@@ -60,7 +58,7 @@ miRNAPathwayEnrichment <- function(mir.sets,
       X[X %in% gene.df[,c(to.id)]]})
     paths.ref <- Reduce(union,pathways.sets)
   }
-  
+
   # select miRNAs of interest
   if (!is.null(mir.selection)){
     

@@ -1,20 +1,20 @@
-#' @description Generates a table of pathways and genes associations
-#' @param path.address address to an RDS file cointaning list of pathways
-#'    each element is a list of genes similar to GMT format.
-#' @param out.dir address to save an RDS for a table of pathway-gene association
-#' @return pathExpTab a table of pathway-gene association
-#' @importFrom  clusterProfiler bitr
-#' @importFrom  tibble as_tibble
-#' @import org.Hs.eg.db
+#' Pathway-Gene Associations
+#'
+#' Generates a table of pathways and genes associations.
+#'
+#' @param path.address Address to an RDS file containing list of pathways where
+#'   each element is a list of genes similar to GMT format.
+#' @param out.dir Address to save an RDS for a table of pathway-gene association
+#' @return pathExpTab Table of pathway-gene association.
 #' @export
 Pathway_Gene_Tab <- function(path.address = NA,
                              pathway.list = NA,
-                             out.dir  = NA){
+                             out.dir = NA) {
   # Development notes: make compatible with direct data input
   #       check and throw errors if the address is valid
   #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
   #       Make a  Pathway_Gene_Tab going out with the package.
-  
+
   if(!is.na(path.address))
     pathList  <- readRDS(path.address)
     
@@ -24,11 +24,18 @@ Pathway_Gene_Tab <- function(path.address = NA,
   if(!is.na(path.address) && !any(is.na(pathway.list)))
     stop("provide a valid input list.")
       
-  pathList2 <- lapply(pathList,
-                      function(X){clusterProfiler::bitr(X,"ENTREZID",
-                                                        "ENSEMBL",
-                                                        OrgDb = org.Hs.eg.db)})
-    
+  pathList2 <- lapply(
+    pathList,
+    function(X) {
+      clusterProfiler::bitr(
+        X,
+        "ENTREZID",
+        "ENSEMBL",
+        OrgDb = org.Hs.eg.db::org.Hs.eg.db
+      )
+    }
+  )
+
   temp      <- lapply(names(pathList2),
                         function(X){data.frame(Pathway = (X), 
                                               pathList2[[X]])})
@@ -42,7 +49,7 @@ Pathway_Gene_Tab <- function(path.address = NA,
 }
 
 
-#' Pathway summary statistics
+#' Pathway Summary Statistics
 #' 
 #' Generates a table of pathway activity profiles per sample
 #' 
@@ -135,17 +142,16 @@ Path_Summary <- function(exprs.mat,
 
 
 
-#' @description The function to count the number of enriched pathways
-#'   for each miRNA
-#' @param enriches a table of miRNA pathway enrichments. Universe
-#' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
-#' @param thresh threshold from p-value cut-off
-#' @return a p-value based scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-
-pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
-  
+#' Score miRNAs In a Cluster Of Pathways
+#'
+#' The function to count the number of enriched pathways for each miRNA.
+#'
+#' @param enriches Table of miRNA pathway enrichments.
+#' @param pathways Queried pathways, e.g. cluster pathways.
+#' @param is.selector Internal argument.
+#' @param thresh Threshold from p-value cut-off.
+#' @return P-value based scoring of miRNAs in a cluster of pathways.
+pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05) {
   if (is.selector==T){
     enriches <- enriches %>% dplyr::mutate(.,hit2=ifelse(pval < thresh,1,0))
   }
@@ -163,7 +169,6 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05){
     return(selector)
   }
 }
-
 
 
 #' The function calculate targeting score of miRNA w.r.t to a cluster 
