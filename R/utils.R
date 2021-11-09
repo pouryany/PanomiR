@@ -373,8 +373,6 @@ sumlog.cover.fn <- AggInv.cover.fn
 #' @param jack.knife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
 #' @param num.cores number of cores used
-#' @import dplyr
-#' @importFrom parallel mclapply
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrich.null,
                                selector,
@@ -385,9 +383,9 @@ samplingDataBase <- function(enrich.null,
                                jack.knife=FALSE,
                                save.sampling,
                                num.cores=1){
-  if(!all(hasName(selector,c("x"))))
+  if(!all(utils::hasName(selector,c("x"))))
     stop("The selector table needs a column x (miRNA name)")
-  if(!all(hasName(enrich.null,c("x","y","pval"))))
+  if(!all(utils::hasName(enrich.null,c("x","y","pval"))))
     stop(paste0("The enrichment table needs a column x (miRNA name)",
                 ",a column y (pathway name), and a pval column"))
   
@@ -454,7 +452,7 @@ samplingDataBase <- function(enrich.null,
 methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NULL)
   {
   
-  if(!all(hasName(selector,c("x","k"))))
+  if(!all(utils::hasName(selector,c("x","k"))))
     stop("The selector table needs a column x (miRNA name) and a column k (miRNA hits)")
   
   # obtain means and sds for distribution, assume CLT
