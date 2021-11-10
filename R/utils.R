@@ -4,6 +4,8 @@
 #'
 #' @param path.address Address to an RDS file containing list of pathways where
 #'   each element is a list of genes similar to GMT format.
+#' @param pathway.list If you wish to use a list of pathways instead of a file
+#'   use this argument instead. The list must contain no NA values.   
 #' @param out.dir Address to save an RDS for a table of pathway-gene association
 #' @return pathExpTab Table of pathway-gene association.
 #' @export
