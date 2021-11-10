@@ -10,6 +10,9 @@ Pathway_Gene_Tab(path.address = NA, pathway.list = NA, out.dir = NA)
 \item{path.address}{Address to an RDS file containing list of pathways where
 each element is a list of genes similar to GMT format.}
 
+\item{pathway.list}{If you wish to use a list of pathways instead of a file
+use this argument instead. The list must contain no NA values.}
+
 \item{out.dir}{Address to save an RDS for a table of pathway-gene association}
 }
 \value{
