@@ -24,6 +24,9 @@ genes in ENTREZ ID.}
 \item{pathways.sets}{Table of pathways and a list of their interactions
 with genes in ENTREZ ID.}
 
+\item{genes.selection}{Table of genes with dtype; if not NULL, select only
+genes from a given table.}
+
 \item{mir.selection}{Table of miRNA names; if not NULL, select only miRNAs
 from given table.}
 
@@ -38,9 +41,6 @@ from given table.}
 \item{out.dir}{Output directory.}
 
 \item{save.RDS.name}{If not NULL, saves output as RDS using save name.}
-
-\item{gene.selection}{Table of genes with dtype; if not NULL, select only
-genes from a given table.}
 }
 \value{
 Table of enrichment, each row contains mirna-pathway and its 
