@@ -27,3 +27,5 @@ Imports:
     preprocessCore,
     RColorBrewer,
     tibble
+Depends: 
+    R (>= 2.10)
