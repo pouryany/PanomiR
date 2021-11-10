@@ -3,15 +3,13 @@
 #' Outputs a table of miRNA (ordered) with respective p-values derived from
 #'   method for prioritization
 #'
-#' @param enriches miRNA-pathway enrichment dataset obtained from
+#' @param enriches0 miRNA-pathway enrichment dataset obtained from
 #'   miRNAPathwayEnrichment.
 #' @param pathway.clusters Pathway clusters, obtained from
 #'   MappingPathwaysClusters.
 #' @param method Vector of methods (pCut, AggInv, AggLog, sumz, sumlog).
 #' @param method.thresh Vector of methods threshold for each method in method,
 #'   if NULL use default thresh values in method.
-#' @param mir.path.fdr.selection FDR threshold for mir-pathway adjusted
-#'   p-values; filter edges with adjusted p-values less than given threshold.
 #' @param top.clust Top x clusters to perform miRNA prioritization on.
 #' @param samp.rate Sampling rate for CLT.
 #' @param num.cores Number of CPU cores to use, must be at least one.
