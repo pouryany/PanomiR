@@ -1,3 +1,8 @@
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/pouryany/PanomiR/workflows/R-CMD-check/badge.svg)](https://github.com/pouryany/PanomiR/actions)
+<!-- badges: end -->
+
 ## PanomiR Walkthrough
 
 ### Under-development version. Unauthorized use of code not permitted.
