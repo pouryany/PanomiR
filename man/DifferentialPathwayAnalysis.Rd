@@ -2,7 +2,7 @@
 % Please edit documentation in R/01-DifferentialPathwayAnalysis.R
 \name{DifferentialPathwayAnalysis}
 \alias{DifferentialPathwayAnalysis}
-\title{Performs differential expression analysis for pathways using LIMMA package with gene counts}
+\title{Differential Expression Analysis For Pathways}
 \usage{
 DifferentialPathwayAnalysis(
   genes.counts,
@@ -24,50 +24,55 @@ DifferentialPathwayAnalysis(
 )
 }
 \arguments{
-\item{genes.counts}{gene counts, rows refer to genes and columns to samples}
+\item{genes.counts}{Gene counts, rows refer to genes and columns to samples.}
 
-\item{pathways}{pathways table, containing pathway names and genes with id
-specified}
+\item{pathways}{Pathways table, containing pathway names and genes with id
+specified.}
 
-\item{covariates}{covariates/metadata file; rows matches the columns of
-gene.counts}
+\item{covariates}{Covariates/metadata file; rows matches the columns of
+gene.counts.}
 
-\item{condition}{to be examined (tumor vs normal etc); must exist in
-covariates column}
+\item{condition}{Condition to be examined (tumor vs normal etc); must exist 
+in covariates column.}
 
-\item{adjust.covars}{adjustment covariates like batch; if NULL,
-no adjustments performed}
+\item{adjust.covars}{Adjustment covariates like batch; if NULL,
+no adjustments performed.}
 
-\item{covariates.correction}{if T, performs covariates detection and
-correction; requires **adjust.covars**; (limma)}
+\item{covariates.correction}{If T, performs covariates detection and
+correction; requires **adjust.covars**; (limma).}
 
-\item{quantile.norm}{if T, performs quantile normalization on pathway
-summary statistics; from *preprocess* package}
+\item{quantile.norm}{If T, performs quantile normalization on pathway
+summary statistics; from *preprocess* package.}
 
-\item{out.dir}{output directory}
+\item{out.dir}{Output directory.}
 
-\item{save.RDS.name}{if not NULL, saves output as RDS using save name,
-if NULL, does not save output}
+\item{save.RDS.name}{If not NULL, saves output as RDS using save name,
+if NULL, does not save output.}
 
-\item{id}{id matching genes to pathways; rownames of gene.counts}
+\item{id}{ID matching genes to pathways; rownames of gene.counts.}
 
-\item{de.genes}{if not NULL, add t-scores to pathways summary statistics;
-filter by genes t-scores}
+\item{de.genes}{If not NULL, add t-scores to pathways summary statistics;
+filter by genes t-scores.}
 
-\item{min.path.size}{minimum pathway size}
+\item{min.path.size}{Minimum pathway size.}
 
-\item{method}{define method to use for pathway summary statistics;
-specifications in documentations}
+\item{method}{Define method to use for pathway summary statistics;
+specifications in documentations.}
 
-\item{trim}{filter pathways with mean less than trim threshold
-in pathway summary statistics}
+\item{trim}{Filter pathways with mean less than trim threshold
+in pathway summary statistics.}
 
-\item{genes.counts.log}{if T, log(genes.counts)}
+\item{genes.counts.log}{If T, log(genes.counts).}
+
+\item{contrast.conds}{Provide a contrast expression to be used in Limma
+comparison. This is necessary if you have more than two levels in the
+condition covariate.}
 }
 \value{
-list contain differentially expressed pathways as DEP and pathway
-  summary statistics as pathwaySummaryStats
+List containing differentially expressed pathways as DEP and pathway
+  summary statistics as pathwaySummaryStats.
 }
 \description{
-Performs differential expression analysis for pathways using LIMMA package with gene counts
+Performs differential expression analysis for pathways using LIMMA package 
+with gene counts
 }

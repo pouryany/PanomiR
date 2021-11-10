@@ -2,24 +2,21 @@
 % Please edit documentation in R/utils.R
 \name{getDesignMatrix}
 \alias{getDesignMatrix}
-\title{Function imported from https://github.com/th1vairam/CovariateAnalysis
-Function to obtain desing matrix (modified from covairates pipeline of Menachem Former)}
+\title{Obtain Design Matrix}
 \usage{
 getDesignMatrix(covariatesDataFrame, Intercept = T, RELEVELS = list())
 }
 \arguments{
-\item{covariatesDataFrame}{a datadframe of covariates.}
+\item{covariatesDataFrame}{Dataframe of covariates.}
 
-\item{Intercept}{intercept in the linear model}
+\item{Intercept}{Intercept in the linear model.}
 
-\item{RELEVELS}{TBA}
-
-\item{pathways}{Pathways in pathway cluster.}
+\item{RELEVELS}{TBA.}
 }
 \value{
-a list containing a design matrix
+List containing a design matrix.
 }
 \description{
-Function imported from https://github.com/th1vairam/CovariateAnalysis
-Function to obtain desing matrix (modified from covairates pipeline of Menachem Former)
+Modified from covariates pipeline of Menachem Former. Imported from 
+\url{https://github.com/th1vairam/CovariateAnalysis}
 }

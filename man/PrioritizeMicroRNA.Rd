@@ -23,6 +23,9 @@ PrioritizeMicroRNA(
 )
 }
 \arguments{
+\item{enriches0}{miRNA-pathway enrichment dataset obtained from
+miRNAPathwayEnrichment.}
+
 \item{pathway.clusters}{Pathway clusters, obtained from
 MappingPathwaysClusters.}
 
@@ -51,12 +54,6 @@ cluster in top.clust in data.dir.}
 out.dir.}
 
 \item{prefix}{Prefix for all saved data.}
-
-\item{enriches}{miRNA-pathway enrichment dataset obtained from
-miRNAPathwayEnrichment.}
-
-\item{mir.path.fdr.selection}{FDR threshold for mir-pathway adjusted
-p-values; filter edges with adjusted p-values less than given threshold.}
 }
 \value{
 Table of miRNA and p-values, each row contains a miRNA and its

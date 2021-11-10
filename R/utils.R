@@ -438,24 +438,20 @@ samplingDataBase <- function(enrich.null,
 }
 
 
-
-
-#' Outputs a table with col x (miRNA), probability of
-#' observing k (depending on methodology)
-#' against a random distribution and cover of methodology
+#' Outputs a table with col x (miRNA), probability of observing k (depending on 
+#' methodology) against a random distribution and cover of methodology
 #' 
-#' @param sampling.data Random distribution data
+#' @param sampling.data Random distribution data.
 #' @param selector Table with x(miRNA) in pathway cluster and observed
 #'   k (depending on methodology).
-#' @param m method name.
-#' @param n_paths the number of pathways used to generate the sampling.data at 
-#'   each iteration. default is set at 100.
+#' @param m Method name.
+#' @param n_paths Number of pathways used to generate the sampling.data at 
+#'   each iteration. Default is set at 100.
 #' @param cover.fn Cover of methodology function.
-#' @import dplyr
 #' @return Outputs a new selector table with col x, pval and cover.
 methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NULL)
   {
-  
+
   if(!all(utils::hasName(selector,c("x","k"))))
     stop("The selector table needs a column x (miRNA name) and a column k (miRNA hits)")
   
@@ -530,23 +526,15 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-#' Function imported from https://github.com/th1vairam/CovariateAnalysis
-#' Function to obtain desing matrix (modified from covairates pipeline of Menachem Former)
+#' Obtain Design Matrix
 #' 
-#' @param covariatesDataFrame a datadframe of covariates.
-#' @param Intercept intercept in the linear model
-#' @param RELEVELS TBA
-#' @return a list containing a design matrix
+#' Modified from covariates pipeline of Menachem Former. Imported from 
+#' \url{https://github.com/th1vairam/CovariateAnalysis}
+#'
+#' @param covariatesDataFrame Dataframe of covariates.
+#' @param Intercept Intercept in the linear model.
+#' @param RELEVELS TBA.
+#' @return List containing a design matrix.
 #' @export
 getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list()) {
   
