@@ -25,6 +25,9 @@
 #' @param trim filter pathways with mean less than trim threshold
 #'   in pathway summary statistics  
 #' @param genes.counts.log if T, log(genes.counts)  
+#' @param contrast.conds Provide a constrast expression to be used in Limma
+#'   comparison. This is necessary if you have more than two levels in the
+#'   condition covariate.
 #' @return list contain differentially expressed pathways as DEP and pathway
 #'   summary statistics as pathwaySummaryStats
 #' @import dplyr

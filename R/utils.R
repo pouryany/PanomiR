@@ -4,6 +4,8 @@
 #'
 #' @param path.address Address to an RDS file containing list of pathways where
 #'   each element is a list of genes similar to GMT format.
+#' @param pathway.list If you wish to use a list of pathways instead of a file
+#'   use this argument instead. The list must contain no NA values.   
 #' @param out.dir Address to save an RDS for a table of pathway-gene association
 #' @return pathExpTab Table of pathway-gene association.
 #' @export
@@ -446,6 +448,8 @@ samplingDataBase <- function(enrich.null,
 #' @param selector Table with x(miRNA) in pathway cluster and observed
 #'   k (depending on methodology).
 #' @param m method name.
+#' @param n_paths the number of pathways used to generate the sampling.data at 
+#'   each iteration. default is set at 100.
 #' @param cover.fn Cover of methodology function.
 #' @import dplyr
 #' @return Outputs a new selector table with col x, pval and cover.
@@ -540,7 +544,6 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
 #' Function to obtain desing matrix (modified from covairates pipeline of Menachem Former)
 #' 
 #' @param covariatesDataFrame a datadframe of covariates.
-#' @param pathways Pathways in pathway cluster.
 #' @param Intercept intercept in the linear model
 #' @param RELEVELS TBA
 #' @return a list containing a design matrix
