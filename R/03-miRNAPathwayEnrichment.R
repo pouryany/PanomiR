@@ -6,7 +6,7 @@
 #'   genes in ENTREZ ID.
 #' @param pathways.sets Table of pathways and a list of their interactions
 #'   with genes in ENTREZ ID.
-#' @param gene.selection Table of genes with dtype; if not NULL, select only
+#' @param genes.selection Table of genes with dtype; if not NULL, select only
 #'   genes from a given table.
 #' @param mir.selection Table of miRNA names; if not NULL, select only miRNAs
 #'   from given table.
