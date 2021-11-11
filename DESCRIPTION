@@ -9,6 +9,7 @@ Description: PanomiR is a package to detect miRNAs that target groups of
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: bzip2
 RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0)
