@@ -580,7 +580,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
   options(na.action='na.pass')
   
   if(Intercept)
-    {design = stats::mmodel.matrix(~ ., data=covariatesDataFrame,
+    {design = stats::model.matrix(~ ., data=covariatesDataFrame,
                                   contrasts.arg=contra)}
   else{
     design = stats::model.matrix(~ 0 + ., data=covariatesDataFrame,
