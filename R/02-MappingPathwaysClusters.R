@@ -21,6 +21,7 @@
 #' @param prefix add prefix to plots
 #' @param weighted True if you wish to include correlation weights in clustering
 #' @return a table with each row containing a pathway and its respective cluster
+#' @import igraph
 #' @export
 
 MappingPathwaysClusters <- function(pcxn,
