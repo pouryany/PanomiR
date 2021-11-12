@@ -93,7 +93,7 @@ Path_Summary <- function(exprs.mat,
                                          by = c("ENSEMBL"))
 
         pathway.ref  %<>%  dplyr::group_by(.,Pathway) %>%
-            dplyr::filter(., abs(t) >= median(abs(t))) %>%
+            dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
             dplyr::select(.,-t)  
     }
 
@@ -580,9 +580,11 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
   options(na.action='na.pass')
   
   if(Intercept)
-    design = model.matrix(~ ., data=covariatesDataFrame, contrasts.arg=contra)
-  else
-    design = model.matrix(~ 0 + ., data=covariatesDataFrame, contrasts.arg=contra)
+    {design = stats::mmodel.matrix(~ ., data=covariatesDataFrame,
+                                  contrasts.arg=contra)}
+  else{
+    design = stats::model.matrix(~ 0 + ., data=covariatesDataFrame,
+                                 contrasts.arg=contra)}
   
   rownames(design) = rownames(covariatesDataFrame)
   
