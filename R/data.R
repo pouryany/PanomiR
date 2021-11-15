@@ -4,16 +4,26 @@
 #' This dataset is filtered to contain only sample with miRNA and mRNA gene
 #' expression profiles.  
 #' 
-#'
-#'
 #' @format A data frame with 417 rows and 73 variables.
 #' @source \url{https://doi.org/10.1016/j.cell.2017.05.046}
 "COV_TCGA_LIHC"
 
 
+#' The gene expression data The Cancer Genome Atlas Liver Hepatocellular 
+#' Carcinoma 
+#' 
+#' This dataset is filtered to contain only sample with miRNA and mRNA gene
+#' expression profiles.  
+#' 
+#' @format A matrix with 14120 rows and 417 columns.
+#' @source \url{https://doi.org/10.1016/j.cell.2017.05.046}
+"TCGA_LIHC"
+
+
+
+
 #' Canonical pathways from Molecular Signatures Database, MsigDb V6.2
 #' 
-#'
 #' @format A list of 1329 pathways
 #' @source \url{http://www.gsea-msigdb.org/gsea/index.jsp}
 "msigdb_c2"
