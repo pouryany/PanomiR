@@ -66,7 +66,7 @@ PrioritizeMicroRNA <- function(enriches0,
   
   # count miRNA-pathway enrichment with p-value less than threshold
   enriches   <- enriches0 %>% dplyr::filter(., Intersect != 0)
-  enriches   %<>% group_by(., y) %>% mutate(., path_fdr = p.adjust(pval, method = "fdr"))
+  enriches   %<>% group_by(., y) %>% mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
   enriches   <- enriches %>% mutate(.,hit =ifelse(path_fdr < mir.path.fdr.thresh, 1, 0))
   
   # Need to fix this function to be able to work on specific clusters instead of all top clusters.
@@ -186,7 +186,7 @@ PrioritizeMicroRNA <- function(enriches0,
       selector <- selector %>% dplyr::arrange(.,!!sym(met))
       met2     <- paste0(m,"_fdr")
       selector <- selector %>% dplyr::mutate(.,
-                                      !!met2 := p.adjust(p = !!sym(met)
+                                      !!met2 := stats::p.adjust(p = !!sym(met)
                                                          ,method = "fdr")
                                       )
     }

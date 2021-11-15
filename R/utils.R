@@ -446,7 +446,7 @@ methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NUL
   
   # obtain means and sds for distribution, assume CLT
   means <- rowMeans(sampling.data) 
-  sds   <- apply(sampling.data, 1, sd)
+  sds   <- apply(sampling.data, 1, stats::sd)
   sds   <- sds *10/sqrt(n_paths)
   
   pval.name <- paste0(m, '_pval')
@@ -484,7 +484,7 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
   # obtain means and sds for distribution, assume CLT
   n_paths      <- length(pathways)
   sample.means <- rowMeans(jack.knife.data) 
-  sample.sds   <- apply(jack.knife.data, 1, sd)
+  sample.sds   <- apply(jack.knife.data, 1, stats::sd)
   sample.sds   <- sample.sds *10/sqrt(n_paths-1)
   
   # remove one pathway at a time and obtain K for each miRNA 
@@ -492,7 +492,7 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
     temp.pathways  <- pathways[-X]
     temp.selector   <- fn(enriches=enrich.null, pathways=temp.pathways, is.selector=F)
     # obtain p-values using the means and sds obtain above
-    p_vals <- pnorm(temp.selector$k, mean=sample.means, sd=sample.sds, lower.tail = FALSE)
+    p_vals <- stats::pnorm(temp.selector$k, mean=sample.means, sd=sample.sds, lower.tail = FALSE)
     return(p_vals)
   }, mc.cores = num.cores)
   
@@ -535,7 +535,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
   NUMERIC_COVARIATE_NAMES = setdiff(COLNAMES, FACTOR_COVARIATE_NAMES)
   
   # Ensure the factors are in fact of type factor, and the quantitative variables are numeric:
-  covariatesDataFrame = as.data.frame( lapply(colnames(covariatesDataFrame), function(column) {if (column %in% FACTOR_COVARIATE_NAMES) {fac = as.factor(covariatesDataFrame[, column]); if (column %in% names(RELEVELS)) {fac = relevel(fac, ref=RELEVELS[[column]])}; return(fac)} else {return(as.numeric(covariatesDataFrame[, column]))}}) )
+  covariatesDataFrame = as.data.frame( lapply(colnames(covariatesDataFrame), function(column) {if (column %in% FACTOR_COVARIATE_NAMES) {fac = as.factor(covariatesDataFrame[, column]); if (column %in% names(RELEVELS)) {fac = stats::relevel(fac, ref=RELEVELS[[column]])}; return(fac)} else {return(as.numeric(covariatesDataFrame[, column]))}}) )
   rownames(covariatesDataFrame) = ROWNAMES
   colnames(covariatesDataFrame) = COLNAMES
   
@@ -557,9 +557,17 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
     # 1) fac is of type factor.
     # 2) fac is releveled as designated in RELEVELS.
     if (Intercept)
-      contra = lapply(FACTOR_COVARIATE_NAMES, function(column) {fac = covariatesDataFrame[, column]; fac = contrasts(fac);})
+      contra = lapply(FACTOR_COVARIATE_NAMES,
+                      function(column) {
+                        fac = covariatesDataFrame[, column]
+                        fac = stats::contrasts(fac)
+                      })
     else
-      contra = lapply(FACTOR_COVARIATE_NAMES, function(column) {fac = covariatesDataFrame[, column]; fac = contrasts(fac,contrasts=F);})
+      contra = lapply(FACTOR_COVARIATE_NAMES,
+                      function(column) {
+                        fac = covariatesDataFrame[, column]
+                        fac = stats::contrasts(fac,contrasts=F)
+                      })
     names(contra) = FACTOR_COVARIATE_NAMES
   }
   
@@ -612,13 +620,13 @@ linColumnFinder <- function(mat){
     if(qr(mymat)$rank != length(ids)){
       # Regression the column of interest on the previous columns to figure
       # out the relationship
-      o <- lm(mat[,i] ~ as.matrix(mat[,cols]) + 0)
+      o <- stats::lm(mat[,i] ~ as.matrix(mat[,cols]) + 0)
       # Construct the output message
       start <- paste0(colnames(mat)[i], " = ")
       # Which coefs are nonzero
-      nz <- !(abs(coef(o)) <= .Machine$double.eps^0.5)
+      nz <- !(abs(stats::coef(o)) <= .Machine$double.eps^0.5)
       tmp <- colnames(mat)[cols[nz]]
-      vals <- paste(coef(o)[nz], tmp, sep = "*", collapse = " + ")
+      vals <- paste(stats::coef(o)[nz], tmp, sep = "*", collapse = " + ")
       message <- paste0(start, vals)      
       All.message <- c(All.message,message)
     } else {
