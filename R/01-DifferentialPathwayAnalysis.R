@@ -63,10 +63,10 @@ DifferentialPathwayAnalysis <- function(genes.counts,
   
   genes.pathways %<>% group_by(.,Pathway) %>%
     dplyr::summarise(., n = n()) %>% 
-    filter(., n >=min.path.size)
+    dplyr::filter(., n >= min.path.size)
   
   pathways <- pathways %>% 
-    filter(., Pathway %in% genes.pathways$Pathway)
+    dplyr::filter(., Pathway %in% genes.pathways$Pathway)
   
   # use de genes as a filter
   if (!is.null(de.genes)){
