@@ -484,7 +484,7 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
   # obtain means and sds for distribution, assume CLT
   n_paths      <- length(pathways)
   sample.means <- rowMeans(jack.knife.data) 
-  sample.sds   <- apply(jack.knife.data, 1, sd)
+  sample.sds   <- apply(jack.knife.data, 1, stats::sd)
   sample.sds   <- sample.sds *10/sqrt(n_paths-1)
   
   # remove one pathway at a time and obtain K for each miRNA 
