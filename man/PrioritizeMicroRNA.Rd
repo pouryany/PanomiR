@@ -34,6 +34,9 @@ MappingPathwaysClusters.}
 \item{method.thresh}{Vector of methods threshold for each method in method,
 if NULL use default thresh values in method.}
 
+\item{mir.path.fdr.thresh}{for calculating miRNA-pathway hits in the input 
+cluster based on standard enrichment analysis.}
+
 \item{top.clust}{Top x clusters to perform miRNA prioritization on.}
 
 \item{samp.rate}{Sampling rate for CLT.}
@@ -44,6 +47,8 @@ if NULL use default thresh values in method.}
 
 \item{save.sampling}{If T, saves sampling data as RDS for each cluster in
 top.clust in data.dir.}
+
+\item{run.jack.knife}{If True, jacknifing will be performed.}
 
 \item{save.jack.knife}{If T, saves jack-knifed sampling data as RDS for each
 cluster in top.clust in data.dir.}
