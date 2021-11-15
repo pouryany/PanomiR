@@ -89,7 +89,7 @@ DifferentialPathwayAnalysis <- function(genes.counts,
   
   # filter pathways with na values in the pathway summary statistics and z-normalize the pathway summary statistics 
   pathwaySummaryStats <- pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats))==0,]
-  pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X){(X - mean(X))/sd(X)})
+  pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X){(X - mean(X))/stats::sd(X)})
   
   # perform quantile normalization if needed
   # Add importing
