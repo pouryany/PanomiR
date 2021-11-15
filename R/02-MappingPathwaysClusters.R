@@ -116,19 +116,23 @@ MappingPathwaysClusters <- function(pcxn,
     node.cols[clusts$membership %in% small.clust] <- NA
     
     
-    pdf(paste0(fig.dir,"PCxNCorGraph.pdf"),
-        width = 18,height = 11)
+    grDevices::pdf(paste0(fig.dir, "PCxNCorGraph.pdf"), width = 18, height = 11)
     set.seed(seed)
     plot(sub.mods, vertex.size = 5,vertex.label =NA,
          vertex.color = node.cols)
-    legend(x = "bottomleft",      ## position, also takes x,y coordinates
-           legend = legend_cats$attr,
-           pch =  c(0,1),
-           bty = "n",cex=1.6)
-    legend(x = "topleft", legend=c("Positive Cor", "Negative Cor"),
-           col=c("#E41A1C","#377EB8"), lty=1, lwd =2, cex = 1.6 , bty = "n")
-    
-    dev.off()
+    graphics::legend(x = "bottomleft",  # position, also takes x,y coordinates
+                     legend = legend_cats$attr,
+                     pch = c(0,1),
+                     bty = "n",
+                     cex = 1.6)
+    graphics::legend(x = "topleft",
+                     legend = c("Positive Cor", "Negative Cor"),
+                     col = c("#E41A1C","#377EB8"),
+                     lty = 1,
+                     lwd = 2,
+                     cex = 1.6,
+                     bty = "n")
+    grDevices::dev.off()
   }
   
   val.tab     <- as.data.frame(ends((sub.mods),E(sub.mods)))
@@ -147,25 +151,29 @@ MappingPathwaysClusters <- function(pcxn,
       if(length(V(sub.mods2)) < 2) next
       paths.out  <- V(sub.mods)$name
       paths.out  <- as.data.frame(cbind("Pathway" =paths.out,"cluster"=clusts$membership))
-      
-      pdf(paste0(fig.dir,"PCxNCorGraph_","Cluster_",k,".pdf"))
-      
+
+      grDevices::pdf(paste0(fig.dir, "PCxNCorGraph_", "Cluster_", k, ".pdf"))
+
       set.seed(seed+1)
       plot(sub.mods2, edge.width= 1.3, vertex.size = 5,vertex.label =NA, 
            vertex.color = cols[clusts$membership[keep]],
            legend = T,
            layout = layout.fruchterman.reingold)
-      legend(x = "bottomleft",      ## position, also takes x,y coordinates
-             legend = legend_cats$attr,
-             pch =  c(0,1),
-             bty = "n",cex=1.4)
-      legend(x = "topleft", legend=c("Positive Cor", "Negative Cor"),
-             col=c("#E41A1C","#377EB8"), lty=1, lwd =2, cex = 1.4 , bty = "n")
-      
-      dev.off()
+      graphics::legend(x = "bottomleft",  # position, also takes x,y coordinates
+                       legend = legend_cats$attr,
+                       pch = c(0,1),
+                       bty = "n",
+                       cex = 1.4)
+      graphics::legend(x = "topleft",
+                       legend = c("Positive Cor", "Negative Cor"),
+                       col = c("#E41A1C","#377EB8"),
+                       lty = 1,
+                       lwd = 2,
+                       cex = 1.4,
+                       bty = "n")
+      grDevices::dev.off()
     }
   }
-  
 
   '%notin%' <- Negate('%in%')
   
@@ -181,22 +189,28 @@ MappingPathwaysClusters <- function(pcxn,
     utils::write.csv(paths.out,paste0(out.dir,save.csv.name))
   
   if(subplot==T){
-    
-    pdf(paste0(fig.dir,"ConnectedPathways_PCxNCorGraph.pdf"),
-        width = 18,height = 11)
+    grDevices::pdf(paste0(fig.dir, "ConnectedPathways_PCxNCorGraph.pdf"),
+                   width = 18, height = 11)
     set.seed(seed-1)
     plot(sub.mods2, edge.width= 1.3, vertex.size = 5,vertex.label =NA, 
          vertex.color = cols[clusts$membership[remove]],
          legend = T,
          layout = layout_components)
-    legend(x = "bottomright",   y=200,   ## position, also takes x,y coordinates
-           legend = legend_cats$attr,
-           pch =  c(0,1),
-           bty = "n",cex=1.4)
-    legend(x = "topleft", legend=c("Positive Cor", "Negative Cor"),
-           col=c("#E41A1C","#377EB8"), lty=1, lwd =2, cex = 1.4 , bty = "n")
-    dev.off()
+    graphics::legend(x = "bottomright",
+                     y = 200,   ## position, also takes x,y coordinates
+                     legend = legend_cats$attr,
+                     pch = c(0,1),
+                     bty = "n",
+                     cex = 1.4)
+    graphics::legend(x = "topleft",
+                     legend = c("Positive Cor", "Negative Cor"),
+                     col = c("#E41A1C","#377EB8"),
+                     lty = 1,
+                     lwd = 2,
+                     cex = 1.4,
+                     bty = "n")
+    grDevices::dev.off()
   }
-  
+
   return(paths.out)
 }
