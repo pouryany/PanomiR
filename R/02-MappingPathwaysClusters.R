@@ -21,7 +21,6 @@
 #' @param prefix add prefix to plots
 #' @param weighted True if you wish to include correlation weights in clustering
 #' @return a table with each row containing a pathway and its respective cluster
-#' @import igraph
 #' @export
 
 MappingPathwaysClusters <- function(pcxn,
@@ -136,34 +135,7 @@ MappingPathwaysClusters <- function(pcxn,
   val.tab$cor <- ifelse(as.numeric(E(sub.mods)$PathCor) > 0,1,0)
   val.tab$V2  <- as.character(val.tab$V2)
   val.tab$V1  <-  as.character(val.tab$V1)
-  # 
-  # discord <- vector("numeric", length = length(shape.dirs))
-  # names(discord) <- names(shape.dirs)
-  # 
-  # for (k in names(shape.dirs)){
-  #   ind1 <- which(k == as.character(val.tab$V1))
-  #   ind2 <- which(k == as.character(val.tab$V2))
-  #   ind1 <- union(ind1,ind2)
-  #   
-  #   #if(ind1 == 1) break
-  #   for (j in ind1){
-  #     
-  #     p1 <- val.tab[j,1]
-  #     p1 <- shape.dirs[p1]
-  #     p2 <- val.tab[j,2]
-  #     p2 <- shape.dirs[p2]
-  #     
-  #     p1 <- xor(p1,p2)
-  #     r1 <- val.tab[j,3]
-  #     r1 <- !xor(p1,r1)
-  #     discord[k] <- discord[k] + r1
-  #     
-  #   }
-  #   
-  # }
-  # 
-  # discordants <- names((discord[order(discord, decreasing = T)]))
-  
+
   V(sub.mods)$shape <- ifelse(shape.inds,"square","circle")
   
   
@@ -194,9 +166,7 @@ MappingPathwaysClusters <- function(pcxn,
     }
   }
   
-  # colcols <- rep(1,length(V(sub.mods)$name))
-  # colcols[V(sub.mods)$name %in% discordants[1:2]] <- 2
-  # 
+
   '%notin%' <- Negate('%in%')
   
   remove <- which(table(clusts$membership) < 4)
