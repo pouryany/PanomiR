@@ -66,8 +66,8 @@ PrioritizeMicroRNA <- function(enriches0,
   
   # count miRNA-pathway enrichment with p-value less than threshold
   enriches   <- enriches0 %>% dplyr::filter(., Intersect != 0)
-  enriches   %<>% group_by(., y) %>% mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
-  enriches   <- enriches %>% mutate(.,hit =ifelse(path_fdr < mir.path.fdr.thresh, 1, 0))
+  enriches   %<>% dplyr::group_by(., y) %>% dplyr::mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
+  enriches   <- enriches %>% dplyr::mutate(.,hit =ifelse(path_fdr < mir.path.fdr.thresh, 1, 0))
   
   # Need to fix this function to be able to work on specific clusters instead of all top clusters.
   for (clustNo in 1:top.clust){
@@ -79,12 +79,12 @@ PrioritizeMicroRNA <- function(enriches0,
     # select pathways in cluster
     pathways    <- as.character(pathway.clusters[pathway.clusters$cluster == clustNo, ]$Pathway)
     n_paths     <- length(pathways)
-    
+
     # formulate number of miRNA-pathway enrichment with p-value less than threshold for each miRNA
     temp.enrich <- enriches[enriches$y %in% pathways, ]
-    selector   <- temp.enrich %>% group_by(x)  %>%
+    selector <- temp.enrich %>% dplyr::group_by(x)  %>%
       dplyr::summarise(., "cluster_hits" = sum(hit))
-    
+
     # perform p-value aggregation based on methodlogy provided
     for (i in 1:length(method)){
       m <- method[i]
@@ -183,10 +183,10 @@ PrioritizeMicroRNA <- function(enriches0,
       selector <- merge(selector, m.selector, all=T)
       
       met      <- paste0(m,"_pval")
-      selector <- selector %>% dplyr::arrange(.,!!sym(met))
+      selector <- selector %>% dplyr::arrange(., !!rlang::sym(met))
       met2     <- paste0(m,"_fdr")
       selector <- selector %>% dplyr::mutate(.,
-                                      !!met2 := stats::p.adjust(p = !!sym(met)
+                                      !!met2 := stats::p.adjust(p = !!rlang::sym(met)
                                                          ,method = "fdr")
                                       )
     }

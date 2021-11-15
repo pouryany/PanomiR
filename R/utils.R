@@ -1,3 +1,7 @@
+utils::globalVariables(c("%<>%", ".", ":=", "ENSEMBL", "ES", "ES2",
+                         "Intersect", "Pathway", "hit", "hit2", "k", "n",
+                         "path_fdr", "pval", "x", "y"))
+
 #' Pathway-Gene Associations
 #'
 #' Generates a table of pathways and genes associations.
@@ -183,13 +187,10 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05) {
 AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
   
   if (is.selector==T){
-    
-    enriches <- enriches %>% mutate(., ES2 =  stats::qnorm(1 - pval))
+    enriches <- enriches %>% dplyr::mutate(., ES2 = stats::qnorm(1 - pval))
     min.es   <- min(enriches$ES2[!is.infinite(enriches$ES2)])
-    enriches <- enriches %>% mutate(., ES2 = ifelse(is.infinite(.$ES2),
-                                                    min.es,
-                                                    .$ES2)
-                                    )
+    enriches <- enriches %>%
+      dplyr::mutate(., ES2 = ifelse(is.infinite(.$ES2), min.es, .$ES2))
   }
   
   temp.enrich <- enriches[enriches$y %in% pathways, ]
@@ -243,9 +244,9 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
 sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
-  enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
-  enriches1 <- enriches1 %>% mutate(., pval =  ifelse(pval <= 1.0e-16, 1.0e-16, pval))
-  
+  enriches1 <- enriches %>% dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
+  enriches1 <- enriches1 %>% dplyr::mutate(., pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
+
   temp.enrich <- enriches1[enriches1$y %in% pathways,]
   agg.p.tab <- vector()
   for (i in unique(temp.enrich$x)) {
