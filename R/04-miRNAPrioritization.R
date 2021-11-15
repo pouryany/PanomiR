@@ -65,7 +65,7 @@ PrioritizeMicroRNA <- function(enriches0,
   output = list()
   
   # count miRNA-pathway enrichment with p-value less than threshold
-  enriches   <- enriches0 %>% filter(., Intersect != 0)
+  enriches   <- enriches0 %>% dplyr::filter(., Intersect != 0)
   enriches   %<>% group_by(., y) %>% mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
   enriches   <- enriches %>% mutate(.,hit =ifelse(path_fdr < mir.path.fdr.thresh, 1, 0))
   
@@ -107,9 +107,9 @@ PrioritizeMicroRNA <- function(enriches0,
         print(paste0('Skipping ', m, ' function due to low number of miRNA after filter'))
         next
       }
-      
-      enrich.null <- m.enriches0 %>% filter(.,x %in% m.selector$x)
-      
+
+      enrich.null <- m.enriches0 %>% dplyr::filter(.,x %in% m.selector$x)
+
       sampling.data.dir <- paste0(data.dir, prefix, 'Sampling_Data/')
       
       if (save.sampling==TRUE){
