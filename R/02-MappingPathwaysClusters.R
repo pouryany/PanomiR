@@ -116,8 +116,7 @@ MappingPathwaysClusters <- function(pcxn,
     node.cols[clusts$membership %in% small.clust] <- NA
     
     
-    pdf(paste0(fig.dir,"PCxNCorGraph.pdf"),
-        width = 18,height = 11)
+    grDevices::pdf(paste0(fig.dir, "PCxNCorGraph.pdf"), width = 18, height = 11)
     set.seed(seed)
     plot(sub.mods, vertex.size = 5,vertex.label =NA,
          vertex.color = node.cols)
@@ -152,9 +151,9 @@ MappingPathwaysClusters <- function(pcxn,
       if(length(V(sub.mods2)) < 2) next
       paths.out  <- V(sub.mods)$name
       paths.out  <- as.data.frame(cbind("Pathway" =paths.out,"cluster"=clusts$membership))
-      
-      pdf(paste0(fig.dir,"PCxNCorGraph_","Cluster_",k,".pdf"))
-      
+
+      grDevices::pdf(paste0(fig.dir, "PCxNCorGraph_", "Cluster_", k, ".pdf"))
+
       set.seed(seed+1)
       plot(sub.mods2, edge.width= 1.3, vertex.size = 5,vertex.label =NA, 
            vertex.color = cols[clusts$membership[keep]],
@@ -190,9 +189,8 @@ MappingPathwaysClusters <- function(pcxn,
     utils::write.csv(paths.out,paste0(out.dir,save.csv.name))
   
   if(subplot==T){
-    
-    pdf(paste0(fig.dir,"ConnectedPathways_PCxNCorGraph.pdf"),
-        width = 18,height = 11)
+    grDevices::pdf(paste0(fig.dir, "ConnectedPathways_PCxNCorGraph.pdf"),
+                   width = 18, height = 11)
     set.seed(seed-1)
     plot(sub.mods2, edge.width= 1.3, vertex.size = 5,vertex.label =NA, 
          vertex.color = cols[clusts$membership[remove]],
