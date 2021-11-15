@@ -121,13 +121,18 @@ MappingPathwaysClusters <- function(pcxn,
     set.seed(seed)
     plot(sub.mods, vertex.size = 5,vertex.label =NA,
          vertex.color = node.cols)
-    legend(x = "bottomleft",      ## position, also takes x,y coordinates
-           legend = legend_cats$attr,
-           pch =  c(0,1),
-           bty = "n",cex=1.6)
-    legend(x = "topleft", legend=c("Positive Cor", "Negative Cor"),
-           col=c("#E41A1C","#377EB8"), lty=1, lwd =2, cex = 1.6 , bty = "n")
-    
+    graphics::legend(x = "bottomleft",  # position, also takes x,y coordinates
+                     legend = legend_cats$attr,
+                     pch = c(0,1),
+                     bty = "n",
+                     cex = 1.6)
+    graphics::legend(x = "topleft",
+                     legend = c("Positive Cor", "Negative Cor"),
+                     col = c("#E41A1C","#377EB8"),
+                     lty = 1,
+                     lwd = 2,
+                     cex = 1.6,
+                     bty = "n")
     dev.off()
   }
   
@@ -155,17 +160,21 @@ MappingPathwaysClusters <- function(pcxn,
            vertex.color = cols[clusts$membership[keep]],
            legend = T,
            layout = layout.fruchterman.reingold)
-      legend(x = "bottomleft",      ## position, also takes x,y coordinates
-             legend = legend_cats$attr,
-             pch =  c(0,1),
-             bty = "n",cex=1.4)
-      legend(x = "topleft", legend=c("Positive Cor", "Negative Cor"),
-             col=c("#E41A1C","#377EB8"), lty=1, lwd =2, cex = 1.4 , bty = "n")
-      
+      graphics::legend(x = "bottomleft",  # position, also takes x,y coordinates
+                       legend = legend_cats$attr,
+                       pch = c(0,1),
+                       bty = "n",
+                       cex = 1.4)
+      graphics::legend(x = "topleft",
+                       legend = c("Positive Cor", "Negative Cor"),
+                       col = c("#E41A1C","#377EB8"),
+                       lty = 1,
+                       lwd = 2,
+                       cex = 1.4,
+                       bty = "n")
       dev.off()
     }
   }
-  
 
   '%notin%' <- Negate('%in%')
   
@@ -189,14 +198,21 @@ MappingPathwaysClusters <- function(pcxn,
          vertex.color = cols[clusts$membership[remove]],
          legend = T,
          layout = layout_components)
-    legend(x = "bottomright",   y=200,   ## position, also takes x,y coordinates
-           legend = legend_cats$attr,
-           pch =  c(0,1),
-           bty = "n",cex=1.4)
-    legend(x = "topleft", legend=c("Positive Cor", "Negative Cor"),
-           col=c("#E41A1C","#377EB8"), lty=1, lwd =2, cex = 1.4 , bty = "n")
+    graphics::legend(x = "bottomright",
+                     y = 200,   ## position, also takes x,y coordinates
+                     legend = legend_cats$attr,
+                     pch = c(0,1),
+                     bty = "n",
+                     cex = 1.4)
+    graphics::legend(x = "topleft",
+                     legend = c("Positive Cor", "Negative Cor"),
+                     col = c("#E41A1C","#377EB8"),
+                     lty = 1,
+                     lwd = 2,
+                     cex = 1.4,
+                     bty = "n")
     dev.off()
   }
-  
+
   return(paths.out)
 }
