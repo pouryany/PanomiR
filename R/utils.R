@@ -446,7 +446,7 @@ methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NUL
   
   # obtain means and sds for distribution, assume CLT
   means <- rowMeans(sampling.data) 
-  sds   <- apply(sampling.data, 1, sd)
+  sds   <- apply(sampling.data, 1, stats::sd)
   sds   <- sds *10/sqrt(n_paths)
   
   pval.name <- paste0(m, '_pval')
