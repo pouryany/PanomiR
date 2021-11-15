@@ -55,6 +55,8 @@ in Figures directory of plots}
 \item{out.dir}{output directory}
 
 \item{save.csv.name}{if not NULL, saves output as csv using save name}
+
+\item{weighted}{True if you wish to include correlation weights in clustering}
 }
 \value{
 a table with each row containing a pathway and its respective cluster

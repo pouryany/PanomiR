@@ -93,7 +93,7 @@ Path_Summary <- function(exprs.mat,
                                          by = c("ENSEMBL"))
 
         pathway.ref  %<>%  dplyr::group_by(.,Pathway) %>%
-            dplyr::filter(., abs(t) >= median(abs(t))) %>%
+            dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
             dplyr::select(.,-t)  
     }
 
@@ -127,7 +127,7 @@ Path_Summary <- function(exprs.mat,
     rownames(PathExp) <- as.character(dplyr::pull(PathExpTab[,1]))
     
     if(z.normalize){
-        PathExp <- apply(PathExp, 2, function(X){(X - mean(X))/sd(X)})
+        PathExp <- apply(PathExp, 2, function(X){(X - mean(X))/stats::sd(X)})
     }
     
     return(PathExp)
@@ -180,12 +180,11 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05) {
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
   
   if (is.selector==T){
     
-    enriches <- enriches %>% mutate(., ES2 =  qnorm(1 - pval))
+    enriches <- enriches %>% mutate(., ES2 =  stats::qnorm(1 - pval))
     min.es   <- min(enriches$ES2[!is.infinite(enriches$ES2)])
     enriches <- enriches %>% mutate(., ES2 = ifelse(is.infinite(.$ES2),
                                                     min.es,
@@ -215,7 +214,6 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
  
   enriches <- enriches %>% dplyr::mutate(., ES =  -log(pval))
@@ -244,8 +242,6 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-#' @import metap
 sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
   enriches1 <- enriches1 %>% mutate(., pval =  ifelse(pval <= 1.0e-16, 1.0e-16, pval))
@@ -283,8 +279,6 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-#' @import metap
 sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% dplyr::mutate(., pval =  ifelse(pval >= 0.999,
                                                             0.999, pval))
@@ -319,7 +313,6 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 pCut.cover.fn <- function(selector, cover.name) {
   selector <- selector %>%
     dplyr::mutate(., !!cover.name := k/n)
@@ -331,7 +324,6 @@ pCut.cover.fn <- function(selector, cover.name) {
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggInv.cover.fn <- function(selector, cover.name) {
   selector <- selector %>%
     dplyr::mutate(., !!cover.name := k)
@@ -342,21 +334,18 @@ AggInv.cover.fn <- function(selector, cover.name) {
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggLog.cover.fn <- AggInv.cover.fn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 sumz.cover.fn   <- AggInv.cover.fn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 sumlog.cover.fn <- AggInv.cover.fn
 
 
@@ -464,7 +453,7 @@ methodProbBase <- function(sampling.data, selector,m, n_paths = 100,cover.fn=NUL
   cover.name <- paste0(m, '_cover')
   
   # obtain p-vals
-  p_vals <- pnorm(selector$k, mean=means, sd=sds, lower.tail=FALSE)
+  p_vals <- stats::pnorm(selector$k, mean=means, sd=sds, lower.tail=FALSE)
   selector <- selector %>%
     dplyr::mutate(., !!pval.name := p_vals) %>%
     cover.fn(., cover.name) %>%
@@ -588,9 +577,11 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
   options(na.action='na.pass')
   
   if(Intercept)
-    design = model.matrix(~ ., data=covariatesDataFrame, contrasts.arg=contra)
-  else
-    design = model.matrix(~ 0 + ., data=covariatesDataFrame, contrasts.arg=contra)
+    {design = stats::model.matrix(~ ., data=covariatesDataFrame,
+                                  contrasts.arg=contra)}
+  else{
+    design = stats::model.matrix(~ 0 + ., data=covariatesDataFrame,
+                                 contrasts.arg=contra)}
   
   rownames(design) = rownames(covariatesDataFrame)
   

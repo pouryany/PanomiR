@@ -10,6 +10,8 @@
 #' @param method Vector of methods (pCut, AggInv, AggLog, sumz, sumlog).
 #' @param method.thresh Vector of methods threshold for each method in method,
 #'   if NULL use default thresh values in method.
+#' @param mir.path.fdr.thresh for calculating miRNA-pathway hits in the input 
+#'   cluster based on standard enrichment analysis.
 #' @param top.clust Top x clusters to perform miRNA prioritization on.
 #' @param samp.rate Sampling rate for CLT.
 #' @param num.cores Number of CPU cores to use, must be at least one.
@@ -19,6 +21,7 @@
 #'   out.dir.
 #' @param save.sampling If T, saves sampling data as RDS for each cluster in
 #'   top.clust in data.dir.
+#' @param run.jack.knife If True, jacknifing will be performed.
 #' @param save.jack.knife If T, saves jack-knifed sampling data as RDS for each
 #'   cluster in top.clust in data.dir.
 #' @param prefix Prefix for all saved data.
