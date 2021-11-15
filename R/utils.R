@@ -492,7 +492,7 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
     temp.pathways  <- pathways[-X]
     temp.selector   <- fn(enriches=enrich.null, pathways=temp.pathways, is.selector=F)
     # obtain p-values using the means and sds obtain above
-    p_vals <- pnorm(temp.selector$k, mean=sample.means, sd=sample.sds, lower.tail = FALSE)
+    p_vals <- stats::pnorm(temp.selector$k, mean=sample.means, sd=sample.sds, lower.tail = FALSE)
     return(p_vals)
   }, mc.cores = num.cores)
   
