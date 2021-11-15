@@ -79,7 +79,7 @@ MappingPathwaysClusters <- function(pcxn,
   de.paths1 <- de.paths
   de.paths <- de.paths[which(rownames(de.paths) %in% all.paths),]
   
-  V(net)$shape <- ifelse(V(net)$name %in% de.paths, "square","circle")
+  igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% de.paths, "square","circle")
   sub.mods <- igraph::induced_subgraph(net,rownames(de.paths))
 
   # choose clustering function for nodes
@@ -97,20 +97,20 @@ MappingPathwaysClusters <- function(pcxn,
   clusts$membership <- as.numeric(zz)
   
   cols <- RColorBrewer::brewer.pal(8,"Set2")
-  E(sub.mods)$color <- ifelse(as.numeric(E(sub.mods)$PathCor)>0,"#E41A1C","#377EB8")
-  shape.inds <- rownames(de.paths1) %in% V(sub.mods)$name
+  igraph::E(sub.mods)$color <- ifelse(as.numeric(igraph::E(sub.mods)$PathCor)>0,"#E41A1C","#377EB8")
+  shape.inds <- rownames(de.paths1) %in% igraph::V(sub.mods)$name
   shape.inds <- de.paths1[shape.inds,c(1,2)]
-  shape.inds<- shape.inds[V(sub.mods)$name,]
+  shape.inds<- shape.inds[igraph::V(sub.mods)$name,]
   
   shape.dirs <- as.numeric(shape.inds$logFC > 0)
   names(shape.dirs) <- rownames(shape.inds)
   shape.inds <- shape.inds$logFC > 0
   
-  V(sub.mods)$shape <- ifelse(shape.inds,"square","circle")
+  igraph::V(sub.mods)$shape <- ifelse(shape.inds,"square","circle")
   
   if (plot==T){
     legend_cats <- data.frame(attr = c("Up-regulated","Down-regulated"),
-                              shape = unique(V(sub.mods)$shape))
+                              shape = unique(igraph::V(sub.mods)$shape))
     node.cols   <- cols[clusts$membership]
     small.clust <- which(table(clusts$membership) <= table(clusts$membership)[5],useNames = T)
     node.cols[clusts$membership %in% small.clust] <- NA
@@ -135,12 +135,12 @@ MappingPathwaysClusters <- function(pcxn,
     grDevices::dev.off()
   }
   
-  val.tab     <- as.data.frame(igraph::ends((sub.mods),E(sub.mods)))
-  val.tab$cor <- ifelse(as.numeric(E(sub.mods)$PathCor) > 0,1,0)
+  val.tab <- as.data.frame(igraph::ends((sub.mods), igraph::E(sub.mods)))
+  val.tab$cor <- ifelse(as.numeric(igraph::E(sub.mods)$PathCor) > 0,1,0)
   val.tab$V2  <- as.character(val.tab$V2)
   val.tab$V1  <-  as.character(val.tab$V1)
 
-  V(sub.mods)$shape <- ifelse(shape.inds,"square","circle")
+  igraph::V(sub.mods)$shape <- ifelse(shape.inds,"square","circle")
   
   
   if(subplot==T){
@@ -148,8 +148,8 @@ MappingPathwaysClusters <- function(pcxn,
       
       keep   <- which((clusts$membership) ==k)
       sub.mods2 <- igraph::induced_subgraph(sub.mods,keep)
-      if(length(V(sub.mods2)) < 2) next
-      paths.out  <- V(sub.mods)$name
+      if(length(igraph::V(sub.mods2)) < 2) next
+      paths.out  <- igraph::V(sub.mods)$name
       paths.out  <- as.data.frame(cbind("Pathway" =paths.out,"cluster"=clusts$membership))
 
       grDevices::pdf(paste0(fig.dir, "PCxNCorGraph_", "Cluster_", k, ".pdf"))
@@ -182,7 +182,7 @@ MappingPathwaysClusters <- function(pcxn,
   
   sub.mods2 <- igraph::induced_subgraph(sub.mods,remove)
   
-  paths.out  <- V(sub.mods)$name
+  paths.out  <- igraph::V(sub.mods)$name
   paths.out  <- as.data.frame(cbind("Pathway" =paths.out,"cluster"=clusts$membership))
   
   if(!is.null(save.csv.name))
