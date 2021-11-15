@@ -255,7 +255,7 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
     agg.p.tab <- rbind(agg.p.tab, c(i, t.pval$p, nrow(temp)))    
   }
   
-  selector <- tibble(
+  selector <- tibble::tibble(
     "x" = agg.p.tab[, 1],
     "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
     "n" =  agg.p.tab[, 3]
@@ -294,7 +294,7 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
     agg.p.tab <- rbind(agg.p.tab, c(i, t.pval$p, nrow(temp)))    
   }
   
-  selector <- tibble(
+  selector <- tibble::tibble(
     "x" = agg.p.tab[, 1],
     "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
     "n" =  agg.p.tab[, 3]
