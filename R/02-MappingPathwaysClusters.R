@@ -133,7 +133,7 @@ MappingPathwaysClusters <- function(pcxn,
                      lwd = 2,
                      cex = 1.6,
                      bty = "n")
-    dev.off()
+    grDevices::dev.off()
   }
   
   val.tab     <- as.data.frame(ends((sub.mods),E(sub.mods)))
@@ -172,7 +172,7 @@ MappingPathwaysClusters <- function(pcxn,
                        lwd = 2,
                        cex = 1.4,
                        bty = "n")
-      dev.off()
+      grDevices::dev.off()
     }
   }
 
@@ -211,7 +211,7 @@ MappingPathwaysClusters <- function(pcxn,
                      lwd = 2,
                      cex = 1.4,
                      bty = "n")
-    dev.off()
+    grDevices::dev.off()
   }
 
   return(paths.out)
