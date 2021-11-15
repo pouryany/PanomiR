@@ -33,7 +33,6 @@
 #'   condition covariate.
 #' @return List containing differentially expressed pathways as DEP and pathway
 #'   summary statistics as pathwaySummaryStats.
-#' @import limma
 #' @export
 DifferentialPathwayAnalysis <- function(genes.counts, 
                                         pathways, 
