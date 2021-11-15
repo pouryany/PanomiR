@@ -15,14 +15,18 @@
 #' 
 #'
 #' @format A list of 1329 pathways
-#' @source \urlhttp://www.gsea-msigdb.org/gsea/index.jsp}
+#' @source \url{http://www.gsea-msigdb.org/gsea/index.jsp}
 "msigdb_c2"
 
 
 #' A table of gene-pathway association. Created based on the pathways of MSigDB.
 #' 
-#' @format A matrix with 3 columns and 76926 rows.
-
+#' @format A matrix with 3 columns and 76926 rows:
+#' \describe{
+#'   \item{Pathway}{An MSigDB annotated pathway}
+#'   \item{ENTREZID}{The ENTREZID of a gene belonging to the pathway}
+#'   \item{ENSEMBL}{The ENSEMBL of a gene belonging to the pathway}
+#' }
 "path_gene_table"
 
 
@@ -36,6 +40,14 @@
 #' https://doi.org/10.1371/journal.pcbi.1006042
 #'
 #' @format A matrix with 6 columns and 882456 rows:
+#' \describe{
+#'   \item{Pathway.A}{An MSigDB annotated pathway}
+#'   \item{Pathway.B}{The ENTREZID of a gene belonging to the pathway}
+#'   \item{Overlap.coefficient}{Jaccard index of the two pathways}
+#'   \item{PathCor}{Correlation coefficient of the two pathways}
+#'   \item{p.value}{correlation p.value}
+#'   \item{p.Adjust}{FDR corrected p.value of correlation}
+#' }
 #' @source \url{https://pcxn.org}
 "pcxn"
 
