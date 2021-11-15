@@ -191,9 +191,9 @@ PrioritizeMicroRNA <- function(enriches0,
     if (save.csv==T){
       save.name <- paste0(prefix, samp.rate, '_samples_clustNo_', clustNo, '.csv')
       print(paste0(save.name, ' saved!'))
-      write.csv(selector, paste0(out.dir, save.name))
+      utils::write.csv(selector, paste0(out.dir, save.name))
     }
-    
+
     output[[clustName]] <- selector
   }
   
