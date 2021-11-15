@@ -629,7 +629,7 @@ linColumnFinder <- function(mat){
     if(qr(mymat)$rank != length(ids)){
       # Regression the column of interest on the previous columns to figure
       # out the relationship
-      o <- lm(mat[,i] ~ as.matrix(mat[,cols]) + 0)
+      o <- stats::lm(mat[,i] ~ as.matrix(mat[,cols]) + 0)
       # Construct the output message
       start <- paste0(colnames(mat)[i], " = ")
       # Which coefs are nonzero
