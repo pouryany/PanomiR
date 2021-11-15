@@ -180,7 +180,6 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh=0.05) {
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
   
   if (is.selector==T){
@@ -215,7 +214,6 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh=NULL){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
  
   enriches <- enriches %>% dplyr::mutate(., ES =  -log(pval))
@@ -244,8 +242,6 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh=0.1){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-#' @import metap
 sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% mutate(., pval =  ifelse(pval >= 0.999, 0.999, pval))
   enriches1 <- enriches1 %>% mutate(., pval =  ifelse(pval <= 1.0e-16, 1.0e-16, pval))
@@ -283,8 +279,6 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 #' @param is.selector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-#' @import dplyr
-#' @import metap
 sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
   enriches1 <- enriches %>% dplyr::mutate(., pval =  ifelse(pval >= 0.999,
                                                             0.999, pval))
@@ -319,7 +313,6 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh=NULL){
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 pCut.cover.fn <- function(selector, cover.name) {
   selector <- selector %>%
     dplyr::mutate(., !!cover.name := k/n)
@@ -331,7 +324,6 @@ pCut.cover.fn <- function(selector, cover.name) {
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggInv.cover.fn <- function(selector, cover.name) {
   selector <- selector %>%
     dplyr::mutate(., !!cover.name := k)
@@ -342,21 +334,18 @@ AggInv.cover.fn <- function(selector, cover.name) {
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 AggLog.cover.fn <- AggInv.cover.fn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 sumz.cover.fn   <- AggInv.cover.fn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table 
 #' @param cover.name a new column name 
 #' @return an updated scoring of miRNAs in a cluster of pathways
-#' @import dplyr
 sumlog.cover.fn <- AggInv.cover.fn
 
 
