@@ -206,7 +206,7 @@ MappingPathwaysClusters <- function(pcxn,
   paths.out  <- as.data.frame(cbind("Pathway" =paths.out,"cluster"=clusts$membership))
   
   if(!is.null(save.csv.name))
-    write.csv(paths.out,paste0(out.dir,save.csv.name))
+    utils::write.csv(paths.out,paste0(out.dir,save.csv.name))
   
   if(subplot==T){
     
