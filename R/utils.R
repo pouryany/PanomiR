@@ -568,9 +568,17 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS=list())
     # 1) fac is of type factor.
     # 2) fac is releveled as designated in RELEVELS.
     if (Intercept)
-      contra = lapply(FACTOR_COVARIATE_NAMES, function(column) {fac = covariatesDataFrame[, column]; fac = contrasts(fac);})
+      contra = lapply(FACTOR_COVARIATE_NAMES,
+                      function(column) {
+                        fac = covariatesDataFrame[, column]
+                        fac = stats::contrasts(fac)
+                      })
     else
-      contra = lapply(FACTOR_COVARIATE_NAMES, function(column) {fac = covariatesDataFrame[, column]; fac = contrasts(fac,contrasts=F);})
+      contra = lapply(FACTOR_COVARIATE_NAMES,
+                      function(column) {
+                        fac = covariatesDataFrame[, column]
+                        fac = stats::contrasts(fac,contrasts=F)
+                      })
     names(contra) = FACTOR_COVARIATE_NAMES
   }
   
@@ -625,9 +633,9 @@ linColumnFinder <- function(mat){
       # Construct the output message
       start <- paste0(colnames(mat)[i], " = ")
       # Which coefs are nonzero
-      nz <- !(abs(coef(o)) <= .Machine$double.eps^0.5)
+      nz <- !(abs(stats::coef(o)) <= .Machine$double.eps^0.5)
       tmp <- colnames(mat)[cols[nz]]
-      vals <- paste(coef(o)[nz], tmp, sep = "*", collapse = " + ")
+      vals <- paste(stats::coef(o)[nz], tmp, sep = "*", collapse = " + ")
       message <- paste0(start, vals)      
       All.message <- c(All.message,message)
     } else {
