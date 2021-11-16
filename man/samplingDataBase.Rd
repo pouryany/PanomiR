@@ -28,7 +28,7 @@ samplingDataBase(
 
 \item{n_paths}{Number of pathways in pathway cluster.}
 
-\item{sampling.data.file}{If file exists, load file. Else, perform random sampling}
+\item{sampling.data.file}{If file exists, load. Else, perform random sampling}
 
 \item{jack.knife}{If TRUE, conduct sampling with one less pathway, used for
 jack knifing}

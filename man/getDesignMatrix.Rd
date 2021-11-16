@@ -17,6 +17,6 @@ getDesignMatrix(covariatesDataFrame, Intercept = T, RELEVELS = list())
 List containing a design matrix.
 }
 \description{
-Modified from covariates pipeline of Menachem Former. Imported from 
+Modified from covariates pipeline of Menachem Former. Imported from
 \url{https://github.com/th1vairam/CovariateAnalysis}
 }

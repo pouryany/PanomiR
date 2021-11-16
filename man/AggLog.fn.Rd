@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{AggLog.fn}
 \alias{AggLog.fn}
-\title{The function calculate targeting score of miRNA w.r.t to a cluster 
+\title{The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via log aggregation method.}
 \usage{
 AggLog.fn(enriches, pathways, is.selector, thresh = 0.1)
@@ -20,6 +20,6 @@ AggLog.fn(enriches, pathways, is.selector, thresh = 0.1)
 a  scoring of miRNAs in a cluster of pathways
 }
 \description{
-The function calculate targeting score of miRNA w.r.t to a cluster 
+The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via log aggregation method.
 }

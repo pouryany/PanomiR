@@ -3,7 +3,7 @@
 \docType{data}
 \name{TCGA_LIHC}
 \alias{TCGA_LIHC}
-\title{The gene expression data The Cancer Genome Atlas Liver Hepatocellular 
+\title{The gene expression data The Cancer Genome Atlas Liver Hepatocellular
 Carcinoma}
 \format{
 A matrix with 14120 rows and 417 columns.
