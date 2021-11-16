@@ -61,7 +61,7 @@ DifferentialPathwayAnalysis <- function(genes.counts,
   pathways       <- as.data.frame(pathways)
   genes.pathways <- pathways[pathways[,id] %in% rownames(genes.counts),]
   
-  genes.pathways %<>% group_by(.,Pathway) %>%
+  genes.pathways %<>% dplyr::group_by(.,Pathway) %>%
     dplyr::summarise(., n = n()) %>% 
     dplyr::filter(., n >= min.path.size)
   
@@ -144,8 +144,8 @@ DifferentialPathwayAnalysis <- function(genes.counts,
                                             Intercept = F)
       res.des.mat$design <- res.des.mat$design[,
                                                linColumnFinder(res.des.mat$design)$indepCols]
-      FIT.res  <- lmFit(pathwaySummaryStats, res.des.mat$design)
-      FIT.res  <- residuals.MArrayLM(FIT.res,pathwaySummaryStats)
+      FIT.res  <- limma::lmFit(pathwaySummaryStats, res.des.mat$design)
+      FIT.res  <- limma::residuals.MArrayLM(FIT.res, pathwaySummaryStats)
     }
   }
   
@@ -159,17 +159,17 @@ DifferentialPathwayAnalysis <- function(genes.counts,
   }else{
     contrasts.name <- contrast.conds
   }
- 
+
   # limma DE analysis
-  FIT       <- lmFit(pathwaySummaryStats, design.mat$design)
-  
+  FIT <- limma::lmFit(pathwaySummaryStats, design.mat$design)
+
   colnames(FIT$coefficients) <- gsub('-','_', colnames(FIT$coefficients))
   
-  contrast  <- makeContrasts(contrasts=c(contrasts.name),
-                             levels = colnames(FIT$coefficients))
-  FIT.CONTR <- contrasts.fit(FIT, contrasts=contrast)
-  FIT.CONTR <- eBayes(FIT.CONTR)
-  tT        <- topTable(FIT.CONTR, adjust="fdr", sort.by="p", number=Inf)
+  contrast <- limma::makeContrasts(contrasts=c(contrasts.name),
+                                   levels = colnames(FIT$coefficients))
+  FIT.CONTR <- limma::contrasts.fit(FIT, contrasts=contrast)
+  FIT.CONTR <- limma::eBayes(FIT.CONTR)
+  tT        <- limma::topTable(FIT.CONTR, adjust="fdr", sort.by="p", number=Inf)
   #}
   tT$contrast  <- contrasts.name
   
