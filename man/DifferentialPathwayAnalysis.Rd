@@ -32,7 +32,7 @@ specified.}
 \item{covariates}{Covariates/metadata file; rows matches the columns of
 gene.counts.}
 
-\item{condition}{Condition to be examined (tumor vs normal etc); must exist 
+\item{condition}{Condition to be examined (tumor vs normal etc); must exist
 in covariates column.}
 
 \item{adjust.covars}{Adjustment covariates like batch; if NULL,
@@ -73,6 +73,6 @@ List containing differentially expressed pathways as DEP and pathway
   summary statistics as pathwaySummaryStats.
 }
 \description{
-Performs differential expression analysis for pathways using LIMMA package 
+Performs differential expression analysis for pathways using LIMMA package
 with gene counts
 }

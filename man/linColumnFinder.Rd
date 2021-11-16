@@ -3,7 +3,7 @@
 \name{linColumnFinder}
 \alias{linColumnFinder}
 \title{Function imported from https://github.com/th1vairam/CovariateAnalysis
-Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
+Modified from http://stackoverflow.com/questions/13088770/
 Function to find linearly dependednt columns of a matrix}
 \usage{
 linColumnFinder(mat)
@@ -16,6 +16,6 @@ a list of independent columns
 }
 \description{
 Function imported from https://github.com/th1vairam/CovariateAnalysis
-Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
+Modified from http://stackoverflow.com/questions/13088770/
 Function to find linearly dependednt columns of a matrix
 }

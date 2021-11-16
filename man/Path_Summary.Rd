@@ -19,7 +19,7 @@ Path_Summary(
 \item{exprs.mat}{Gene expression matrix with row names as genes and samples
 as columns.}
 
-\item{pathway.ref}{Table of pathway-gene associations. Created from 
+\item{pathway.ref}{Table of pathway-gene associations. Created from
 \code{\link{Pathway_Gene_Tab}} function.}
 
 \item{id}{Gene annotation type in the row name of gene expression data.}
@@ -28,7 +28,7 @@ as columns.}
 
 \item{method}{Choice of how to summarize gene ranks into pathway statistics.}
 
-\item{de.genes}{List of differentially expressed genes along with t-scores. 
+\item{de.genes}{List of differentially expressed genes along with t-scores.
 Only necessary if working on Top 50\% summary method.}
 
 \item{trim}{Percentage of top and bottom ranked genes to be excluded from

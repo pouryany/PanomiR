@@ -43,7 +43,7 @@ from given table.}
 \item{save.RDS.name}{If not NULL, saves output as RDS using save name.}
 }
 \value{
-Table of enrichment, each row contains mirna-pathway and its 
+Table of enrichment, each row contains mirna-pathway and its
   enrichment p-values
 }
 \description{
