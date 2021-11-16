@@ -177,7 +177,8 @@ Path_Summary <- function(exprs.mat,
 #' @return P-value based scoring of miRNAs in a cluster of pathways.
 pCut.fn <- function(enriches, pathways, is.selector, thresh = 0.05) {
   if (is.selector == T) {
-    enriches <- enriches %>% dplyr::mutate(., hit2 = ifelse(pval < thresh, 1, 0))
+    enriches <- enriches %>%
+      dplyr::mutate(., hit2 = ifelse(pval < thresh, 1, 0))
   }
 
   temp.enrich <- enriches[enriches$y %in% pathways, ]
@@ -260,8 +261,11 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh = 0.1) {
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
 sumz.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
-  enriches1 <- enriches %>% dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
-  enriches1 <- enriches1 %>% dplyr::mutate(., pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
+  enriches1 <- enriches %>%
+    dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
+  
+  enriches1 <- enriches1 %>%
+    dplyr::mutate(., pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
 
   temp.enrich <- enriches1[enriches1$y %in% pathways, ]
   agg.p.tab <- vector()
@@ -378,7 +382,7 @@ sumlog.cover.fn <- AggInv.cover.fn
 #' @param samp.rate Sampling rate.
 #' @param fn Methodology function.
 #' @param n_paths Number of pathways in pathway cluster.
-#' @param sampling.data.file If file exists, load file. Else, perform random sampling
+#' @param sampling.data.file If file exists, load. Else, perform random sampling
 #' @param save.sampling If TRUE, data is saved.
 #' @param jack.knife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
@@ -415,9 +419,13 @@ samplingDataBase <- function(enrich.null,
     out.list <- list()
     for (temp.n_paths in samp.size.vec) {
       temp <- parallel::mclapply(1:(samp.rate), function(Y) {
+        
         set.seed(Y)
         null.paths <- sample(all.paths, temp.n_paths, replace = F)
-        sel.null <- fn(enriches = enrich.null, pathways = null.paths, is.selector = F)
+        
+        sel.null <- fn(enriches = enrich.null,
+                       pathways = null.paths,
+                       is.selector = F)
         return(sel.null$k)
       }, mc.cores = num.cores)
       # build null distribution of K
@@ -460,9 +468,13 @@ samplingDataBase <- function(enrich.null,
 #'   each iteration. Default is set at 100.
 #' @param cover.fn Cover of methodology function.
 #' @return Outputs a new selector table with col x, pval and cover.
-methodProbBase <- function(sampling.data, selector, m, n_paths = 100, cover.fn = NULL) {
+methodProbBase <- function(sampling.data,
+                           selector,
+                           m,
+                           n_paths = 100,
+                           cover.fn = NULL) {
   if (!all(utils::hasName(selector, c("x", "k")))) {
-    stop("The selector table needs a column x (miRNA name) and a column k (miRNA hits)")
+    stop("The selector needs a column x (miRNA) and a column k (miRNA hits)")
   }
 
   # obtain means and sds for distribution, assume CLT
@@ -500,7 +512,13 @@ methodProbBase <- function(sampling.data, selector, m, n_paths = 100, cover.fn =
 #' @param m method name
 #' @param num.cores number of cores
 #' @return Outputs a new selector table with col x, pval_jk
-jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, m, num.cores = 1) {
+jackKnifeBase <- function(selector,
+                          pathways,
+                          enrich.null,
+                          fn,
+                          jack.knife.data,
+                          m,
+                          num.cores = 1) {
 
   # obtain means and sds for distribution, assume CLT
   n_paths <- length(pathways)
@@ -513,7 +531,10 @@ jackKnifeBase <- function(selector, pathways, enrich.null, fn, jack.knife.data, 
     temp.pathways <- pathways[-X]
     temp.selector <- fn(enriches = enrich.null, pathways = temp.pathways, is.selector = F)
     # obtain p-values using the means and sds obtain above
-    p_vals <- stats::pnorm(temp.selector$k, mean = sample.means, sd = sample.sds, lower.tail = FALSE)
+    p_vals <- stats::pnorm(temp.selector$k,
+                           mean = sample.means,
+                           sd = sample.sds,
+                           lower.tail = FALSE)
     return(p_vals)
   }, mc.cores = num.cores)
 
@@ -550,22 +571,32 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list(
   ROWNAMES <- rownames(covariatesDataFrame)
   COLNAMES <- colnames(covariatesDataFrame)
 
-  FACTOR_COVARIATE_NAMES <- names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
-  FACTOR_COVARIATE_NAMES <- setdiff(FACTOR_COVARIATE_NAMES, FACTOR_COVARIATE_NAMES[!(FACTOR_COVARIATE_NAMES %in% colnames(covariatesDataFrame))])
+  FACTOR_COVARIATE_NAMES <-
+    names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
+  
+  FACTOR_COVARIATE_NAMES <- 
+    setdiff(FACTOR_COVARIATE_NAMES,
+            FACTOR_COVARIATE_NAMES[
+              !(FACTOR_COVARIATE_NAMES %in% colnames(covariatesDataFrame))])
+  
   NUMERIC_COVARIATE_NAMES <- setdiff(COLNAMES, FACTOR_COVARIATE_NAMES)
 
-  # Ensure the factors are in fact of type factor, and the quantitative variables are numeric:
-  covariatesDataFrame <- as.data.frame(lapply(colnames(covariatesDataFrame), function(column) {
-    if (column %in% FACTOR_COVARIATE_NAMES) {
-      fac <- as.factor(covariatesDataFrame[, column])
-      if (column %in% names(RELEVELS)) {
-        fac <- stats::relevel(fac, ref = RELEVELS[[column]])
-      }
-      return(fac)
-    } else {
-      return(as.numeric(covariatesDataFrame[, column]))
-    }
-  }))
+  # Ensure the factors are in fact of type factor, and the quantitative
+  # variables are numeric:
+  covariatesDataFrame <-
+    as.data.frame(lapply(colnames(covariatesDataFrame),function(column) {
+                           
+                        if (column %in% FACTOR_COVARIATE_NAMES) {
+                          fac <- as.factor(covariatesDataFrame[, column])
+                          if (column %in% names(RELEVELS)) {
+                            fac <- stats::relevel(fac, ref = RELEVELS[[column]])
+                          }
+                          return(fac)
+                        } else {
+                          return(as.numeric(covariatesDataFrame[, column]))
+                        }
+                      }))
+  
   rownames(covariatesDataFrame) <- ROWNAMES
   colnames(covariatesDataFrame) <- COLNAMES
 
@@ -573,17 +604,35 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list(
   MAX_NUM_CATS <- Inf
   catData <- covariatesDataFrame[, FACTOR_COVARIATE_NAMES, drop = FALSE]
   if (ncol(catData) > 0) {
-    numCats <- sapply(colnames(catData), function(col) nlevels(factor(catData[, col])))
-    EXCLUDE_CATEGORICAL_COLS <- names(numCats)[numCats <= 1 | numCats > MAX_NUM_CATS]
-    if (!is.null(EXCLUDE_CATEGORICAL_COLS) && length(EXCLUDE_CATEGORICAL_COLS) > 0) {
-      warning(paste("Excluding categorical variables with less than 2", ifelse(is.infinite(MAX_NUM_CATS), "", paste(" or more than ", MAX_NUM_CATS, sep = "")), " categories: ", paste(paste("'", EXCLUDE_CATEGORICAL_COLS, "'", sep = ""), collapse = ", "), sep = ""))
-      FACTOR_COVARIATE_NAMES <- setdiff(FACTOR_COVARIATE_NAMES, EXCLUDE_CATEGORICAL_COLS)
-      covariatesDataFrame <- covariatesDataFrame[, !(colnames(covariatesDataFrame) %in% EXCLUDE_CATEGORICAL_COLS), drop = FALSE]
+    numCats <- sapply(colnames(catData),
+                      function(col) nlevels(factor(catData[, col])))
+    
+    EXCLUDE_CATEGORICAL_COLS <-
+      names(numCats)[numCats <= 1 | numCats > MAX_NUM_CATS]
+    
+    if (!is.null(EXCLUDE_CATEGORICAL_COLS) &&
+        length(EXCLUDE_CATEGORICAL_COLS) > 0)
+      {
+      warning(paste("Excluding categorical variables with less than 2",
+                    ifelse(is.infinite(MAX_NUM_CATS),
+                           "",
+                           paste(" or more than ", MAX_NUM_CATS, sep = "")),
+                    " categories: ",
+                    paste(paste("'", EXCLUDE_CATEGORICAL_COLS, "'", sep = ""),
+                          collapse = ", "), sep = ""))
+      
+      FACTOR_COVARIATE_NAMES <- setdiff(FACTOR_COVARIATE_NAMES,
+                                        EXCLUDE_CATEGORICAL_COLS)
+      covariatesDataFrame <- 
+        covariatesDataFrame[, 
+            !(colnames(covariatesDataFrame) %in% EXCLUDE_CATEGORICAL_COLS),
+            drop = FALSE]
     }
 
-    # Inspired by http://stackoverflow.com/questions/4560459/all-levels-of-a-factor-in-a-model-matrix-in-r
+    # Inspired by http://stackoverflow.com/questions/4560459/
     #
-    # And, already ensured above that covariatesDataFrame[, FACTOR_COVARIATE_NAMES] satisfies:
+    # And, already ensured above that 
+    # covariatesDataFrame[, FACTOR_COVARIATE_NAMES] satisfies:
     # 1) fac is of type factor.
     # 2) fac is releveled as designated in RELEVELS.
     if (Intercept) {
@@ -606,7 +655,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list(
     names(contra) <- FACTOR_COVARIATE_NAMES
   }
 
-  # Inspired by http://stackoverflow.com/questions/5616210/model-matrix-with-na-action-null :
+  # Inspired by http://stackoverflow.com/questions/5616210/
   current.na.action <- getOption("na.action")
   # Model matrix will now include "NA":
   options(na.action = "na.pass")
@@ -627,7 +676,11 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list(
 
   options(na.action = current.na.action)
 
-  return(list(design = design, covariates = COLNAMES, factorsLevels = sapply(contra, colnames, simplify = FALSE), numericCovars = NUMERIC_COVARIATE_NAMES, covariatesDataFrame = covariatesDataFrame))
+  return(list(design = design,
+              covariates = COLNAMES,
+              factorsLevels = sapply(contra, colnames, simplify = FALSE),
+              numericCovars = NUMERIC_COVARIATE_NAMES, 
+              covariatesDataFrame = covariatesDataFrame))
 }
 
 
@@ -635,7 +688,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list(
 
 
 #' Function imported from https://github.com/th1vairam/CovariateAnalysis
-#' Modified from http://stackoverflow.com/questions/13088770/how-to-write-linearly-dependent-column-in-a-matrix-in-terms-of-linearly-independ
+#' Modified from http://stackoverflow.com/questions/13088770/
 #' Function to find linearly dependednt columns of a matrix
 #' @param mat an input design matrix.
 #' @return a list of independent columns

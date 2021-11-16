@@ -70,7 +70,7 @@ MappingPathwaysClusters <- function(pcxn,
   # filter de pathways with less than path fdr threshold
   de.paths <- de.paths[de.paths$adj.P.Val < path.fdr.thresh, ]
   if (nrow(de.paths) < 10) {
-    stop("Please use a more lenient threshold for differentially expressed pathways adjusted p-values.")
+    stop("Please use a more lenient threshold for pathway adjusted p-values.")
   }
 
   # choose top n pathways
@@ -78,9 +78,11 @@ MappingPathwaysClusters <- function(pcxn,
     de.paths <- de.paths[1:top.paths, ]
   }
   de.paths1 <- de.paths
-  de.paths <- de.paths[which(rownames(de.paths) %in% all.paths), ]
+  de.paths  <- de.paths[which(rownames(de.paths) %in% all.paths), ]
 
-  igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% de.paths, "square", "circle")
+  igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% de.paths,
+                                 "square",
+                                 "circle")
   sub.mods <- igraph::induced_subgraph(net, rownames(de.paths))
 
   # choose clustering function for nodes
@@ -98,7 +100,10 @@ MappingPathwaysClusters <- function(pcxn,
   clusts$membership <- as.numeric(zz)
 
   cols <- RColorBrewer::brewer.pal(8, "Set2")
-  igraph::E(sub.mods)$color <- ifelse(as.numeric(igraph::E(sub.mods)$PathCor) > 0, "#E41A1C", "#377EB8")
+  
+  igraph::E(sub.mods)$color <-
+    ifelse(as.numeric(igraph::E(sub.mods)$PathCor) > 0, "#E41A1C", "#377EB8")
+  
   shape.inds <- rownames(de.paths1) %in% igraph::V(sub.mods)$name
   shape.inds <- de.paths1[shape.inds, c(1, 2)]
   shape.inds <- shape.inds[igraph::V(sub.mods)$name, ]
@@ -115,7 +120,11 @@ MappingPathwaysClusters <- function(pcxn,
       shape = unique(igraph::V(sub.mods)$shape)
     )
     node.cols <- cols[clusts$membership]
-    small.clust <- which(table(clusts$membership) <= table(clusts$membership)[5], useNames = T)
+    
+    small.clust <-
+      which(table(clusts$membership) <= table(clusts$membership)[5],
+            useNames = T)
+    
     node.cols[clusts$membership %in% small.clust] <- NA
 
 
@@ -154,11 +163,16 @@ MappingPathwaysClusters <- function(pcxn,
 
   if (subplot == T) {
     for (k in 1:top.clusts) {
-      keep <- which((clusts$membership) == k)
+      keep     <- which((clusts$membership) == k)
       sub.mods2 <- igraph::induced_subgraph(sub.mods, keep)
+      
       if (length(igraph::V(sub.mods2)) < 2) next
+      
       paths.out <- igraph::V(sub.mods)$name
-      paths.out <- as.data.frame(cbind("Pathway" = paths.out, "cluster" = clusts$membership))
+      
+      paths.out <-
+        as.data.frame(cbind("Pathway" = paths.out,
+                            "cluster" = clusts$membership))
 
       grDevices::pdf(paste0(fig.dir, "PCxNCorGraph_", "Cluster_", k, ".pdf"))
 
@@ -197,7 +211,10 @@ MappingPathwaysClusters <- function(pcxn,
   sub.mods2 <- igraph::induced_subgraph(sub.mods, remove)
 
   paths.out <- igraph::V(sub.mods)$name
-  paths.out <- as.data.frame(cbind("Pathway" = paths.out, "cluster" = clusts$membership))
+  
+  paths.out <-
+    as.data.frame(cbind("Pathway" = paths.out,
+                        "cluster" = clusts$membership))
 
   if (!is.null(save.csv.name)) {
     utils::write.csv(paths.out, paste0(out.dir, save.csv.name))
