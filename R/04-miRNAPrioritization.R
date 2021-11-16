@@ -198,8 +198,7 @@ PrioritizeMicroRNA <- function(enriches0,
           pathways = pathways,
           enrich.null = enrich.null,
           fn = fn,
-          jack.knife.data =
-            sampling.data[[paste0("SampSize_", 100)]],
+          jack.knife.data = sampling.data[[paste0("SampSize_", 100)]],
           m = m,
           num.cores = 8
         )
@@ -218,10 +217,7 @@ PrioritizeMicroRNA <- function(enriches0,
       met2 <- paste0(m, "_fdr")
       selector <- selector %>% dplyr::mutate(
         .,
-        !!met2 := stats::p.adjust(
-          p = !!rlang::sym(met),
-          method = "fdr"
-        )
+        !!met2 := stats::p.adjust(p = !!rlang::sym(met),method = "fdr")
       )
     }
 
