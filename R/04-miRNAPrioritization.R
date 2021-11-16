@@ -174,15 +174,6 @@ PrioritizeMicroRNA <- function(enriches0,
 
       # perform jack-knife
       if (run.jack.knife == T) {
-        # jack.knife.data.filename  <- paste0(prefix, m,
-        #    "_", samp.rate, "_samples_jack_knifed.RDS")
-        # jack.knife.data.file <- paste0(sampling.data.dir, '/',
-        #     jack.knife.data.filename)
-        #
-        # jack.knife.data <- 
-         #   sampling.data.base(enrich.null, m.selector, samp.rate, fn, n_paths,
-        #    sampling.data.file=jack.knife.data.file, jack.knife=TRUE,
-        #    save.sampling = save.jack.knife)
         sampling.data <- samplingDataBase(enrich.null,
           m.selector,
           samp.rate,
