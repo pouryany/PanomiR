@@ -69,7 +69,7 @@ miRNAPathwayEnrichment <- function(mir.sets,
   sel.vec <- sapply(mir.sets,length)
   mir.sets <- mir.sets[sel.vec > min.path.size]
   iterator <- (merge(names(mir.sets),names(pathways.sets)))
-  iterator <- iterator %>% mutate_all(.,as.character)
+  iterator <- iterator %>% dplyr::mutate_all(., as.character)
   all <- length(paths.ref)
   
   # find enrichment p-value of each miRNA target set and each pathway set

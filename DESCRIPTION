@@ -22,12 +22,14 @@ Imports:
     igraph,
     metap,
     limma,
+    magrittr,
     multtest,
     org.Hs.eg.db,
     parallel,
     preprocessCore,
     RColorBrewer,
+    rlang,
     tibble,
-    magrittr
+    utils
 Depends: 
     R (>= 2.10)
