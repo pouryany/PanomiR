@@ -12,9 +12,9 @@
 #'   in covariates column.
 #' @param adjust.covars Adjustment covariates like batch; if NULL,
 #'   no adjustments performed.
-#' @param covariates.correction If T, performs covariates detection and
+#' @param covariates.correction If TRUE, performs covariates detection and
 #'   correction; requires **adjust.covars**; (limma).
-#' @param quantile.norm If T, performs quantile normalization on pathway
+#' @param quantile.norm If TRUE, performs quantile normalization on pathway
 #'   summary statistics; from *preprocess* package.
 #' @param out.dir Output directory.
 #' @param save.RDS.name If not NULL, saves output as RDS using save name,
@@ -27,7 +27,7 @@
 #'   specifications in documentations.
 #' @param trim Filter pathways with mean less than trim threshold
 #'   in pathway summary statistics.
-#' @param genes.counts.log If T, log(genes.counts).
+#' @param genes.counts.log If TRUE, log(genes.counts).
 #' @param contrast.conds Provide a contrast expression to be used in Limma
 #'   comparison. This is necessary if you have more than two levels in the
 #'   condition covariate.
@@ -39,8 +39,8 @@ DifferentialPathwayAnalysis <- function(genes.counts,
                                         covariates,
                                         condition,
                                         adjust.covars = NULL,
-                                        covariates.correction = F,
-                                        quantile.norm = F,
+                                        covariates.correction = FALSE,
+                                        quantile.norm = FALSE,
                                         out.dir = "",
                                         save.RDS.name = NULL,
                                         id = "ENSEMBL",
@@ -48,7 +48,7 @@ DifferentialPathwayAnalysis <- function(genes.counts,
                                         min.path.size = 10,
                                         method = "x2",
                                         trim = 0.025,
-                                        genes.counts.log = T,
+                                        genes.counts.log = TRUE,
                                         contrast.conds = NA) {
   if (substring(out.dir, nchar(out.dir)) != "/") {
     out.dir <- paste0(out.dir, "/")
@@ -78,7 +78,7 @@ DifferentialPathwayAnalysis <- function(genes.counts,
 
   # log gene counts if gene counts are not log-transformed yet; essential for
   # path summary statistics
-  if (genes.counts.log == T) {
+  if (genes.counts.log == TRUE) {
     genes.counts <- log(genes.counts)
   }
 
@@ -88,7 +88,7 @@ DifferentialPathwayAnalysis <- function(genes.counts,
     id = id,
     method = method,
     de.genes = de.genes,
-    z.normalize = F,
+    z.normalize = FALSE,
     trim = trim,
     t.scores = t.scores
   )
@@ -104,7 +104,7 @@ DifferentialPathwayAnalysis <- function(genes.counts,
 
   # perform quantile normalization if needed
   # Add importing
-  if (quantile.norm == T) {
+  if (quantile.norm == TRUE) {
     pathways.names <- rownames(pathwaySummaryStats)
     
     pathwaySummaryStats <-
@@ -125,29 +125,29 @@ DifferentialPathwayAnalysis <- function(genes.counts,
   # if no adjust.covars are available, then design matrix only consider the
   # condition in question.
   FIT.res <- NULL
-  if (covariates.correction == T) {
-    stop("Under development. Please use Covariates.correction = F option")
+  if (covariates.correction == TRUE) {
+    stop("Under development. Please use Covariates.correction = FALSE option")
   } else {
     if (is.null(adjust.covars)) {
       conditions <- as.data.frame(covariates[, condition])
       colnames(conditions) <- condition
       rownames(conditions) <- rownames(covariates)
-      design.mat <- getDesignMatrix(conditions, Intercept = F)
+      design.mat <- getDesignMatrix(conditions, Intercept = FALSE)
     } else {
       design.mat <- getDesignMatrix(covariates[,
                                                c(condition,
                                                  adjust.covars),
-                                               drop = F],
-                                    Intercept = F)
+                                               drop = FALSE],
+                                    Intercept = FALSE)
       
       design.mat$design <-
         design.mat$design[, linColumnFinder(design.mat$design)$indepCols]
 
       # Getting pathway residuals
       res.des.mat <- getDesignMatrix(covariates[, c(adjust.covars),
-        drop = F
+        drop = FALSE
       ],
-      Intercept = F
+      Intercept = FALSE
       )
       res.des.mat$design <- res.des.mat$design[
         ,
