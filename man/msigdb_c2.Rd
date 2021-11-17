@@ -11,7 +11,7 @@ A list of 1329 pathways
 \url{http://www.gsea-msigdb.org/gsea/index.jsp}
 }
 \usage{
-msigdb_c2
+data(msigdb_c2)
 }
 \description{
 Canonical pathways from Molecular Signatures Database, MsigDb V6.2
