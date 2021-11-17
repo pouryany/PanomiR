@@ -34,7 +34,7 @@ MappingPathwaysClusters.}
 \item{method.thresh}{Vector of methods threshold for each method in method,
 if NULL use default thresh values in method.}
 
-\item{mir.path.fdr.thresh}{for calculating miRNA-pathway hits in the input 
+\item{mir.path.fdr.thresh}{for calculating miRNA-pathway hits in the input
 cluster based on standard enrichment analysis.}
 
 \item{top.clust}{Top x clusters to perform miRNA prioritization on.}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{methodProbBase}
 \alias{methodProbBase}
-\title{Outputs a table with col x (miRNA), probability of observing k (depending on 
+\title{Outputs a table with col x (miRNA), probability of observing k (depending on
 methodology) against a random distribution and cover of methodology}
 \usage{
 methodProbBase(sampling.data, selector, m, n_paths = 100, cover.fn = NULL)
@@ -15,7 +15,7 @@ k (depending on methodology).}
 
 \item{m}{Method name.}
 
-\item{n_paths}{Number of pathways used to generate the sampling.data at 
+\item{n_paths}{Number of pathways used to generate the sampling.data at
 each iteration. Default is set at 100.}
 
 \item{cover.fn}{Cover of methodology function.}
@@ -24,6 +24,6 @@ each iteration. Default is set at 100.}
 Outputs a new selector table with col x, pval and cover.
 }
 \description{
-Outputs a table with col x (miRNA), probability of observing k (depending on 
+Outputs a table with col x (miRNA), probability of observing k (depending on
 methodology) against a random distribution and cover of methodology
 }

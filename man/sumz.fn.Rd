@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{sumz.fn}
 \alias{sumz.fn}
-\title{The function calculate targeting score of miRNA w.r.t to a cluster 
+\title{The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via sumz aggregation method.}
 \usage{
 sumz.fn(enriches, pathways, is.selector, thresh = NULL)
@@ -20,6 +20,6 @@ sumz.fn(enriches, pathways, is.selector, thresh = NULL)
 a  scoring of miRNAs in a cluster of pathways
 }
 \description{
-The function calculate targeting score of miRNA w.r.t to a cluster 
+The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via sumz aggregation method.
 }

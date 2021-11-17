@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{AggInv.fn}
 \alias{AggInv.fn}
-\title{The function calculate targeting score of miRNA w.r.t to a cluster 
+\title{The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via inverse normal method}
 \usage{
 AggInv.fn(enriches, pathways, is.selector = TRUE, thresh = NULL)
@@ -20,6 +20,6 @@ AggInv.fn(enriches, pathways, is.selector = TRUE, thresh = NULL)
 a  scoring of miRNAs in a cluster of pathways
 }
 \description{
-The function calculate targeting score of miRNA w.r.t to a cluster 
+The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via inverse normal method
 }
