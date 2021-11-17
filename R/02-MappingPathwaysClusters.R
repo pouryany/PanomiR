@@ -12,8 +12,8 @@
 #'   filter pathways with adjusted p-values less than given threshold
 #' @param top.paths  use only top x paths; if NULL, use all paths
 #' @param seed set seed
-#' @param plot if T, store graph plot in Figures directory of plots
-#' @param subplot if T, store inidividual clusters plots and connected plots
+#' @param plot if TRUE, store graph plot in Figures directory of plots
+#' @param subplot if TRUE, store inidividual clusters plots and connected plots
 #'   in Figures directory of plots
 #' @param top.clusts plot figures for top x clusters
 #' @param out.dir output directory
@@ -31,13 +31,13 @@ MappingPathwaysClusters <- function(pcxn,
                                     path.fdr.thresh = 0.05,
                                     top.paths = 200,
                                     seed = 2,
-                                    plot = T,
-                                    subplot = T,
+                                    plot = TRUE,
+                                    subplot = TRUE,
                                     top.clusts = 2,
                                     prefix = "",
                                     out.dir = "",
                                     save.csv.name = NULL,
-                                    weighted = F) {
+                                    weighted = FALSE) {
   if (substring(out.dir, nchar(out.dir)) != "/") {
     out.dir <- paste0(out.dir, "/")
   }
@@ -48,7 +48,7 @@ MappingPathwaysClusters <- function(pcxn,
   fig.dir <- paste0(out.dir, "Figures/")
 
   if (!dir.exists(fig.dir)) {
-    dir.create(fig.dir, recursive = T)
+    dir.create(fig.dir, recursive = TRUE)
   }
 
   fig.dir <- paste0(fig.dir, prefix)
@@ -63,7 +63,7 @@ MappingPathwaysClusters <- function(pcxn,
     net$weight <- abs(net$PathCor)
   }
   net <- as.matrix(net)
-  net <- igraph::graph_from_data_frame(net, directed = F)
+  net <- igraph::graph_from_data_frame(net, directed = FALSE)
 
   igraph::set_vertex_attr(net, "col", value = "red")
 
@@ -114,7 +114,7 @@ MappingPathwaysClusters <- function(pcxn,
 
   igraph::V(sub.mods)$shape <- ifelse(shape.inds, "square", "circle")
 
-  if (plot == T) {
+  if (plot == TRUE) {
     legend_cats <- data.frame(
       attr = c("Up-regulated", "Down-regulated"),
       shape = unique(igraph::V(sub.mods)$shape)
@@ -123,7 +123,7 @@ MappingPathwaysClusters <- function(pcxn,
     
     small.clust <-
       which(table(clusts$membership) <= table(clusts$membership)[5],
-            useNames = T)
+            useNames = TRUE)
     
     node.cols[clusts$membership %in% small.clust] <- NA
 
@@ -161,7 +161,7 @@ MappingPathwaysClusters <- function(pcxn,
   igraph::V(sub.mods)$shape <- ifelse(shape.inds, "square", "circle")
 
 
-  if (subplot == T) {
+  if (subplot == TRUE) {
     for (k in 1:top.clusts) {
       keep     <- which((clusts$membership) == k)
       sub.mods2 <- igraph::induced_subgraph(sub.mods, keep)
@@ -180,7 +180,7 @@ MappingPathwaysClusters <- function(pcxn,
       plot(sub.mods2,
         edge.width = 1.3, vertex.size = 5, vertex.label = NA,
         vertex.color = cols[clusts$membership[keep]],
-        legend = T,
+        legend = TRUE,
         layout = igraph::layout.fruchterman.reingold
       )
       graphics::legend(
@@ -220,7 +220,7 @@ MappingPathwaysClusters <- function(pcxn,
     utils::write.csv(paths.out, paste0(out.dir, save.csv.name))
   }
 
-  if (subplot == T) {
+  if (subplot == TRUE) {
     grDevices::pdf(paste0(fig.dir, "ConnectedPathways_PCxNCorGraph.pdf"),
       width = 18, height = 11
     )
@@ -228,7 +228,7 @@ MappingPathwaysClusters <- function(pcxn,
     plot(sub.mods2,
       edge.width = 1.3, vertex.size = 5, vertex.label = NA,
       vertex.color = cols[clusts$membership[remove]],
-      legend = T,
+      legend = TRUE,
       layout = igraph::layout_components
     )
     graphics::legend(
