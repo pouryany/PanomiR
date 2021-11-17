@@ -17,12 +17,12 @@
 #' @param num.cores Number of CPU cores to use, must be at least one.
 #' @param out.dir Output directory.
 #' @param data.dir Data directory.
-#' @param save.csv If T, saves CSV file for each cluster in top.clust in
+#' @param save.csv If TRUE, saves CSV file for each cluster in top.clust in
 #'   out.dir.
-#' @param save.sampling If T, saves sampling data as RDS for each cluster in
+#' @param save.sampling If TRUE, saves sampling data as RDS for each cluster in
 #'   top.clust in data.dir.
-#' @param run.jack.knife If True, jacknifing will be performed.
-#' @param save.jack.knife If T, saves jack-knifed sampling data as RDS for each
+#' @param run.jack.knife If TRUE, jacknifing will be performed.
+#' @param save.jack.knife If TRUE, saves jack-knifed sampling data as RDS for each
 #'   cluster in top.clust in data.dir.
 #' @param prefix Prefix for all saved data.
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
@@ -37,11 +37,11 @@ PrioritizeMicroRNA <- function(enriches0,
                                samp.rate = 1000,
                                out.dir = "",
                                data.dir = "",
-                               save.sampling = T,
-                               run.jack.knife = T,
-                               save.jack.knife = F,
+                               save.sampling = TRUE,
+                               run.jack.knife = TRUE,
+                               save.jack.knife = FALSE,
                                num.cores = 1,
-                               save.csv = T,
+                               save.csv = TRUE,
                                prefix = "") {
   if (substring(out.dir, nchar(out.dir)) != "/") {
     out.dir <- paste0(out.dir, "/")
@@ -110,10 +110,10 @@ PrioritizeMicroRNA <- function(enriches0,
         m.thresh <- method.thresh[i]
         temp <- fn(enriches = enriches0,
                    pathways,
-                   is.selector = T,
+                   is.selector = TRUE,
                    thresh = m.thresh)
       } else {
-        temp <- fn(enriches = enriches0, pathways, is.selector = T)
+        temp <- fn(enriches = enriches0, pathways, is.selector = TRUE)
       }
 
       m.selector <- temp$selector
@@ -132,7 +132,7 @@ PrioritizeMicroRNA <- function(enriches0,
 
       if (save.sampling == TRUE) {
         if (!dir.exists(sampling.data.dir))
-          dir.create(sampling.data.dir, recursive = T)
+          dir.create(sampling.data.dir, recursive = TRUE)
       }
 
       sampling.data.filename <- paste0(prefix,
@@ -173,7 +173,7 @@ PrioritizeMicroRNA <- function(enriches0,
       print(paste0(m, " Method Done"))
 
       # perform jack-knife
-      if (run.jack.knife == T) {
+      if (run.jack.knife == TRUE) {
         sampling.data <- samplingDataBase(enrich.null,
           m.selector,
           samp.rate,
@@ -201,7 +201,7 @@ PrioritizeMicroRNA <- function(enriches0,
         m.selector <- m.selector[, c(1, 3, 2)]
       }
 
-      selector <- merge(selector, m.selector, all = T)
+      selector <- merge(selector, m.selector, all = TRUE)
 
       met <- paste0(m, "_pval")
       selector <- selector %>% dplyr::arrange(., !!rlang::sym(met))
@@ -212,7 +212,7 @@ PrioritizeMicroRNA <- function(enriches0,
       )
     }
 
-    if (save.csv == T) {
+    if (save.csv == TRUE) {
       save.name <- paste0(prefix,
                           samp.rate,
                           "_samples_clustNo_",
