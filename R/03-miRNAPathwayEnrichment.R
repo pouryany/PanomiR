@@ -85,7 +85,7 @@ miRNAPathwayEnrichment <- function(mir.sets,
       m <- length(unlist(mir.sets[X[[1]]]))
       n <- all - m
       k <- length(unlist(pathways.sets[X[[2]]]))
-      pval <- stats::phyper(q - 1, m, n, k, lower.tail = F, log.p = F)
+      pval <- stats::phyper(q - 1, m, n, k, lower.tail = FALSE, log.p = FALSE)
       return(c(
         "pval" = pval,
         "Intersect" = q,
