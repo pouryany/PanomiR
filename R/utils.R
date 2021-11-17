@@ -89,8 +89,8 @@ Pathway_Gene_Tab <- function(path.address = NA,
 Path_Summary <- function(exprs.mat,
                          pathway.ref,
                          id = "ENSEMBL",
-                         z.normalize = F,
-                         method = F,
+                         z.normalize = FALSE,
+                         method = FALSE,
                          de.genes = NULL,
                          trim = 0,
                          t.scores = NULL) {
@@ -140,7 +140,7 @@ Path_Summary <- function(exprs.mat,
 
   PathExpTab <- PathExpTab %>%
     dplyr::group_by(., Pathway) %>%
-    dplyr::summarise_if(is.numeric, mean, na.rm = T, trim = trim)
+    dplyr::summarise_if(is.numeric, mean, na.rm = TRUE, trim = trim)
 
 
   PathExp <- as.data.frame(PathExpTab[, -1])
@@ -176,7 +176,7 @@ Path_Summary <- function(exprs.mat,
 #' @param thresh Threshold from p-value cut-off.
 #' @return P-value based scoring of miRNAs in a cluster of pathways.
 pCut.fn <- function(enriches, pathways, is.selector, thresh = 0.05) {
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     enriches <- enriches %>%
       dplyr::mutate(., hit2 = ifelse(pval < thresh, 1, 0))
   }
@@ -187,7 +187,7 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh = 0.05) {
     dplyr::summarise(n = n(), k = sum(hit2)) %>%
     dplyr::arrange(., x)
 
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     selector <- selector %>% dplyr::filter(., k > thresh * length(pathways))
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
@@ -204,7 +204,7 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh = 0.05) {
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
 AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh = NULL) {
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     enriches <- enriches %>% dplyr::mutate(., ES2 = stats::qnorm(1 - pval))
     min.es <- min(enriches$ES2[!is.infinite(enriches$ES2)])
     enriches <- enriches %>%
@@ -217,7 +217,7 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh = NULL) {
     dplyr::summarise(n = n(), k = mean(ES2)) %>%
     dplyr::arrange(., x)
 
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
     return(selector)
@@ -235,7 +235,7 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh = NULL) {
 #' @return a  scoring of miRNAs in a cluster of pathways
 AggLog.fn <- function(enriches, pathways, is.selector, thresh = 0.1) {
   enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
   }
 
@@ -244,7 +244,7 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh = 0.1) {
     dplyr::group_by(x) %>%
     dplyr::summarise(n = n(), k = mean(ES))
 
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     selector <- selector %>% dplyr::filter(., k * n > thresh * length(pathways))
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
@@ -282,7 +282,7 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
     "n" =  agg.p.tab[, 3]
   )
 
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
     return(selector)
@@ -323,7 +323,7 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
     "n" =  agg.p.tab[, 3]
   )
 
-  if (is.selector == T) {
+  if (is.selector == TRUE) {
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
     return(selector)
@@ -421,11 +421,11 @@ samplingDataBase <- function(enrich.null,
       temp <- parallel::mclapply(1:(samp.rate), function(Y) {
         
         set.seed(Y)
-        null.paths <- sample(all.paths, temp.n_paths, replace = F)
+        null.paths <- sample(all.paths, temp.n_paths, replace = FALSE)
         
         sel.null <- fn(enriches = enrich.null,
                        pathways = null.paths,
-                       is.selector = F)
+                       is.selector = FALSE)
         return(sel.null$k)
       }, mc.cores = num.cores)
       # build null distribution of K
@@ -529,7 +529,7 @@ jackKnifeBase <- function(selector,
   # remove one pathway at a time and obtain K for each miRNA
   temp1 <- parallel::mclapply(1:length(pathways), function(X) {
     temp.pathways <- pathways[-X]
-    temp.selector <- fn(enriches = enrich.null, pathways = temp.pathways, is.selector = F)
+    temp.selector <- fn(enriches = enrich.null, pathways = temp.pathways, is.selector = FALSE)
     # obtain p-values using the means and sds obtain above
     p_vals <- stats::pnorm(temp.selector$k,
                            mean = sample.means,
@@ -567,7 +567,7 @@ jackKnifeBase <- function(selector,
 #' @param RELEVELS TBA.
 #' @return List containing a design matrix.
 #' @export
-getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list()) {
+getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = list()) {
   ROWNAMES <- rownames(covariatesDataFrame)
   COLNAMES <- colnames(covariatesDataFrame)
 
@@ -648,7 +648,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = T, RELEVELS = list(
         FACTOR_COVARIATE_NAMES,
         function(column) {
           fac <- covariatesDataFrame[, column]
-          fac <- stats::contrasts(fac, contrasts = F)
+          fac <- stats::contrasts(fac, contrasts = FALSE)
         }
       )
     }
