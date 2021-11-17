@@ -8,8 +8,8 @@ Path_Summary(
   exprs.mat,
   pathway.ref,
   id = "ENSEMBL",
-  z.normalize = F,
-  method = F,
+  z.normalize = FALSE,
+  method = FALSE,
   de.genes = NULL,
   trim = 0,
   t.scores = NULL
