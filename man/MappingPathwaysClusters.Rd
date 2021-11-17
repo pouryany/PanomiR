@@ -13,13 +13,13 @@ MappingPathwaysClusters(
   path.fdr.thresh = 0.05,
   top.paths = 200,
   seed = 2,
-  plot = T,
-  subplot = T,
+  plot = TRUE,
+  subplot = TRUE,
   top.clusts = 2,
   prefix = "",
   out.dir = "",
   save.csv.name = NULL,
-  weighted = F
+  weighted = FALSE
 )
 }
 \arguments{
@@ -43,9 +43,9 @@ filter pathways with adjusted p-values less than given threshold}
 
 \item{seed}{set seed}
 
-\item{plot}{if T, store graph plot in Figures directory of plots}
+\item{plot}{if TRUE, store graph plot in Figures directory of plots}
 
-\item{subplot}{if T, store inidividual clusters plots and connected plots
+\item{subplot}{if TRUE, store inidividual clusters plots and connected plots
 in Figures directory of plots}
 
 \item{top.clusts}{plot figures for top x clusters}
