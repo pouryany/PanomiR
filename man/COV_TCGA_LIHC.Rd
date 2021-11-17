@@ -3,7 +3,7 @@
 \docType{data}
 \name{COV_TCGA_LIHC}
 \alias{COV_TCGA_LIHC}
-\title{Covariates/metadata of The Cancer Genome Atlas Liver Hepatocellular 
+\title{Covariates/metadata of The Cancer Genome Atlas Liver Hepatocellular
 Carcinoma gene expression data.}
 \format{
 A data frame with 417 rows and 73 variables.

@@ -3,7 +3,7 @@
 \docType{data}
 \name{targetScan_01}
 \alias{targetScan_01}
-\title{A processed list of miRNA target gene sets from the TargetScan dataset. 
+\title{A processed list of miRNA target gene sets from the TargetScan dataset.
 Each list item is a list of genes targeted by the respective miRNA family}
 \format{
 A list of 439 items
@@ -18,7 +18,7 @@ targetScan_01
 The interactions are filtered to only human interactions.
 }
 \details{
-The interactions are filtered to have a 
+The interactions are filtered to have a
 Cumulative weighted context++ score of < -0.1
 }
 \keyword{datasets}

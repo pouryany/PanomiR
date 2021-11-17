@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{sumlog.fn}
 \alias{sumlog.fn}
-\title{The function calculate targeting score of miRNA w.r.t to a cluster 
+\title{The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via sumlog aggregation method.}
 \usage{
 sumlog.fn(enriches, pathways, is.selector, thresh = NULL)
@@ -20,6 +20,6 @@ sumlog.fn(enriches, pathways, is.selector, thresh = NULL)
 a  scoring of miRNAs in a cluster of pathways
 }
 \description{
-The function calculate targeting score of miRNA w.r.t to a cluster 
+The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via sumlog aggregation method.
 }
