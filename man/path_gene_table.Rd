@@ -13,7 +13,7 @@ A matrix with 3 columns and 76926 rows:
 }
 }
 \usage{
-path_gene_table
+data(path_gene_table)
 }
 \description{
 A table of gene-pathway association. Created based on the pathways of MSigDB.

@@ -2,6 +2,7 @@
 #'
 #' @format A list of 1329 pathways
 #' @source \url{http://www.gsea-msigdb.org/gsea/index.jsp}
+#' @usage data(msigdb_c2)
 "msigdb_c2"
 
 #' A table of gene-pathway association. Created based on the pathways of MSigDB.
@@ -12,6 +13,7 @@
 #'   \item{ENTREZID}{The ENTREZID of a gene belonging to the pathway}
 #'   \item{ENSEMBL}{The ENSEMBL of a gene belonging to the pathway}
 #' }
+#' @usage data(path_gene_table)
 "path_gene_table"
 
 #' A processed list of miRNA target gene sets from the TargetScan dataset.
@@ -23,4 +25,5 @@
 #' Cumulative weighted context++ score of < -0.3
 #' @format A list of 439 items
 #' @source \url{http://www.targetscan.org/vert_72/}
+#' @usage data(targetScan_03)
 "targetScan_03"
