@@ -28,7 +28,7 @@
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
 #'   associated p-values from the methods.
 #' @export
-PrioritizeMicroRNA <- function(enriches0,
+prioritizeMicroRNA <- function(enriches0,
                                pathwayClusters,
                                method = "AggInv",
                                methodThresh = NULL,
