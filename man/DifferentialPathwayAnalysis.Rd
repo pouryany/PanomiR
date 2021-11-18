@@ -30,7 +30,7 @@ differentialPathwayAnalysis(
 specified.}
 
 \item{covariates}{Covariates/metadata file; rows matches the columns of
-gene.counts.}
+geneCounts.}
 
 \item{condition}{Condition to be examined (tumor vs normal etc); must exist
 in covariates column.}
@@ -49,7 +49,7 @@ summary statistics; from *preprocess* package.}
 \item{saveOutName}{If not NULL, saves output as RDS using save name,
 if NULL, does not save output.}
 
-\item{id}{ID matching genes to pathways; rownames of gene.counts.}
+\item{id}{ID matching genes to pathways; rownames of geneCounts.}
 
 \item{deGenes}{If not NULL, add t-scores to pathways summary statistics;
 filter by genes t-scores.}

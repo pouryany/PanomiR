@@ -4,16 +4,16 @@
 \alias{pathwayGeneTab}
 \title{Pathway-Gene Associations}
 \usage{
-pathwayGeneTab(path.address = NA, pathway.list = NA, out.dir = NA)
+pathwayGeneTab(pathAdress = NA, pathwayList = NA, outDir = NA)
 }
 \arguments{
-\item{path.address}{Address to an RDS file containing list of pathways where
+\item{pathAdress}{Address to an RDS file containing list of pathways where
 each element is a list of genes similar to GMT format.}
 
-\item{pathway.list}{If you wish to use a list of pathways instead of a file
+\item{pathwayList}{If you wish to use a list of pathways instead of a file
 use this argument instead. The list must contain no NA values.}
 
-\item{out.dir}{Address to save an RDS for a table of pathway-gene association}
+\item{outDir}{Address to save an RDS for a table of pathway-gene association}
 }
 \value{
 pathExpTab Table of pathway-gene association.
