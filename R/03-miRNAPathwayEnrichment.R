@@ -2,89 +2,89 @@
 #'
 #' Outputs enrichment probability of miRNAs based on pathway clusters.
 #'
-#' @param mir.sets Table of miRNAs and a list of their interactions with
+#' @param mirSets Table of miRNAs and a list of their interactions with
 #'   genes in ENTREZ ID.
-#' @param pathways.sets Table of pathways and a list of their interactions
+#' @param pathwaySets Table of pathways and a list of their interactions
 #'   with genes in ENTREZ ID.
-#' @param genes.selection Table of genes with dtype; if not NULL, select only
+#' @param geneSelection Table of genes with dtype; if not NULL, select only
 #'   genes from a given table.
-#' @param mir.selection Table of miRNA names; if not NULL, select only miRNAs
+#' @param mirSelection Table of miRNA names; if not NULL, select only miRNAs
 #'   from given table.
-#' @param from.id ID of genes in genes.selection.
-#' @param to.id ID of genes used in pcxn and pathways set.
-#' @param min.path.size Filter out pathways with sets less than given value.
-#' @param num.cores Number of CPU cores to use, must be at least one.
-#' @param out.dir Output directory.
-#' @param save.RDS.name If not NULL, saves output as RDS using save name.
+#' @param fromID ID of genes in geneSelection.
+#' @param toID ID of genes used in pcxn and pathways set.
+#' @param minPathSize Filter out pathways with sets less than given value.
+#' @param numCores Number of CPU cores to use, must be at least one.
+#' @param outDir Output directory.
+#' @param saveOutName If not NULL, saves output as RDS using save name.
 #' @return Table of enrichment, each row contains mirna-pathway and its
 #'   enrichment p-values
 #' @export
-miRNAPathwayEnrichment <- function(mir.sets,
-                                   pathways.sets,
-                                   genes.selection = NULL,
-                                   mir.selection = NULL,
-                                   from.id = "ENSEMBL",
-                                   to.id = "ENTREZID",
-                                   min.path.size = 9,
-                                   num.cores = 1,
-                                   out.dir = "",
-                                   save.RDS.name = NULL) {
-  if (substring(out.dir, nchar(out.dir)) != "/") {
-    out.dir <- paste0(out.dir, "/")
+miRNAPathwayEnrichment <- function(mirSets,
+                                   pathwaySets,
+                                   geneSelection = NULL,
+                                   mirSelection = NULL,
+                                   fromID = "ENSEMBL",
+                                   toID = "ENTREZID",
+                                   minPathSize = 9,
+                                   numCores = 1,
+                                   outDir = "",
+                                   saveOutName = NULL) {
+  if (substring(outDir, nchar(outDir)) != "/") {
+    outDir <- paste0(outDir, "/")
   }
-  if (!dir.exists(out.dir)) {
+  if (!dir.exists(outDir)) {
     stop("Output directory does not exist.")
   }
   # select pathways with minimum set size
-  paths.sel <- sapply(pathways.sets, length)
-  pathways.sets <- pathways.sets[paths.sel > min.path.size]
-  paths.ref <- Reduce(union, pathways.sets)
+  pathsSel   <- sapply(pathwaySets, length)
+  pathwaySets <- pathwaySets[pathsSel > minPathSize]
+  pathsRef   <- Reduce(union, pathwaySets)
 
   # select miRNAs with targets in pathways
-  mir.sets <- lapply(mir.sets, function(X) {
-    X[X %in% paths.ref]
+  mirSets <- lapply(mirSets, function(X) {
+    X[X %in% pathsRef]
   })
 
   # select pathways with selected genes of interest
-  if (!is.null(genes.selection)) {
-    gene.df <- clusterProfiler::bitr(
-      genes.selection,
-      fromType = from.id,
-      toType = to.id,
+  if (!is.null(geneSelection)) {
+    geneDF <- clusterProfiler::bitr(
+      geneSelection,
+      fromType = fromID,
+      toType = toID,
       OrgDb = org.Hs.eg.db::org.Hs.eg.db
     )
-    pathways.sets <- lapply(pathways.sets, function(X) {
-      X[X %in% gene.df[, c(to.id)]]
+    pathwaySets <- lapply(pathwaySets, function(X) {
+      X[X %in% geneDF[, c(toID)]]
     })
 
-    mir.sets <- lapply(mir.sets, function(X) {
-      X[X %in% gene.df[, c(to.id)]]
+    mirSets <- lapply(mirSets, function(X) {
+      X[X %in% geneDF[, c(toID)]]
     })
-    paths.ref <- Reduce(union, pathways.sets)
+    pathsRef <- Reduce(union, pathwaySets)
   }
 
   # select miRNAs of interest
-  if (!is.null(mir.selection)) {
-    mir.sets <- mir.sets[names(mir.sets) %in% mir.selection]
+  if (!is.null(mirSelection)) {
+    mirSets <- mirSets[names(mirSets) %in% mirSelection]
   }
 
-  sel.vec <- sapply(mir.sets, length)
-  mir.sets <- mir.sets[sel.vec > min.path.size]
-  iterator <- (merge(names(mir.sets), names(pathways.sets)))
+  selVec <- sapply(mirSets, length)
+  mirSets <- mirSets[selVec > minPathSize]
+  iterator <- (merge(names(mirSets), names(pathwaySets)))
   iterator <- iterator %>% dplyr::mutate_all(., as.character)
-  all <- length(paths.ref)
+  all <- length(pathsRef)
 
   # find enrichment p-value of each miRNA target set and each pathway set
-  enrichs <- parallel::mclapply(1:nrow(iterator),
+  enrichs <- parallel::mclapply(seq_len(nrow(iterator)),
     function(Y) {
       X <- iterator[Y, ]
       q <- length(intersect(
-        unlist(pathways.sets[X[[2]]]),
-        unlist(mir.sets[X[[1]]])
+        unlist(pathwaySets[X[[2]]]),
+        unlist(mirSets[X[[1]]])
       ))
-      m <- length(unlist(mir.sets[X[[1]]]))
+      m <- length(unlist(mirSets[X[[1]]]))
       n <- all - m
-      k <- length(unlist(pathways.sets[X[[2]]]))
+      k <- length(unlist(pathwaySets[X[[2]]]))
       pval <- stats::phyper(q - 1, m, n, k, lower.tail = FALSE, log.p = FALSE)
       return(c(
         "pval" = pval,
@@ -97,15 +97,15 @@ miRNAPathwayEnrichment <- function(mir.sets,
         "ratio_ratios" = (q / (k - q)) / ((m - q) / n)
       ))
     },
-    mc.cores = num.cores
+    mc.cores = numCores
   )
 
   temp <- do.call(rbind, enrichs)
   temp <- as.data.frame(temp)
   iterator <- cbind(iterator, temp)
 
-  if (!is.null(save.RDS.name)) {
-    saveRDS(iterator, paste0(out.dir, save.RDS.name))
+  if (!is.null(saveOutName)) {
+    saveRDS(iterator, paste0(outDir, saveOutName))
   }
   return(iterator)
 }
