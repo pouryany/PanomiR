@@ -12,8 +12,8 @@ samplingDataBase(
   n_paths,
   sampling.data.file,
   jack.knife = FALSE,
-  save.sampling,
-  num.cores = 1
+  saveSampling,
+  numCores = 1
 )
 }
 \arguments{
@@ -33,9 +33,9 @@ samplingDataBase(
 \item{jack.knife}{If TRUE, conduct sampling with one less pathway, used for
 jack knifing}
 
-\item{save.sampling}{If TRUE, data is saved.}
+\item{saveSampling}{If TRUE, data is saved.}
 
-\item{num.cores}{number of cores used}
+\item{numCores}{number of cores used}
 }
 \value{
 Outputs of sampling data.
