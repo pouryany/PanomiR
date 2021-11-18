@@ -8,30 +8,30 @@ utils::globalVariables(c(
 #'
 #' Generates a table of pathways and genes associations.
 #'
-#' @param path.address Address to an RDS file containing list of pathways where
+#' @param pathAdress Address to an RDS file containing list of pathways where
 #'   each element is a list of genes similar to GMT format.
-#' @param pathway.list If you wish to use a list of pathways instead of a file
+#' @param pathwayList If you wish to use a list of pathways instead of a file
 #'   use this argument instead. The list must contain no NA values.
-#' @param out.dir Address to save an RDS for a table of pathway-gene association
+#' @param outDir Address to save an RDS for a table of pathway-gene association
 #' @return pathExpTab Table of pathway-gene association.
 #' @export
-Pathway_Gene_Tab <- function(path.address = NA,
-                             pathway.list = NA,
-                             out.dir = NA) {
+pathwayGeneTab <- function(pathAdress = NA,
+                             pathwayList = NA,
+                             outDir = NA) {
   # Development notes: make compatible with direct data input
   #       check and throw errors if the address is valid
   #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
-  #       Make a  Pathway_Gene_Tab going out with the package.
+  #       Make a  pathwayGeneTab going out with the package.
 
-  if (!is.na(path.address)) {
-    pathList <- readRDS(path.address)
+  if (!is.na(pathAdress)) {
+    pathList <- readRDS(pathAdress)
   }
 
-  if (is.na(path.address) && !any(is.na(pathway.list))) {
-    pathList <- pathway.list
+  if (is.na(pathAdress) && !any(is.na(pathwayList))) {
+    pathList <- pathwayList
   }
 
-  if (!is.na(path.address) && !any(is.na(pathway.list))) {
+  if (!is.na(pathAdress) && !any(is.na(pathwayList))) {
     stop("provide a valid input list.")
   }
 
@@ -57,13 +57,13 @@ Pathway_Gene_Tab <- function(path.address = NA,
     }
   )
   temp <- do.call(rbind, (temp))
-  PathExpTab <- tibble::as_tibble(temp)
+  pathExpTab <- tibble::as_tibble(temp)
 
-  if (!is.na(out.dir)) {
-    saveRDS(PathExpTab, out.dir)
+  if (!is.na(outDir)) {
+    saveRDS(pathExpTab, outDir)
   }
 
-  return(PathExpTab)
+  return(pathExpTab)
 }
 
 
@@ -71,62 +71,62 @@ Pathway_Gene_Tab <- function(path.address = NA,
 #'
 #' Generates a table of pathway activity profiles per sample
 #'
-#' @param exprs.mat Gene expression matrix with row names as genes and samples
+#' @param exprsMat Gene expression matrix with row names as genes and samples
 #'   as columns.
-#' @param pathway.ref Table of pathway-gene associations. Created from
-#'   \code{\link{Pathway_Gene_Tab}} function.
+#' @param pathwayRef Table of pathway-gene associations. Created from
+#'   \code{\link{pathwayGeneTab}} function.
 #' @param id Gene annotation type in the row name of gene expression data.
-#' @param z.normalize Normalization of pathway summary score.
+#' @param zNormalize Normalization of pathway summary score.
 #' @param method Choice of how to summarize gene ranks into pathway statistics.
-#' @param de.genes List of differentially expressed genes along with t-scores.
+#' @param deGenes List of differentially expressed genes along with t-scores.
 #'   Only necessary if working on Top 50\% summary method.
 #' @param trim Percentage of top and bottom ranked genes to be excluded from
 #'   pathway summary statistics.
-#' @param t.scores Argument for-top-50-percent-genes method.
-#' @return PathExp Table of pathway activity profiles per sample.
+#' @param tScores Argument for-top-50-percent-genes method.
+#' @return pathExp Table of pathway activity profiles per sample.
 #' @export
 
-Path_Summary <- function(exprs.mat,
-                         pathway.ref,
+pathwaySummary <- function(exprsMat,
+                         pathwayRef,
                          id = "ENSEMBL",
-                         z.normalize = FALSE,
+                         zNormalize = FALSE,
                          method = FALSE,
-                         de.genes = NULL,
+                         deGenes = NULL,
                          trim = 0,
-                         t.scores = NULL) {
+                         tScores = NULL) {
 
   # There is a confusion about the data format here.
   # Make sure it is consistent.
   # Current version only works with ENSEMBL.
-  exprs.mat <- tibble::rownames_to_column(as.data.frame(exprs.mat), var = id)
+  exprsMat <- tibble::rownames_to_column(as.data.frame(exprsMat), var = id)
 
-  if (!is.null(de.genes)) {
-    if (is.null(t.scores)) {
+  if (!is.null(deGenes)) {
+    if (is.null(tScores)) {
       stop("Provide tscores/pvalues")
     }
 
-    pathway.ref <- dplyr::inner_join(pathway.ref, t.scores,
+    pathwayRef <- dplyr::inner_join(pathwayRef, tScores,
       by = c("ENSEMBL")
     )
 
-    pathway.ref %<>% dplyr::group_by(., Pathway) %>%
+    pathwayRef %<>% dplyr::group_by(., Pathway) %>%
       dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
       dplyr::select(., -t)
   }
 
   if (method == "none") {
-    exprs.mat <- exprs.mat %>%
+    exprsMat <- exprsMat %>%
       dplyr::mutate_if(., is.numeric, function(X) {
         X
       })
   } else if (method == "x") {
-    exprs.mat <- exprs.mat %>%
+    exprsMat <- exprsMat %>%
       dplyr::mutate_if(., is.numeric, rank) %>%
       dplyr::mutate_if(., is.numeric, function(X) {
         X
       })
   } else if (method == "x2") {
-    exprs.mat <- exprs.mat %>%
+    exprsMat <- exprsMat %>%
       dplyr::mutate_if(., is.numeric, rank) %>%
       dplyr::mutate_if(., is.numeric, function(X) {
         X * X
@@ -136,23 +136,23 @@ Path_Summary <- function(exprs.mat,
   }
 
 
-  PathExpTab <- dplyr::inner_join(pathway.ref, exprs.mat, by = id)
+  pathExpTab <- dplyr::inner_join(pathwayRef, exprsMat, by = id)
 
-  PathExpTab <- PathExpTab %>%
+  pathExpTab <- pathExpTab %>%
     dplyr::group_by(., Pathway) %>%
     dplyr::summarise_if(is.numeric, mean, na.rm = TRUE, trim = trim)
 
 
-  PathExp <- as.data.frame(PathExpTab[, -1])
-  rownames(PathExp) <- as.character(dplyr::pull(PathExpTab[, 1]))
+  pathExp <- as.data.frame(pathExpTab[, -1])
+  rownames(pathExp) <- as.character(dplyr::pull(pathExpTab[, 1]))
 
-  if (z.normalize) {
-    PathExp <- apply(PathExp, 2, function(X) {
+  if (zNormalize) {
+    pathExp <- apply(pathExp, 2, function(X) {
       (X - mean(X)) / stats::sd(X)
     })
   }
 
-  return(PathExp)
+  return(pathExp)
 }
 
 
@@ -172,22 +172,22 @@ Path_Summary <- function(exprs.mat,
 #'
 #' @param enriches Table of miRNA pathway enrichments.
 #' @param pathways Queried pathways, e.g. cluster pathways.
-#' @param is.selector Internal argument.
+#' @param isSelector Internal argument.
 #' @param thresh Threshold from p-value cut-off.
 #' @return P-value based scoring of miRNAs in a cluster of pathways.
-pCut.fn <- function(enriches, pathways, is.selector, thresh = 0.05) {
-  if (is.selector == TRUE) {
+pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
+  if (isSelector == TRUE) {
     enriches <- enriches %>%
       dplyr::mutate(., hit2 = ifelse(pval < thresh, 1, 0))
   }
 
-  temp.enrich <- enriches[enriches$y %in% pathways, ]
-  selector <- temp.enrich %>%
+  tempEnrich <- enriches[enriches$y %in% pathways, ]
+  selector <- tempEnrich %>%
     dplyr::group_by(x) %>%
     dplyr::summarise(n = n(), k = sum(hit2)) %>%
     dplyr::arrange(., x)
 
-  if (is.selector == TRUE) {
+  if (isSelector == TRUE) {
     selector <- selector %>% dplyr::filter(., k > thresh * length(pathways))
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
@@ -200,24 +200,24 @@ pCut.fn <- function(enriches, pathways, is.selector, thresh = 0.05) {
 #' of pathways via inverse normal method
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
+#' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh = NULL) {
-  if (is.selector == TRUE) {
+aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
+  if (isSelector == TRUE) {
     enriches <- enriches %>% dplyr::mutate(., ES2 = stats::qnorm(1 - pval))
-    min.es <- min(enriches$ES2[!is.infinite(enriches$ES2)])
+    minES <- min(enriches$ES2[!is.infinite(enriches$ES2)])
     enriches <- enriches %>%
-      dplyr::mutate(., ES2 = ifelse(is.infinite(.$ES2), min.es, .$ES2))
+      dplyr::mutate(., ES2 = ifelse(is.infinite(.$ES2), minES, .$ES2))
   }
 
-  temp.enrich <- enriches[enriches$y %in% pathways, ]
-  selector <- temp.enrich %>%
+  tempEnrich <- enriches[enriches$y %in% pathways, ]
+  selector <- tempEnrich %>%
     dplyr::group_by(x) %>%
     dplyr::summarise(n = n(), k = mean(ES2)) %>%
     dplyr::arrange(., x)
 
-  if (is.selector == TRUE) {
+  if (isSelector == TRUE) {
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
     return(selector)
@@ -230,21 +230,21 @@ AggInv.fn <- function(enriches, pathways, is.selector = TRUE, thresh = NULL) {
 #' of pathways via log aggregation method.
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
+#' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-AggLog.fn <- function(enriches, pathways, is.selector, thresh = 0.1) {
+aggLogFn <- function(enriches, pathways, isSelector, thresh = 0.1) {
   enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
-  if (is.selector == TRUE) {
+  if (isSelector == TRUE) {
     enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
   }
 
-  temp.enrich <- enriches[enriches$y %in% pathways, ]
-  selector <- temp.enrich %>%
+  tempEnrich <- enriches[enriches$y %in% pathways, ]
+  selector <- tempEnrich %>%
     dplyr::group_by(x) %>%
     dplyr::summarise(n = n(), k = mean(ES))
 
-  if (is.selector == TRUE) {
+  if (isSelector == TRUE) {
     selector <- selector %>% dplyr::filter(., k * n > thresh * length(pathways))
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
@@ -257,32 +257,31 @@ AggLog.fn <- function(enriches, pathways, is.selector, thresh = 0.1) {
 #' of pathways via sumz aggregation method.
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
+#' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-sumz.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
+sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
   enriches1 <- enriches %>%
     dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
-  
+
   enriches1 <- enriches1 %>%
     dplyr::mutate(., pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
 
-  temp.enrich <- enriches1[enriches1$y %in% pathways, ]
-  agg.p.tab <- vector()
-  for (i in unique(temp.enrich$x)) {
-    temp <- temp.enrich[temp.enrich$x == i, ]
-    t.pval <- metap::sumz(temp$pval)
-    # print(paste0(i, ": ", t.pval$p))
-    agg.p.tab <- rbind(agg.p.tab, c(i, t.pval$p, nrow(temp)))
+  tempEnrich <- enriches1[enriches1$y %in% pathways, ]
+  aggPTab <- vector()
+  for (i in unique(tempEnrich$x)) {
+    temp <- tempEnrich[tempEnrich$x == i, ]
+    tPVal <- metap::sumz(temp$pval)
+    aggPTab <- rbind(aggPTab, c(i, tPVal$p, nrow(temp)))
   }
 
   selector <- tibble::tibble(
-    "x" = agg.p.tab[, 1],
-    "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
-    "n" =  agg.p.tab[, 3]
+    "x" = aggPTab[, 1],
+    "pval" = signif(as.numeric(aggPTab[, 2]), 4),
+    "n" =  aggPTab[, 3]
   )
 
-  if (is.selector == TRUE) {
+  if (isSelector == TRUE) {
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
     return(selector)
@@ -297,10 +296,10 @@ sumz.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
 #' of pathways via sumlog aggregation method.
 #' @param enriches a table of miRNA pathway enrichments. Universe
 #' @param pathways queried pathways. e.g. cluster pathways
-#' @param is.selector internal argument
+#' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-sumlog.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
+sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
   enriches1 <- enriches %>% dplyr::mutate(., pval = ifelse(pval >= 0.999,
     0.999, pval
   ))
@@ -308,22 +307,21 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
     1.0e-16, pval
   ))
 
-  temp.enrich <- enriches1[enriches1$y %in% pathways, ]
-  agg.p.tab <- vector()
-  for (i in unique(temp.enrich$x)) {
-    temp <- temp.enrich[temp.enrich$x == i, ]
-    t.pval <- metap::sumlog(temp$pval)
-    # print(paste0(i, ": ", t.pval$p))
-    agg.p.tab <- rbind(agg.p.tab, c(i, t.pval$p, nrow(temp)))
+  tempEnrich <- enriches1[enriches1$y %in% pathways, ]
+  aggPTab <- vector()
+  for (i in unique(tempEnrich$x)) {
+    temp <- tempEnrich[tempEnrich$x == i, ]
+    tPVal <- metap::sumlog(temp$pval)
+    aggPTab <- rbind(aggPTab, c(i, tPVal$p, nrow(temp)))
   }
 
   selector <- tibble::tibble(
-    "x" = agg.p.tab[, 1],
-    "pval" = signif(as.numeric(agg.p.tab[, 2]), 4),
-    "n" =  agg.p.tab[, 3]
+    "x" = aggPTab[, 1],
+    "pval" = signif(as.numeric(aggPTab[, 2]), 4),
+    "n" =  aggPTab[, 3]
   )
 
-  if (is.selector == TRUE) {
+  if (isSelector == TRUE) {
     return(list("selector" = selector, "enriches0" = enriches))
   } else {
     return(selector)
@@ -334,100 +332,99 @@ sumlog.fn <- function(enriches, pathways, is.selector, thresh = NULL) {
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
-#' @param cover.name a new column name
+#' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
-pCut.cover.fn <- function(selector, cover.name) {
+pCutCoverFn <- function(selector, coverName) {
   selector <- selector %>%
-    dplyr::mutate(., !!cover.name := k / n)
+    dplyr::mutate(., !!coverName := k / n)
   return(selector)
 }
 
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
-#' @param cover.name a new column name
+#' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
-AggInv.cover.fn <- function(selector, cover.name) {
+aggInvCoverFn <- function(selector, coverName) {
   selector <- selector %>%
-    dplyr::mutate(., !!cover.name := k)
+    dplyr::mutate(., !!coverName := k)
   return(selector)
 }
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
-#' @param cover.name a new column name
+#' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
-AggLog.cover.fn <- AggInv.cover.fn
+aggLogCoverFn <- aggInvCoverFn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
-#' @param cover.name a new column name
+#' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
-sumz.cover.fn <- AggInv.cover.fn
+sumzCoverFn <- aggInvCoverFn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
-#' @param cover.name a new column name
+#' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
-sumlog.cover.fn <- AggInv.cover.fn
+sumlogCoverFn <- aggInvCoverFn
 
 
 #### Working
 
 #' Outputs a table of sampling data(rows are miRNA and cols are samples)
 #'
-#' @param enrich.null Enrichment dataset with x (miRNA), y (pathway) and pval
+#' @param enrichNull Enrichment dataset with x (miRNA), y (pathway) and pval
 #'   (probability of observing x in pathway cluster).
 #' @param selector Table with x(miRNA) in pathway cluster.
-#' @param samp.rate Sampling rate.
+#' @param sampRate Sampling rate.
 #' @param fn Methodology function.
-#' @param n_paths Number of pathways in pathway cluster.
-#' @param sampling.data.file If file exists, load. Else, perform random sampling
-#' @param save.sampling If TRUE, data is saved.
-#' @param jack.knife If TRUE, conduct sampling with one less pathway, used for
+#' @param nPaths Number of pathways in pathway cluster.
+#' @param samplingDataFile If file exists, load. Else, perform random sampling
+#' @param saveSampling If TRUE, data is saved.
+#' @param jackKnife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
-#' @param num.cores number of cores used
+#' @param numCores number of cores used
 #' @return Outputs of sampling data.
-samplingDataBase <- function(enrich.null,
+samplingDataBase <- function(enrichNull,
                              selector,
-                             samp.rate,
+                             sampRate,
                              fn,
-                             n_paths,
-                             sampling.data.file,
-                             jack.knife = FALSE,
-                             save.sampling,
-                             num.cores = 1) {
+                             nPaths,
+                             samplingDataFile,
+                             jackKnife = FALSE,
+                             saveSampling,
+                             numCores = 1) {
   if (!all(utils::hasName(selector, c("x")))) {
     stop("The selector table needs a column x (miRNA name)")
   }
-  if (!all(utils::hasName(enrich.null, c("x", "y", "pval")))) {
+  if (!all(utils::hasName(enrichNull, c("x", "y", "pval")))) {
     stop(paste0(
       "The enrichment table needs a column x (miRNA name)",
       ",a column y (pathway name), and a pval column"
     ))
   }
 
-  if (!file.exists(sampling.data.file)) {
-    all.paths <- unique(enrich.null$y)
-    # temp.n_paths <- n_paths
+  if (!file.exists(samplingDataFile)) {
+    allPaths <- unique(enrichNull$y)
 
-    if (jack.knife == TRUE) {
-      temp.n_paths <- n_paths - 1
+    if (jackKnife == TRUE) {
+      nPathsTemp <- nPaths - 1
     }
-    samp.size.vec <- c(n_paths, n_paths - 1, 100, 50)
+    sampSizeVec <- c(nPaths, nPaths - 1, 100, 50)
 
-    out.list <- list()
-    for (temp.n_paths in samp.size.vec) {
-      temp <- parallel::mclapply(1:(samp.rate), function(Y) {
-        
+    outList <- list()
+    for (nPathsTemp in sampSizeVec) {
+      temp <- parallel::mclapply(1:(sampRate), function(Y) {
+
         set.seed(Y)
-        null.paths <- sample(all.paths, temp.n_paths, replace = FALSE)
-        
-        sel.null <- fn(enriches = enrich.null,
-                       pathways = null.paths,
-                       is.selector = FALSE)
-        return(sel.null$k)
-      }, mc.cores = num.cores)
+        nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
+
+        selNull <- fn(enriches = enrichNull,
+                       pathways = nullPaths,
+                       isSelector = FALSE)
+        return(selNull$k)
+      }, mc.cores = numCores)
       # build null distribution of K
 
 
@@ -436,60 +433,60 @@ samplingDataBase <- function(enrich.null,
       temp <- t(temp)
 
       rownames(temp) <- selector$x
-      colnames(temp) <- sapply(1:(samp.rate), function(Y) {
+      colnames(temp) <- sapply(seq_len(sampRate), function(Y) {
         paste0("sample_", Y)
       })
-      samp.tag <- paste0("SampSize_", temp.n_paths)
+      sampTag <- paste0("SampSize_", nPathsTemp)
 
-      out.list[[samp.tag]] <- temp
+      outList[[sampTag]] <- temp
     }
-    if (save.sampling == TRUE) {
-      saveRDS(out.list, file = sampling.data.file)
-      print(paste0(sampling.data.file, " saved."))
+    if (saveSampling == TRUE) {
+      saveRDS(outList, file = samplingDataFile)
+      print(paste0(samplingDataFile, " saved."))
     }
   } else {
-    print(paste0("Skipping sampling, ", sampling.data.file, " exists."))
-    out.list <- readRDS(sampling.data.file)
-    print(paste0(sampling.data.file, " loaded."))
+    print(paste0("Skipping sampling, ", samplingDataFile, " exists."))
+    outList <- readRDS(samplingDataFile)
+    print(paste0(samplingDataFile, " loaded."))
   }
 
-  return(out.list)
+  return(outList)
 }
 
 
 #' Outputs a table with col x (miRNA), probability of observing k (depending on
 #' methodology) against a random distribution and cover of methodology
 #'
-#' @param sampling.data Random distribution data.
+#' @param samplingData Random distribution data.
 #' @param selector Table with x(miRNA) in pathway cluster and observed
 #'   k (depending on methodology).
 #' @param m Method name.
-#' @param n_paths Number of pathways used to generate the sampling.data at
+#' @param nPaths Number of pathways used to generate the samplingData at
 #'   each iteration. Default is set at 100.
-#' @param cover.fn Cover of methodology function.
+#' @param coverFn Cover of methodology function.
 #' @return Outputs a new selector table with col x, pval and cover.
-methodProbBase <- function(sampling.data,
+methodProbBase <- function(samplingData,
                            selector,
                            m,
-                           n_paths = 100,
-                           cover.fn = NULL) {
+                           nPaths = 100,
+                           coverFn = NULL) {
   if (!all(utils::hasName(selector, c("x", "k")))) {
     stop("The selector needs a column x (miRNA) and a column k (miRNA hits)")
   }
 
   # obtain means and sds for distribution, assume CLT
-  means <- rowMeans(sampling.data)
-  sds <- apply(sampling.data, 1, stats::sd)
-  sds <- sds * 10 / sqrt(n_paths)
+  means <- rowMeans(samplingData)
+  sds <- apply(samplingData, 1, stats::sd)
+  sds <- sds * 10 / sqrt(nPaths)
 
-  pval.name <- paste0(m, "_pval")
-  cover.name <- paste0(m, "_cover")
+  pvalName <- paste0(m, "_pval")
+  coverName <- paste0(m, "_cover")
 
   # obtain p-vals
   p_vals <- stats::pnorm(selector$k, mean = means, sd = sds, lower.tail = FALSE)
   selector <- selector %>%
-    dplyr::mutate(., !!pval.name := p_vals) %>%
-    cover.fn(., cover.name) %>%
+    dplyr::mutate(., !!pvalName := p_vals) %>%
+    coverFn(., coverName) %>%
     dplyr::select(., -c(k, n))
   return(selector)
 }
@@ -504,39 +501,40 @@ methodProbBase <- function(sampling.data,
 #' @param selector Table with x(miRNA) in pathway cluster and observed k
 #'   (depending on methodology).
 #' @param pathways Pathways in pathway cluster.
-#' @param enrich.null Enrichment dataset with x (miRNA), y (pathway) and pval
+#' @param enrichNull Enrichment dataset with x (miRNA), y (pathway) and pval
 #'   (probability of observing x in pathway cluster).
 #' @param fn Methodology function.
-#' @param jack.knife.data Random distribution data with jack-knifing
+#' @param jackKnifeData Random distribution data with jack-knifing
 #'   (i.e. one less pathway)
 #' @param m method name
-#' @param num.cores number of cores
+#' @param numCores number of cores
 #' @return Outputs a new selector table with col x, pval_jk
 jackKnifeBase <- function(selector,
                           pathways,
-                          enrich.null,
+                          enrichNull,
                           fn,
-                          jack.knife.data,
+                          jackKnifeData,
                           m,
-                          num.cores = 1) {
+                          numCores = 1) {
 
   # obtain means and sds for distribution, assume CLT
-  n_paths <- length(pathways)
-  sample.means <- rowMeans(jack.knife.data)
-  sample.sds <- apply(jack.knife.data, 1, stats::sd)
-  sample.sds <- sample.sds * 10 / sqrt(n_paths - 1)
+  nPaths <- length(pathways)
+  sampleMeans <- rowMeans(jackKnifeData)
+  sampleSDs <- apply(jackKnifeData, 1, stats::sd)
+  sampleSDs <- sampleSDs * 10 / sqrt(nPaths - 1)
 
   # remove one pathway at a time and obtain K for each miRNA
-  temp1 <- parallel::mclapply(1:length(pathways), function(X) {
-    temp.pathways <- pathways[-X]
-    temp.selector <- fn(enriches = enrich.null, pathways = temp.pathways, is.selector = FALSE)
+  temp1 <- parallel::mclapply(seq_along(pathways), function(X) {
+    tempPathways <- pathways[-X]
+    tempSelector <- fn(enriches = enrichNull, pathways = tempPathways,
+                       isSelector = FALSE)
     # obtain p-values using the means and sds obtain above
-    p_vals <- stats::pnorm(temp.selector$k,
-                           mean = sample.means,
-                           sd = sample.sds,
+    p_vals <- stats::pnorm(tempSelector$k,
+                           mean = sampleMeans,
+                           sd = sampleSDs,
                            lower.tail = FALSE)
     return(p_vals)
-  }, mc.cores = num.cores)
+  }, mc.cores = numCores)
 
 
   # rows <- number of pathways; col <- number of miRNAs
@@ -546,12 +544,12 @@ jackKnifeBase <- function(selector,
 
   ## added from here
 
-  jack.knife.name <- paste0(m, "_pval_jk")
+  jackKnifeName <- paste0(m, "_pval_jk")
 
   # obtain aggregate p-values
   means <- rowMeans(temp1)
   selector <- selector %>%
-    dplyr::mutate(., !!jack.knife.name := means)
+    dplyr::mutate(., !!jackKnifeName := means)
 
   return(selector)
 }
@@ -567,26 +565,27 @@ jackKnifeBase <- function(selector,
 #' @param RELEVELS TBA.
 #' @return List containing a design matrix.
 #' @export
-getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = list()) {
-  ROWNAMES <- rownames(covariatesDataFrame)
-  COLNAMES <- colnames(covariatesDataFrame)
+getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
+                            RELEVELS = list()) {
+  rowNamesTemp <- rownames(covariatesDataFrame)
+  colNamesTemp <- colnames(covariatesDataFrame)
 
-  FACTOR_COVARIATE_NAMES <-
+  factorCovariateNames <-
     names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
-  
-  FACTOR_COVARIATE_NAMES <- 
-    setdiff(FACTOR_COVARIATE_NAMES,
-            FACTOR_COVARIATE_NAMES[
-              !(FACTOR_COVARIATE_NAMES %in% colnames(covariatesDataFrame))])
-  
-  NUMERIC_COVARIATE_NAMES <- setdiff(COLNAMES, FACTOR_COVARIATE_NAMES)
+
+  factorCovariateNames <-
+    setdiff(factorCovariateNames,
+            factorCovariateNames[
+              !(factorCovariateNames %in% colnames(covariatesDataFrame))])
+
+  numericCovariateNames <- setdiff(colNamesTemp, factorCovariateNames)
 
   # Ensure the factors are in fact of type factor, and the quantitative
   # variables are numeric:
   covariatesDataFrame <-
-    as.data.frame(lapply(colnames(covariatesDataFrame),function(column) {
-                           
-                        if (column %in% FACTOR_COVARIATE_NAMES) {
+    as.data.frame(lapply(colnames(covariatesDataFrame), function(column) {
+
+                        if (column %in% factorCovariateNames) {
                           fac <- as.factor(covariatesDataFrame[, column])
                           if (column %in% names(RELEVELS)) {
                             fac <- stats::relevel(fac, ref = RELEVELS[[column]])
@@ -596,48 +595,47 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
                           return(as.numeric(covariatesDataFrame[, column]))
                         }
                       }))
-  
-  rownames(covariatesDataFrame) <- ROWNAMES
-  colnames(covariatesDataFrame) <- COLNAMES
+
+  rownames(covariatesDataFrame) <- rowNamesTemp
+  colnames(covariatesDataFrame) <- colNamesTemp
 
   contra <- NULL
-  MAX_NUM_CATS <- Inf
-  catData <- covariatesDataFrame[, FACTOR_COVARIATE_NAMES, drop = FALSE]
+  maxNumCat <- Inf
+  catData <- covariatesDataFrame[, factorCovariateNames, drop = FALSE]
   if (ncol(catData) > 0) {
     numCats <- sapply(colnames(catData),
                       function(col) nlevels(factor(catData[, col])))
-    
-    EXCLUDE_CATEGORICAL_COLS <-
-      names(numCats)[numCats <= 1 | numCats > MAX_NUM_CATS]
-    
-    if (!is.null(EXCLUDE_CATEGORICAL_COLS) &&
-        length(EXCLUDE_CATEGORICAL_COLS) > 0)
-      {
+
+    excludeCategoricalCols <-
+      names(numCats)[numCats <= 1 | numCats > maxNumCat]
+
+    if (!is.null(excludeCategoricalCols) &&
+        length(excludeCategoricalCols) > 0){
       warning(paste("Excluding categorical variables with less than 2",
-                    ifelse(is.infinite(MAX_NUM_CATS),
+                    ifelse(is.infinite(maxNumCat),
                            "",
-                           paste(" or more than ", MAX_NUM_CATS, sep = "")),
+                           paste(" or more than ", maxNumCat, sep = "")),
                     " categories: ",
-                    paste(paste("'", EXCLUDE_CATEGORICAL_COLS, "'", sep = ""),
+                    paste(paste("'", excludeCategoricalCols, "'", sep = ""),
                           collapse = ", "), sep = ""))
-      
-      FACTOR_COVARIATE_NAMES <- setdiff(FACTOR_COVARIATE_NAMES,
-                                        EXCLUDE_CATEGORICAL_COLS)
-      covariatesDataFrame <- 
-        covariatesDataFrame[, 
-            !(colnames(covariatesDataFrame) %in% EXCLUDE_CATEGORICAL_COLS),
+
+      factorCovariateNames <- setdiff(factorCovariateNames,
+                                        excludeCategoricalCols)
+      covariatesDataFrame <-
+        covariatesDataFrame[,
+            !(colnames(covariatesDataFrame) %in% excludeCategoricalCols),
             drop = FALSE]
     }
 
     # Inspired by http://stackoverflow.com/questions/4560459/
     #
-    # And, already ensured above that 
-    # covariatesDataFrame[, FACTOR_COVARIATE_NAMES] satisfies:
+    # And, already ensured above that
+    # covariatesDataFrame[, factorCovariateNames] satisfies:
     # 1) fac is of type factor.
     # 2) fac is releveled as designated in RELEVELS.
     if (Intercept) {
       contra <- lapply(
-        FACTOR_COVARIATE_NAMES,
+        factorCovariateNames,
         function(column) {
           fac <- covariatesDataFrame[, column]
           fac <- stats::contrasts(fac)
@@ -645,18 +643,18 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
       )
     } else {
       contra <- lapply(
-        FACTOR_COVARIATE_NAMES,
+        factorCovariateNames,
         function(column) {
           fac <- covariatesDataFrame[, column]
           fac <- stats::contrasts(fac, contrasts = FALSE)
         }
       )
     }
-    names(contra) <- FACTOR_COVARIATE_NAMES
+    names(contra) <- factorCovariateNames
   }
 
   # Inspired by http://stackoverflow.com/questions/5616210/
-  current.na.action <- getOption("na.action")
+  currentNAAction <- getOption("na.action")
   # Model matrix will now include "NA":
   options(na.action = "na.pass")
 
@@ -674,12 +672,12 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
 
   rownames(design) <- rownames(covariatesDataFrame)
 
-  options(na.action = current.na.action)
+  options(na.action = currentNAAction)
 
   return(list(design = design,
-              covariates = COLNAMES,
+              covariates = colNamesTemp,
               factorsLevels = sapply(contra, colnames, simplify = FALSE),
-              numericCovars = NUMERIC_COVARIATE_NAMES, 
+              numericCovars = numericCovariateNames,
               covariatesDataFrame = covariatesDataFrame))
 }
 
@@ -707,7 +705,7 @@ linColumnFinder <- function(mat) {
   m <- ncol(mat)
   # cols keeps track of which columns are linearly independent
   cols <- 1
-  All.message <- c()
+  allMessages <- c()
   for (i in seq(2, m)) {
     ids <- c(cols, i)
     mymat <- mat[, ids]
@@ -722,7 +720,7 @@ linColumnFinder <- function(mat) {
       tmp <- colnames(mat)[cols[nz]]
       vals <- paste(stats::coef(o)[nz], tmp, sep = "*", collapse = " + ")
       message <- paste0(start, vals)
-      All.message <- c(All.message, message)
+      allMessages <- c(allMessages, message)
     } else {
       # If the matrix subset was of full rank
       # then the newest column in linearly independent
@@ -730,5 +728,5 @@ linColumnFinder <- function(mat) {
       cols <- ids
     }
   }
-  return(list(indepCols = cols, relations = All.message))
+  return(list(indepCols = cols, relations = allMessages))
 }

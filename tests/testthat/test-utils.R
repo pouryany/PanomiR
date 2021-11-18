@@ -8,7 +8,7 @@ test_that("Pathway-gene table works", {
     path.list <- list("Path1" = Pathway1, "Path2" = Pathway2) 
 
     # org.Hs.eg.db is required
-    res <- Pathway_Gene_Tab(pathway.list = path.list)
+    res <- pathwayGeneTab(pathwayList = path.list)
     expect_equal(nrow(res), 6)
 })
 
@@ -24,11 +24,11 @@ test_that("Pathway summary generates a correct number of pathways", {
     )
     
     
-    exprs.mat <- matrix(2*(1:12),4,3)                
-    rownames(exprs.mat) <- path_tab$ENSEMBL
-    colnames(exprs.mat) <- LETTERS[1:3]
+    exprsMat <- matrix(2*(1:12),4,3)                
+    rownames(exprsMat) <- path_tab$ENSEMBL
+    colnames(exprsMat) <- LETTERS[1:3]
     
-    res <- Path_Summary(exprs.mat, path_tab, method = "x2")
+    res <- pathwaySummary(exprsMat, path_tab, method = "x2")
     
     expect_equal(nrow(res), 2)
 })
@@ -45,11 +45,11 @@ test_that("Pathway summary generates a correct number of samples", {
     )
     
     
-    exprs.mat <- matrix(2*(1:12),4,3)                
-    rownames(exprs.mat) <- path_tab$ENSEMBL
-    colnames(exprs.mat) <- LETTERS[1:3]
+    exprsMat <- matrix(2*(1:12),4,3)                
+    rownames(exprsMat) <- path_tab$ENSEMBL
+    colnames(exprsMat) <- LETTERS[1:3]
     
-    res <- Path_Summary(exprs.mat, path_tab, method = "x2")
+    res <- pathwaySummary(exprsMat, path_tab, method = "x2")
     
     expect_equal(ncol(res), 3)
 })
@@ -67,11 +67,11 @@ test_that("Pathway summary generates correct activity scores", {
     )
     
     
-    exprs.mat <- matrix(2*(1:12),4,3)                
-    rownames(exprs.mat) <- path_tab$ENSEMBL
-    colnames(exprs.mat) <- LETTERS[1:3]
+    exprsMat <- matrix(2*(1:12),4,3)                
+    rownames(exprsMat) <- path_tab$ENSEMBL
+    colnames(exprsMat) <- LETTERS[1:3]
     
-    res <- Path_Summary(exprs.mat, path_tab, method = "x2")
+    res <- pathwaySummary(exprsMat, path_tab, method = "x2")
     
     expect_equal(res[1,1], 2.5)
     expect_equal(res[2,1], 12.5)

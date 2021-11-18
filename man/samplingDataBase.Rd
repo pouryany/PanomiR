@@ -5,37 +5,37 @@
 \title{Outputs a table of sampling data(rows are miRNA and cols are samples)}
 \usage{
 samplingDataBase(
-  enrich.null,
+  enrichNull,
   selector,
-  samp.rate,
+  sampRate,
   fn,
-  n_paths,
-  sampling.data.file,
-  jack.knife = FALSE,
-  save.sampling,
-  num.cores = 1
+  nPaths,
+  samplingDataFile,
+  jackKnife = FALSE,
+  saveSampling,
+  numCores = 1
 )
 }
 \arguments{
-\item{enrich.null}{Enrichment dataset with x (miRNA), y (pathway) and pval
+\item{enrichNull}{Enrichment dataset with x (miRNA), y (pathway) and pval
 (probability of observing x in pathway cluster).}
 
 \item{selector}{Table with x(miRNA) in pathway cluster.}
 
-\item{samp.rate}{Sampling rate.}
+\item{sampRate}{Sampling rate.}
 
 \item{fn}{Methodology function.}
 
-\item{n_paths}{Number of pathways in pathway cluster.}
+\item{nPaths}{Number of pathways in pathway cluster.}
 
-\item{sampling.data.file}{If file exists, load. Else, perform random sampling}
+\item{samplingDataFile}{If file exists, load. Else, perform random sampling}
 
-\item{jack.knife}{If TRUE, conduct sampling with one less pathway, used for
+\item{jackKnife}{If TRUE, conduct sampling with one less pathway, used for
 jack knifing}
 
-\item{save.sampling}{If TRUE, data is saved.}
+\item{saveSampling}{If TRUE, data is saved.}
 
-\item{num.cores}{number of cores used}
+\item{numCores}{number of cores used}
 }
 \value{
 Outputs of sampling data.
