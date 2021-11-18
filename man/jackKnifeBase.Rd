@@ -13,7 +13,7 @@ jackKnifeBase(
   fn,
   jack.knife.data,
   m,
-  num.cores = 1
+  numCores = 1
 )
 }
 \arguments{
@@ -32,7 +32,7 @@ jackKnifeBase(
 
 \item{m}{method name}
 
-\item{num.cores}{number of cores}
+\item{numCores}{number of cores}
 }
 \value{
 Outputs a new selector table with col x, pval_jk

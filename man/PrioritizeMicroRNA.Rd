@@ -6,19 +6,19 @@
 \usage{
 PrioritizeMicroRNA(
   enriches0,
-  pathway.clusters,
+  pathwayClusters,
   method = "AggInv",
-  method.thresh = NULL,
-  mir.path.fdr.thresh = 0.25,
-  top.clust = 2,
-  samp.rate = 1000,
-  out.dir = "",
-  data.dir = "",
-  save.sampling = TRUE,
-  run.jack.knife = TRUE,
-  save.jack.knife = FALSE,
-  num.cores = 1,
-  save.csv = TRUE,
+  methodThresh = NULL,
+  enrichmentFDR = 0.25,
+  topClust = 2,
+  sampRate = 1000,
+  outDir = "",
+  dataDir = "",
+  saveSampling = TRUE,
+  runJackKnife = TRUE,
+  saveJackKnife = FALSE,
+  numCores = 1,
+  saveCSV = TRUE,
   prefix = ""
 )
 }
@@ -26,37 +26,37 @@ PrioritizeMicroRNA(
 \item{enriches0}{miRNA-pathway enrichment dataset obtained from
 miRNAPathwayEnrichment.}
 
-\item{pathway.clusters}{Pathway clusters, obtained from
+\item{pathwayClusters}{Pathway clusters, obtained from
 MappingPathwaysClusters.}
 
 \item{method}{Vector of methods (pCut, AggInv, AggLog, sumz, sumlog).}
 
-\item{method.thresh}{Vector of methods threshold for each method in method,
+\item{methodThresh}{Vector of methods threshold for each method in method,
 if NULL use default thresh values in method.}
 
-\item{mir.path.fdr.thresh}{for calculating miRNA-pathway hits in the input
-cluster based on standard enrichment analysis.}
+\item{enrichmentFDR}{FDR cut-off calculating miRNA-pathway hits
+in the input cluster based on significant enrichment readouts.}
 
-\item{top.clust}{Top x clusters to perform miRNA prioritization on.}
+\item{topClust}{Top x clusters to perform miRNA prioritization on.}
 
-\item{samp.rate}{Sampling rate for CLT.}
+\item{sampRate}{Sampling rate for CLT.}
 
-\item{out.dir}{Output directory.}
+\item{outDir}{Output directory.}
 
-\item{data.dir}{Data directory.}
+\item{dataDir}{Data directory.}
 
-\item{save.sampling}{If TRUE, saves sampling data as RDS for each cluster in
-top.clust in data.dir.}
+\item{saveSampling}{If TRUE, saves sampling data as RDS for each cluster in
+topClust in dataDir.}
 
-\item{run.jack.knife}{If TRUE, jacknifing will be performed.}
+\item{runJackKnife}{If TRUE, jacknifing will be performed.}
 
-\item{save.jack.knife}{If TRUE, saves jack-knifed sampling data as RDS for each
-cluster in top.clust in data.dir.}
+\item{saveJackKnife}{If TRUE, saves jack-knifed sampling data as RDS for each
+cluster in topClust in dataDir.}
 
-\item{num.cores}{Number of CPU cores to use, must be at least one.}
+\item{numCores}{Number of CPU cores to use, must be at least one.}
 
-\item{save.csv}{If TRUE, saves CSV file for each cluster in top.clust in
-out.dir.}
+\item{saveCSV}{If TRUE, saves CSV file for each cluster in topClust in
+outDir.}
 
 \item{prefix}{Prefix for all saved data.}
 }
