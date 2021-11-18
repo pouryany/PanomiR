@@ -383,10 +383,10 @@ sumlog.cover.fn <- AggInv.cover.fn
 #' @param fn Methodology function.
 #' @param n_paths Number of pathways in pathway cluster.
 #' @param sampling.data.file If file exists, load. Else, perform random sampling
-#' @param save.sampling If TRUE, data is saved.
+#' @param saveSampling If TRUE, data is saved.
 #' @param jack.knife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
-#' @param num.cores number of cores used
+#' @param numCores number of cores used
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrich.null,
                              selector,
@@ -395,8 +395,8 @@ samplingDataBase <- function(enrich.null,
                              n_paths,
                              sampling.data.file,
                              jack.knife = FALSE,
-                             save.sampling,
-                             num.cores = 1) {
+                             saveSampling,
+                             numCores = 1) {
   if (!all(utils::hasName(selector, c("x")))) {
     stop("The selector table needs a column x (miRNA name)")
   }
@@ -427,7 +427,7 @@ samplingDataBase <- function(enrich.null,
                        pathways = null.paths,
                        is.selector = FALSE)
         return(sel.null$k)
-      }, mc.cores = num.cores)
+      }, mc.cores = numCores)
       # build null distribution of K
 
 
@@ -443,7 +443,7 @@ samplingDataBase <- function(enrich.null,
 
       out.list[[samp.tag]] <- temp
     }
-    if (save.sampling == TRUE) {
+    if (saveSampling == TRUE) {
       saveRDS(out.list, file = sampling.data.file)
       print(paste0(sampling.data.file, " saved."))
     }
@@ -510,7 +510,7 @@ methodProbBase <- function(sampling.data,
 #' @param jack.knife.data Random distribution data with jack-knifing
 #'   (i.e. one less pathway)
 #' @param m method name
-#' @param num.cores number of cores
+#' @param numCores number of cores
 #' @return Outputs a new selector table with col x, pval_jk
 jackKnifeBase <- function(selector,
                           pathways,
@@ -518,7 +518,7 @@ jackKnifeBase <- function(selector,
                           fn,
                           jack.knife.data,
                           m,
-                          num.cores = 1) {
+                          numCores = 1) {
 
   # obtain means and sds for distribution, assume CLT
   n_paths <- length(pathways)
@@ -536,7 +536,7 @@ jackKnifeBase <- function(selector,
                            sd = sample.sds,
                            lower.tail = FALSE)
     return(p_vals)
-  }, mc.cores = num.cores)
+  }, mc.cores = numCores)
 
 
   # rows <- number of pathways; col <- number of miRNAs

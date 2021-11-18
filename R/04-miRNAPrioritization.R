@@ -5,65 +5,65 @@
 #'
 #' @param enriches0 miRNA-pathway enrichment dataset obtained from
 #'   miRNAPathwayEnrichment.
-#' @param pathway.clusters Pathway clusters, obtained from
+#' @param pathwayClusters Pathway clusters, obtained from
 #'   MappingPathwaysClusters.
 #' @param method Vector of methods (pCut, AggInv, AggLog, sumz, sumlog).
-#' @param method.thresh Vector of methods threshold for each method in method,
+#' @param methodThresh Vector of methods threshold for each method in method,
 #'   if NULL use default thresh values in method.
-#' @param mir.path.fdr.thresh for calculating miRNA-pathway hits in the input
-#'   cluster based on standard enrichment analysis.
-#' @param top.clust Top x clusters to perform miRNA prioritization on.
-#' @param samp.rate Sampling rate for CLT.
-#' @param num.cores Number of CPU cores to use, must be at least one.
-#' @param out.dir Output directory.
-#' @param data.dir Data directory.
-#' @param save.csv If TRUE, saves CSV file for each cluster in top.clust in
-#'   out.dir.
-#' @param save.sampling If TRUE, saves sampling data as RDS for each cluster in
-#'   top.clust in data.dir.
-#' @param run.jack.knife If TRUE, jacknifing will be performed.
-#' @param save.jack.knife If TRUE, saves jack-knifed sampling data as RDS for each
-#'   cluster in top.clust in data.dir.
+#' @param enrichmentFDR FDR cut-off calculating miRNA-pathway hits
+#'   in the input cluster based on significant enrichment readouts.
+#' @param topClust Top x clusters to perform miRNA prioritization on.
+#' @param sampRate Sampling rate for CLT.
+#' @param numCores Number of CPU cores to use, must be at least one.
+#' @param outDir Output directory.
+#' @param dataDir Data directory.
+#' @param saveCSV If TRUE, saves CSV file for each cluster in topClust in
+#'   outDir.
+#' @param saveSampling If TRUE, saves sampling data as RDS for each cluster in
+#'   topClust in dataDir.
+#' @param runJackKnife If TRUE, jacknifing will be performed.
+#' @param saveJackKnife If TRUE, saves jack-knifed sampling data as RDS for each
+#'   cluster in topClust in dataDir.
 #' @param prefix Prefix for all saved data.
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
 #'   associated p-values from the methods.
 #' @export
 PrioritizeMicroRNA <- function(enriches0,
-                               pathway.clusters,
+                               pathwayClusters,
                                method = "AggInv",
-                               method.thresh = NULL,
-                               mir.path.fdr.thresh = 0.25,
-                               top.clust = 2,
-                               samp.rate = 1000,
-                               out.dir = "",
-                               data.dir = "",
-                               save.sampling = TRUE,
-                               run.jack.knife = TRUE,
-                               save.jack.knife = FALSE,
-                               num.cores = 1,
-                               save.csv = TRUE,
+                               methodThresh = NULL,
+                               enrichmentFDR = 0.25,
+                               topClust = 2,
+                               sampRate = 1000,
+                               outDir = "",
+                               dataDir = "",
+                               saveSampling = TRUE,
+                               runJackKnife = TRUE,
+                               saveJackKnife = FALSE,
+                               numCores = 1,
+                               saveCSV = TRUE,
                                prefix = "") {
-  if (substring(out.dir, nchar(out.dir)) != "/") {
-    out.dir <- paste0(out.dir, "/")
+  if (substring(outDir, nchar(outDir)) != "/") {
+    outDir <- paste0(outDir, "/")
   }
-  if (!dir.exists(out.dir)) {
+  if (!dir.exists(outDir)) {
     warning("Output directory does not exist.")
-    dir.create(out.dir, recursive = TRUE)
+    dir.create(outDir, recursive = TRUE)
   }
 
-  if (out.dir == "/") {
-    out.dir <- ""
+  if (outDir == "/") {
+    outDir <- ""
   }
 
-  if (substring(data.dir, nchar(data.dir)) != "/") {
-    data.dir <- paste0(data.dir, "/")
+  if (substring(dataDir, nchar(dataDir)) != "/") {
+    dataDir <- paste0(dataDir, "/")
   }
-  if (!dir.exists(data.dir)) {
+  if (!dir.exists(dataDir)) {
     stop("Data directory does not exist.")
   }
 
-  if (data.dir == "/") {
-    data.dir <- ""
+  if (dataDir == "/") {
+    dataDir <- ""
   }
 
   output <- list()
@@ -75,26 +75,26 @@ PrioritizeMicroRNA <- function(enriches0,
                                                 method = "fdr"))
   
   enriches <- enriches %>%
-    dplyr::mutate(., hit = ifelse(path_fdr < mir.path.fdr.thresh, 1, 0))
+    dplyr::mutate(., hit = ifelse(path_fdr < enrichmentFDR, 1, 0))
 
   # Need to fix this function to be able to work on specific clusters
   # instead of all top clusters.
-  for (clustNo in 1:top.clust) {
+  for (clustNo in seq_len(topClust)) {
     clustName <- paste0("Cluster", clustNo)
 
     print(paste0("Working on ", clustName, "."))
 
     # select pathways in cluster
     pathways <- 
-      as.character(pathway.clusters[pathway.clusters$cluster == clustNo,
+      as.character(pathwayClusters[pathwayClusters$cluster == clustNo,
                                     ]$Pathway)
     
     n_paths <- length(pathways)
 
     # formulate number of miRNA-pathway enrichment with p-value less 
     # than threshold for each miRNA
-    temp.enrich <- enriches[enriches$y %in% pathways, ]
-    selector <- temp.enrich %>%
+    tempEnrich <- enriches[enriches$y %in% pathways, ]
+    selector <- tempEnrich %>%
       dplyr::group_by(x) %>%
       dplyr::summarise(., "cluster_hits" = sum(hit))
 
@@ -103,105 +103,105 @@ PrioritizeMicroRNA <- function(enriches0,
       m <- method[i]
 
       print(paste0("Performing ", m, " function."))
-      fn <- get(paste0(m, ".fn"))
-      cover.fn <- get(paste0(m, ".cover.fn"))
+      fn <- get(paste0(m, "Fn"))
+      coverFn <- get(paste0(m, "CoverFn"))
 
-      if (!is.null(method.thresh)) {
-        m.thresh <- method.thresh[i]
+      if (!is.null(methodThresh)) {
+        mThresh <- methodThresh[i]
         temp <- fn(enriches = enriches0,
                    pathways,
-                   is.selector = TRUE,
-                   thresh = m.thresh)
+                   isSelector = TRUE,
+                   thresh = mThresh)
       } else {
-        temp <- fn(enriches = enriches0, pathways, is.selector = TRUE)
+        temp <- fn(enriches = enriches0, pathways, isSelector = TRUE)
       }
 
-      m.selector <- temp$selector
-      m.enriches0 <- temp$enriches0
+      mSelector  <- temp$selector
+      mEnriches0 <- temp$enriches0
 
-      if (nrow(m.selector) < 3) {
+      if (nrow(mSelector) < 3) {
         print(paste0("Skipping ",
                      m,
                      " function due to low number of miRNA after filter"))
         next
       }
 
-      enrich.null <- m.enriches0 %>% dplyr::filter(., x %in% m.selector$x)
+      enrichNull <- mEnriches0 %>% dplyr::filter(., x %in% mSelector$x)
 
-      sampling.data.dir <- paste0(data.dir, prefix, "Sampling_Data/")
+      samplingDataDir <- paste0(dataDir, prefix, "Sampling_Data/")
 
-      if (save.sampling == TRUE) {
-        if (!dir.exists(sampling.data.dir))
-          dir.create(sampling.data.dir, recursive = TRUE)
+      if (saveSampling == TRUE) {
+        if (!dir.exists(samplingDataDir))
+          dir.create(samplingDataDir, recursive = TRUE)
       }
 
-      sampling.data.filename <- paste0(prefix,
+      samplingDataFilename <- paste0(prefix,
                                        m,
                                        "_",
-                                       samp.rate,
+                                       sampRate,
                                        "_samples.RDS")
       
-      sampling.data.file <- paste0(sampling.data.dir,
+      samplingDataFile <- paste0(samplingDataDir,
                                    "/", 
-                                   sampling.data.filename)
+                                   samplingDataFilename)
 
-      if (m %in% c("AggInv", "AggLog")) {
+      if (m %in% c("aggInv", "aggLog")) {
         # perform sampling
-        sampling.data <- samplingDataBase(enrich.null,
-          m.selector,
-          samp.rate,
+        samplingData <- samplingDataBase(enrichNull,
+          mSelector,
+          sampRate,
           fn,
           n_paths,
-          sampling.data.file,
-          jack.knife = FALSE,
-          save.sampling = save.sampling,
-          num.cores = 8
+          samplingDataFile,
+          jackKnife = FALSE,
+          saveSampling = saveSampling,
+          numCores = 8
         )
 
-        m.selector <- methodProbBase(
-          sampling.data = sampling.data[[paste0("SampSize_", 100)]],
-          selector = m.selector,
+        mSelector <- methodProbBase(
+          samplingData = samplingData[[paste0("SampSize_", 100)]],
+          selector = mSelector,
           m = m,
           n_paths = n_paths,
-          cover.fn = cover.fn
+          coverFn = coverFn
         )
       } else {
-        names(m.selector)[2:3] <- paste0(m, "_", names(m.selector)[2:3])
+        names(mSelector)[2:3] <- paste0(m, "_", names(mSelector)[2:3])
       }
 
 
       print(paste0(m, " Method Done"))
 
       # perform jack-knife
-      if (run.jack.knife == TRUE) {
-        sampling.data <- samplingDataBase(enrich.null,
-          m.selector,
-          samp.rate,
+      if (runJackKnife == TRUE) {
+        samplingData <- samplingDataBase(enrichNull,
+          mSelector,
+          sampRate,
           fn,
           n_paths,
-          sampling.data.file,
-          jack.knife = FALSE,
-          save.sampling = save.sampling,
-          num.cores = 8
+          samplingDataFile,
+          jackKnife = FALSE,
+          saveSampling = saveSampling,
+          numCores = 8
         )
-        m.selector <- jackKnifeBase(
-          selector = m.selector,
+        mSelector <- jackKnifeBase(
+          selector = mSelector,
           pathways = pathways,
-          enrich.null = enrich.null,
+          enrichNull = enrichNull,
           fn = fn,
-          jack.knife.data = sampling.data[[paste0("SampSize_", 100)]],
+          jackKnifeData = samplingData[[paste0("SampSize_", 100)]],
           m = m,
-          num.cores = 8
+          numCores = 8
         )
 
         print(paste0(m, " JackKnifing Method Done!"))
 
-        m.selector <- m.selector[, c(1, 3, 2, 4)]
+        mSelector <- mSelector[, c(1, 3, 2, 4)]
       } else {
-        m.selector <- m.selector[, c(1, 3, 2)]
+        mSelector <- mSelector[, c(1, 3, 2)]
       }
 
-      selector <- merge(selector, m.selector, all = TRUE)
+      selector <- merge(selector, mSelector, all = TRUE)
 
       met <- paste0(m, "_pval")
       selector <- selector %>% dplyr::arrange(., !!rlang::sym(met))
@@ -212,15 +212,15 @@ PrioritizeMicroRNA <- function(enriches0,
       )
     }
 
-    if (save.csv == TRUE) {
-      save.name <- paste0(prefix,
-                          samp.rate,
+    if (saveCSV == TRUE) {
+      saveName <- paste0(prefix,
+                          sampRate,
                           "_samples_clustNo_",
                           clustNo, ".csv")
       
-      print(paste0(save.name, " saved!"))
+      print(paste0(saveName, " saved!"))
       
-      utils::write.csv(selector, paste0(out.dir, save.name))
+      utils::write.csv(selector, paste0(outDir, saveName))
     }
 
     output[[clustName]] <- selector
