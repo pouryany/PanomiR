@@ -5,14 +5,14 @@
 \title{The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via sumlog aggregation method.}
 \usage{
-sumlog.fn(enriches, pathways, is.selector, thresh = NULL)
+sumlog.fn(enriches, pathways, isSelector, thresh = NULL)
 }
 \arguments{
 \item{enriches}{a table of miRNA pathway enrichments. Universe}
 
 \item{pathways}{queried pathways. e.g. cluster pathways}
 
-\item{is.selector}{internal argument}
+\item{isSelector}{internal argument}
 
 \item{thresh}{internal argument}
 }
