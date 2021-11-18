@@ -8,14 +8,15 @@ Description: PanomiR is a package to detect miRNAs that target groups of
     pathways from gene expression data.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyDataCompression: bzip2
 RoxygenNote: 7.1.2
-Suggests: 
+Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 biocViews:
-    GeneExpression
-Imports: 
+    GeneExpression,
+    GeneTarget,
+    Pathways
+Imports:
     clusterProfiler,
     dplyr,
     forcats,
@@ -30,5 +31,5 @@ Imports:
     rlang,
     tibble,
     utils
-Depends: 
+Depends:
     R (>= 2.10)
