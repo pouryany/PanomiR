@@ -9,11 +9,11 @@ jack-knifing of the pathway cluster (removing a pathway at a time)}
 jackKnifeBase(
   selector,
   pathways,
-  enrich.null,
+  enrichNull,
   fn,
-  jack.knife.data,
+  jackKnifeData,
   m,
-  num.cores = 1
+  numCores = 1
 )
 }
 \arguments{
@@ -22,17 +22,17 @@ jackKnifeBase(
 
 \item{pathways}{Pathways in pathway cluster.}
 
-\item{enrich.null}{Enrichment dataset with x (miRNA), y (pathway) and pval
+\item{enrichNull}{Enrichment dataset with x (miRNA), y (pathway) and pval
 (probability of observing x in pathway cluster).}
 
 \item{fn}{Methodology function.}
 
-\item{jack.knife.data}{Random distribution data with jack-knifing
+\item{jackKnifeData}{Random distribution data with jack-knifing
 (i.e. one less pathway)}
 
 \item{m}{method name}
 
-\item{num.cores}{number of cores}
+\item{numCores}{number of cores}
 }
 \value{
 Outputs a new selector table with col x, pval_jk
