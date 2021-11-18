@@ -10,8 +10,8 @@ DifferentialPathwayAnalysis(
   covariates,
   condition,
   adjust.covars = NULL,
-  covariates.correction = F,
-  quantile.norm = F,
+  covariates.correction = FALSE,
+  quantile.norm = FALSE,
   out.dir = "",
   save.RDS.name = NULL,
   id = "ENSEMBL",
@@ -19,7 +19,7 @@ DifferentialPathwayAnalysis(
   min.path.size = 10,
   method = "x2",
   trim = 0.025,
-  genes.counts.log = T,
+  genes.counts.log = TRUE,
   contrast.conds = NA
 )
 }
@@ -38,10 +38,10 @@ in covariates column.}
 \item{adjust.covars}{Adjustment covariates like batch; if NULL,
 no adjustments performed.}
 
-\item{covariates.correction}{If T, performs covariates detection and
+\item{covariates.correction}{If TRUE, performs covariates detection and
 correction; requires **adjust.covars**; (limma).}
 
-\item{quantile.norm}{If T, performs quantile normalization on pathway
+\item{quantile.norm}{If TRUE, performs quantile normalization on pathway
 summary statistics; from *preprocess* package.}
 
 \item{out.dir}{Output directory.}
@@ -62,7 +62,7 @@ specifications in documentations.}
 \item{trim}{Filter pathways with mean less than trim threshold
 in pathway summary statistics.}
 
-\item{genes.counts.log}{If T, log(genes.counts).}
+\item{genes.counts.log}{If TRUE, log(genes.counts).}
 
 \item{contrast.conds}{Provide a contrast expression to be used in Limma
 comparison. This is necessary if you have more than two levels in the

@@ -4,7 +4,7 @@
 \alias{getDesignMatrix}
 \title{Obtain Design Matrix}
 \usage{
-getDesignMatrix(covariatesDataFrame, Intercept = T, RELEVELS = list())
+getDesignMatrix(covariatesDataFrame, Intercept = TRUE, RELEVELS = list())
 }
 \arguments{
 \item{covariatesDataFrame}{Dataframe of covariates.}

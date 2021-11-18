@@ -14,11 +14,11 @@ PrioritizeMicroRNA(
   samp.rate = 1000,
   out.dir = "",
   data.dir = "",
-  save.sampling = T,
-  run.jack.knife = T,
-  save.jack.knife = F,
+  save.sampling = TRUE,
+  run.jack.knife = TRUE,
+  save.jack.knife = FALSE,
   num.cores = 1,
-  save.csv = T,
+  save.csv = TRUE,
   prefix = ""
 )
 }
@@ -45,17 +45,17 @@ cluster based on standard enrichment analysis.}
 
 \item{data.dir}{Data directory.}
 
-\item{save.sampling}{If T, saves sampling data as RDS for each cluster in
+\item{save.sampling}{If TRUE, saves sampling data as RDS for each cluster in
 top.clust in data.dir.}
 
-\item{run.jack.knife}{If True, jacknifing will be performed.}
+\item{run.jack.knife}{If TRUE, jacknifing will be performed.}
 
-\item{save.jack.knife}{If T, saves jack-knifed sampling data as RDS for each
+\item{save.jack.knife}{If TRUE, saves jack-knifed sampling data as RDS for each
 cluster in top.clust in data.dir.}
 
 \item{num.cores}{Number of CPU cores to use, must be at least one.}
 
-\item{save.csv}{If T, saves CSV file for each cluster in top.clust in
+\item{save.csv}{If TRUE, saves CSV file for each cluster in top.clust in
 out.dir.}
 
 \item{prefix}{Prefix for all saved data.}
