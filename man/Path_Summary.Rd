@@ -20,7 +20,7 @@ Path_Summary(
 as columns.}
 
 \item{pathway.ref}{Table of pathway-gene associations. Created from
-\code{\link{Pathway_Gene_Tab}} function.}
+\code{\link{pathwayGeneTab}} function.}
 
 \item{id}{Gene annotation type in the row name of gene expression data.}
 

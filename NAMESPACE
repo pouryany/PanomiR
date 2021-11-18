@@ -2,11 +2,11 @@
 
 export("%>%")
 export(Path_Summary)
-export(Pathway_Gene_Tab)
 export(PrioritizeMicroRNA)
 export(differentialPathwayAnalysis)
 export(getDesignMatrix)
 export(linColumnFinder)
 export(mappingPathwaysClusters)
 export(miRNAPathwayEnrichment)
+export(pathwayGeneTab)
 importFrom(magrittr,"%>%")

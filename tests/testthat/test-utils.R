@@ -8,7 +8,7 @@ test_that("Pathway-gene table works", {
     path.list <- list("Path1" = Pathway1, "Path2" = Pathway2) 
 
     # org.Hs.eg.db is required
-    res <- Pathway_Gene_Tab(pathway.list = path.list)
+    res <- pathwayGeneTab(pathway.list = path.list)
     expect_equal(nrow(res), 6)
 })
 

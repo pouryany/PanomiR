@@ -4,14 +4,14 @@
 \alias{pCut.fn}
 \title{Score miRNAs In a Cluster Of Pathways}
 \usage{
-pCut.fn(enriches, pathways, is.selector, thresh = 0.05)
+pCut.fn(enriches, pathways, isSelector, thresh = 0.05)
 }
 \arguments{
 \item{enriches}{Table of miRNA pathway enrichments.}
 
 \item{pathways}{Queried pathways, e.g. cluster pathways.}
 
-\item{is.selector}{Internal argument.}
+\item{isSelector}{Internal argument.}
 
 \item{thresh}{Threshold from p-value cut-off.}
 }
