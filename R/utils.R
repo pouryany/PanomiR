@@ -76,36 +76,36 @@ Pathway_Gene_Tab <- function(path.address = NA,
 #' @param pathway.ref Table of pathway-gene associations. Created from
 #'   \code{\link{Pathway_Gene_Tab}} function.
 #' @param id Gene annotation type in the row name of gene expression data.
-#' @param z.normalize Normalization of pathway summary score.
+#' @param zNormalize Normalization of pathway summary score.
 #' @param method Choice of how to summarize gene ranks into pathway statistics.
-#' @param de.genes List of differentially expressed genes along with t-scores.
+#' @param deGenes List of differentially expressed genes along with t-scores.
 #'   Only necessary if working on Top 50\% summary method.
 #' @param trim Percentage of top and bottom ranked genes to be excluded from
 #'   pathway summary statistics.
-#' @param t.scores Argument for-top-50-percent-genes method.
+#' @param tScores Argument for-top-50-percent-genes method.
 #' @return PathExp Table of pathway activity profiles per sample.
 #' @export
 
 Path_Summary <- function(exprs.mat,
                          pathway.ref,
                          id = "ENSEMBL",
-                         z.normalize = FALSE,
+                         zNormalize = FALSE,
                          method = FALSE,
-                         de.genes = NULL,
+                         deGenes = NULL,
                          trim = 0,
-                         t.scores = NULL) {
+                         tScores = NULL) {
 
   # There is a confusion about the data format here.
   # Make sure it is consistent.
   # Current version only works with ENSEMBL.
   exprs.mat <- tibble::rownames_to_column(as.data.frame(exprs.mat), var = id)
 
-  if (!is.null(de.genes)) {
-    if (is.null(t.scores)) {
+  if (!is.null(deGenes)) {
+    if (is.null(tScores)) {
       stop("Provide tscores/pvalues")
     }
 
-    pathway.ref <- dplyr::inner_join(pathway.ref, t.scores,
+    pathway.ref <- dplyr::inner_join(pathway.ref, tScores,
       by = c("ENSEMBL")
     )
 
@@ -146,7 +146,7 @@ Path_Summary <- function(exprs.mat,
   PathExp <- as.data.frame(PathExpTab[, -1])
   rownames(PathExp) <- as.character(dplyr::pull(PathExpTab[, 1]))
 
-  if (z.normalize) {
+  if (zNormalize) {
     PathExp <- apply(PathExp, 2, function(X) {
       (X - mean(X)) / stats::sd(X)
     })

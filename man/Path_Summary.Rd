@@ -8,11 +8,11 @@ Path_Summary(
   exprs.mat,
   pathway.ref,
   id = "ENSEMBL",
-  z.normalize = FALSE,
+  zNormalize = FALSE,
   method = FALSE,
-  de.genes = NULL,
+  deGenes = NULL,
   trim = 0,
-  t.scores = NULL
+  tScores = NULL
 )
 }
 \arguments{
@@ -24,17 +24,17 @@ as columns.}
 
 \item{id}{Gene annotation type in the row name of gene expression data.}
 
-\item{z.normalize}{Normalization of pathway summary score.}
+\item{zNormalize}{Normalization of pathway summary score.}
 
 \item{method}{Choice of how to summarize gene ranks into pathway statistics.}
 
-\item{de.genes}{List of differentially expressed genes along with t-scores.
+\item{deGenes}{List of differentially expressed genes along with t-scores.
 Only necessary if working on Top 50\% summary method.}
 
 \item{trim}{Percentage of top and bottom ranked genes to be excluded from
 pathway summary statistics.}
 
-\item{t.scores}{Argument for-top-50-percent-genes method.}
+\item{tScores}{Argument for-top-50-percent-genes method.}
 }
 \value{
 PathExp Table of pathway activity profiles per sample.
