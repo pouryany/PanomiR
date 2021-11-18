@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/pouryany/PanomiR/workflows/R-CMD-check/badge.svg)](https://github.com/pouryany/PanomiR/actions)
+[![lint](https://github.com/pouryany/PanomiR/workflows/lint/badge.svg)](https://github.com/pouryany/PanomiR/actions)
 <!-- badges: end -->
 
 ## PanomiR Walkthrough
