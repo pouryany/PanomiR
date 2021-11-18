@@ -1,6 +1,6 @@
 .DS_Store
 
-.Rproj.*
+*.Rproj*
 .Rhistory
 .RData
 .Ruserdata
