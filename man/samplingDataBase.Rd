@@ -7,9 +7,9 @@
 samplingDataBase(
   enrichNull,
   selector,
-  samp.rate,
+  sampRate,
   fn,
-  n_paths,
+  nPaths,
   samplingDataFile,
   jackKnife = FALSE,
   saveSampling,
@@ -22,11 +22,11 @@ samplingDataBase(
 
 \item{selector}{Table with x(miRNA) in pathway cluster.}
 
-\item{samp.rate}{Sampling rate.}
+\item{sampRate}{Sampling rate.}
 
 \item{fn}{Methodology function.}
 
-\item{n_paths}{Number of pathways in pathway cluster.}
+\item{nPaths}{Number of pathways in pathway cluster.}
 
 \item{samplingDataFile}{If file exists, load. Else, perform random sampling}
 

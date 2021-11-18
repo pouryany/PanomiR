@@ -263,7 +263,7 @@ aggLogFn <- function(enriches, pathways, isSelector, thresh = 0.1) {
 sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
   enriches1 <- enriches %>%
     dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
-  
+
   enriches1 <- enriches1 %>%
     dplyr::mutate(., pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
 
@@ -272,7 +272,6 @@ sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
   for (i in unique(tempEnrich$x)) {
     temp <- tempEnrich[tempEnrich$x == i, ]
     tPVal <- metap::sumz(temp$pval)
-    # print(paste0(i, ": ", tPVal$p))
     aggPTab <- rbind(aggPTab, c(i, tPVal$p, nrow(temp)))
   }
 
@@ -417,10 +416,10 @@ samplingDataBase <- function(enrichNull,
     outList <- list()
     for (nPathsTemp in sampSizeVec) {
       temp <- parallel::mclapply(1:(sampRate), function(Y) {
-        
+
         set.seed(Y)
         nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
-        
+
         selNull <- fn(enriches = enrichNull,
                        pathways = nullPaths,
                        isSelector = FALSE)
@@ -525,9 +524,10 @@ jackKnifeBase <- function(selector,
   sampleSDs <- sampleSDs * 10 / sqrt(nPaths - 1)
 
   # remove one pathway at a time and obtain K for each miRNA
-  temp1 <- parallel::mclapply(1:length(pathways), function(X) {
+  temp1 <- parallel::mclapply(seq_along(pathways), function(X) {
     tempPathways <- pathways[-X]
-    tempSelector <- fn(enriches = enrichNull, pathways = tempPathways, isSelector = FALSE)
+    tempSelector <- fn(enriches = enrichNull, pathways = tempPathways,
+                       isSelector = FALSE)
     # obtain p-values using the means and sds obtain above
     p_vals <- stats::pnorm(tempSelector$k,
                            mean = sampleMeans,
@@ -565,25 +565,26 @@ jackKnifeBase <- function(selector,
 #' @param RELEVELS TBA.
 #' @return List containing a design matrix.
 #' @export
-getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = list()) {
+getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
+                            RELEVELS = list()) {
   rowNamesTemp <- rownames(covariatesDataFrame)
   colNamesTemp <- colnames(covariatesDataFrame)
 
   factorCovariateNames <-
     names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
-  
-  factorCovariateNames <- 
+
+  factorCovariateNames <-
     setdiff(factorCovariateNames,
             factorCovariateNames[
               !(factorCovariateNames %in% colnames(covariatesDataFrame))])
-  
+
   numericCovariateNames <- setdiff(colNamesTemp, factorCovariateNames)
 
   # Ensure the factors are in fact of type factor, and the quantitative
   # variables are numeric:
   covariatesDataFrame <-
-    as.data.frame(lapply(colnames(covariatesDataFrame),function(column) {
-                           
+    as.data.frame(lapply(colnames(covariatesDataFrame), function(column) {
+
                         if (column %in% factorCovariateNames) {
                           fac <- as.factor(covariatesDataFrame[, column])
                           if (column %in% names(RELEVELS)) {
@@ -594,7 +595,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
                           return(as.numeric(covariatesDataFrame[, column]))
                         }
                       }))
-  
+
   rownames(covariatesDataFrame) <- rowNamesTemp
   colnames(covariatesDataFrame) <- colNamesTemp
 
@@ -604,13 +605,12 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
   if (ncol(catData) > 0) {
     numCats <- sapply(colnames(catData),
                       function(col) nlevels(factor(catData[, col])))
-    
+
     excludeCategoricalCols <-
       names(numCats)[numCats <= 1 | numCats > maxNumCat]
-    
+
     if (!is.null(excludeCategoricalCols) &&
-        length(excludeCategoricalCols) > 0)
-      {
+        length(excludeCategoricalCols) > 0){
       warning(paste("Excluding categorical variables with less than 2",
                     ifelse(is.infinite(maxNumCat),
                            "",
@@ -618,18 +618,18 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
                     " categories: ",
                     paste(paste("'", excludeCategoricalCols, "'", sep = ""),
                           collapse = ", "), sep = ""))
-      
+
       factorCovariateNames <- setdiff(factorCovariateNames,
                                         excludeCategoricalCols)
-      covariatesDataFrame <- 
-        covariatesDataFrame[, 
+      covariatesDataFrame <-
+        covariatesDataFrame[,
             !(colnames(covariatesDataFrame) %in% excludeCategoricalCols),
             drop = FALSE]
     }
 
     # Inspired by http://stackoverflow.com/questions/4560459/
     #
-    # And, already ensured above that 
+    # And, already ensured above that
     # covariatesDataFrame[, factorCovariateNames] satisfies:
     # 1) fac is of type factor.
     # 2) fac is releveled as designated in RELEVELS.
@@ -677,7 +677,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE, RELEVELS = li
   return(list(design = design,
               covariates = colNamesTemp,
               factorsLevels = sapply(contra, colnames, simplify = FALSE),
-              numericCovars = numericCovariateNames, 
+              numericCovars = numericCovariateNames,
               covariatesDataFrame = covariatesDataFrame))
 }
 

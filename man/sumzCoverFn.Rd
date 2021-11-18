@@ -4,12 +4,12 @@
 \alias{sumzCoverFn}
 \title{Internal function for modification of prioritization.}
 \usage{
-sumzCoverFn(selector, cover.name)
+sumzCoverFn(selector, coverName)
 }
 \arguments{
 \item{selector}{a prioritzation table}
 
-\item{cover.name}{a new column name}
+\item{coverName}{a new column name}
 }
 \value{
 an updated scoring of miRNAs in a cluster of pathways

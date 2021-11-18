@@ -4,12 +4,12 @@
 \alias{pCutCoverFn}
 \title{Internal function for modification of prioritization.}
 \usage{
-pCutCoverFn(selector, cover.name)
+pCutCoverFn(selector, coverName)
 }
 \arguments{
 \item{selector}{a prioritzation table}
 
-\item{cover.name}{a new column name}
+\item{coverName}{a new column name}
 }
 \value{
 an updated scoring of miRNAs in a cluster of pathways

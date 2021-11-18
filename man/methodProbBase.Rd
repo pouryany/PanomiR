@@ -5,7 +5,7 @@
 \title{Outputs a table with col x (miRNA), probability of observing k (depending on
 methodology) against a random distribution and cover of methodology}
 \usage{
-methodProbBase(samplingData, selector, m, n_paths = 100, coverFn = NULL)
+methodProbBase(samplingData, selector, m, nPaths = 100, coverFn = NULL)
 }
 \arguments{
 \item{samplingData}{Random distribution data.}
@@ -15,7 +15,7 @@ k (depending on methodology).}
 
 \item{m}{Method name.}
 
-\item{n_paths}{Number of pathways used to generate the samplingData at
+\item{nPaths}{Number of pathways used to generate the samplingData at
 each iteration. Default is set at 100.}
 
 \item{coverFn}{Cover of methodology function.}
