@@ -89,7 +89,7 @@ PrioritizeMicroRNA <- function(enriches0,
       as.character(pathwayClusters[pathwayClusters$cluster == clustNo,
                                     ]$Pathway)
     
-    n_paths <- length(pathways)
+    nPaths <- length(pathways)
 
     # formulate number of miRNA-pathway enrichment with p-value less 
     # than threshold for each miRNA
@@ -103,7 +103,8 @@ PrioritizeMicroRNA <- function(enriches0,
       m <- method[i]
 
       print(paste0("Performing ", m, " function."))
-      fn <- get(paste0(m, "Fn"))
+      
+      fn      <- get(paste0(m, "Fn"))
       coverFn <- get(paste0(m, "CoverFn"))
 
       if (!is.null(methodThresh)) {
@@ -151,7 +152,7 @@ PrioritizeMicroRNA <- function(enriches0,
           mSelector,
           sampRate,
           fn,
-          n_paths,
+          nPaths,
           samplingDataFile,
           jackKnife = FALSE,
           saveSampling = saveSampling,
@@ -162,7 +163,7 @@ PrioritizeMicroRNA <- function(enriches0,
           samplingData = samplingData[[paste0("SampSize_", 100)]],
           selector = mSelector,
           m = m,
-          n_paths = n_paths,
+          nPaths = nPaths,
           coverFn = coverFn
         )
       } else {
@@ -178,7 +179,7 @@ PrioritizeMicroRNA <- function(enriches0,
           mSelector,
           sampRate,
           fn,
-          n_paths,
+          nPaths,
           samplingDataFile,
           jackKnife = FALSE,
           saveSampling = saveSampling,

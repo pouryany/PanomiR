@@ -7,7 +7,7 @@
 #' @param pathways Pathways table, containing pathway names and genes with id
 #'   specified.
 #' @param covariates Covariates/metadata file; rows matches the columns of
-#'   gene.counts.
+#'   geneCounts.
 #' @param condition Condition to be examined (tumor vs normal etc); must exist
 #'   in covariates column.
 #' @param adjustCovars Adjustment covariates like batch; if NULL,
@@ -19,7 +19,7 @@
 #' @param outDir Output directory.
 #' @param saveOutName If not NULL, saves output as RDS using save name,
 #'   if NULL, does not save output.
-#' @param id ID matching genes to pathways; rownames of gene.counts.
+#' @param id ID matching genes to pathways; rownames of geneCounts.
 #' @param deGenes If not NULL, add t-scores to pathways summary statistics;
 #'   filter by genes t-scores.
 #' @param minPathSize Minimum pathway size.
@@ -83,7 +83,7 @@ differentialPathwayAnalysis <- function(geneCounts,
   }
 
   # generate pathway summary statistics
-  pathwaySummaryStats <- Path_Summary(geneCounts,
+  pathwaySummaryStats <- pathwaySummary(geneCounts,
     pathways,
     id = id,
     method = method,
