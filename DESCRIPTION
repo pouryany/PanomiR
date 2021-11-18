@@ -10,7 +10,9 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 Suggests:
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 biocViews:
     GeneExpression,
@@ -33,3 +35,4 @@ Imports:
     utils
 Depends:
     R (>= 2.10)
+VignetteBuilder: knitr
