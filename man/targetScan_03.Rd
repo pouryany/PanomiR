@@ -12,7 +12,7 @@ A list of 439 items
 \url{http://www.targetscan.org/vert_72/}
 }
 \usage{
-targetScan_03
+data(targetScan_03)
 }
 \description{
 The interactions are filtered to only human interactions.
