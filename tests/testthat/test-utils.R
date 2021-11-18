@@ -28,7 +28,7 @@ test_that("Pathway summary generates a correct number of pathways", {
     rownames(exprs.mat) <- path_tab$ENSEMBL
     colnames(exprs.mat) <- LETTERS[1:3]
     
-    res <- Path_Summary(exprs.mat, path_tab, method = "x2")
+    res <- pathwaySummary(exprs.mat, path_tab, method = "x2")
     
     expect_equal(nrow(res), 2)
 })
@@ -49,7 +49,7 @@ test_that("Pathway summary generates a correct number of samples", {
     rownames(exprs.mat) <- path_tab$ENSEMBL
     colnames(exprs.mat) <- LETTERS[1:3]
     
-    res <- Path_Summary(exprs.mat, path_tab, method = "x2")
+    res <- pathwaySummary(exprs.mat, path_tab, method = "x2")
     
     expect_equal(ncol(res), 3)
 })
@@ -71,7 +71,7 @@ test_that("Pathway summary generates correct activity scores", {
     rownames(exprs.mat) <- path_tab$ENSEMBL
     colnames(exprs.mat) <- LETTERS[1:3]
     
-    res <- Path_Summary(exprs.mat, path_tab, method = "x2")
+    res <- pathwaySummary(exprs.mat, path_tab, method = "x2")
     
     expect_equal(res[1,1], 2.5)
     expect_equal(res[2,1], 12.5)
