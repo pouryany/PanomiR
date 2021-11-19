@@ -43,15 +43,15 @@ mappingPathwaysClusters <- function(pcxn,
     if (!dir.exists(outDir)) {
         stop("Output directory does not exist.")
     }
-    
+
     figDir <- paste0(outDir, "Figures/")
-    
+
     if (!dir.exists(figDir)) {
         dir.create(figDir, recursive = TRUE)
     }
-    
+
     figDir <- paste0(figDir, prefix)
-    
+
     # filter pcxn edges with edge fdr threshold and correlation threshold
     pcxn$p.Adjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
     res <- pcxn[pcxn$p.Adjust < edgeFDR, ]
@@ -63,15 +63,15 @@ mappingPathwaysClusters <- function(pcxn,
     }
     net <- as.matrix(net)
     net <- igraph::graph_from_data_frame(net, directed = FALSE)
-    
+
     igraph::set_vertex_attr(net, "col", value = "red")
-    
+
     # filter de pathways with less than path fdr threshold
     dePathways <- dePathways[dePathways$adj.P.Val < pathwayFDR, ]
     if (nrow(dePathways) < 10) {
-      stop(
-        "Please use a more lenient threshold for pathway adjusted p-values."
-      )
+        stop(
+            "Please use a more lenient threshold for pathway adjusted p-values."
+        )
     }
 
     # choose top n pathways
@@ -80,12 +80,12 @@ mappingPathwaysClusters <- function(pcxn,
     }
     dePathways1 <- dePathways
     dePathways  <- dePathways[which(rownames(dePathways) %in% allPathways), ]
-    
+
     igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% dePathways,
                                    "square",
                                    "circle")
     subNet <- igraph::induced_subgraph(net, rownames(dePathways))
-    
+
     # choose clustering function for nodes
     set.seed(seed)
     if (is.null(clusteringFunction)) {
@@ -93,39 +93,39 @@ mappingPathwaysClusters <- function(pcxn,
     } else {
         clusts <- clusteringFunction(subNet)
     }
-    
+
     # setting up plot
     zz <- as.factor(clusts$membership)
     zz <- forcats::fct_infreq(zz, ordered = NA)
     levels(zz) <- seq_along(unique(zz))
     clusts$membership <- as.numeric(zz)
-    
+
     cols <- RColorBrewer::brewer.pal(8, "Set2")
-    
+
     igraph::E(subNet)$color <-
         ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, "#E41A1C", "#377EB8")
-    
+
     shapeIndex <- rownames(dePathways1) %in% igraph::V(subNet)$name
     shapeIndex <- dePathways1[shapeIndex, c(1, 2)]
     shapeIndex <- shapeIndex[igraph::V(subNet)$name, ]
-    
+
     shapeDirs <- as.numeric(shapeIndex$logFC > 0)
     names(shapeDirs) <- rownames(shapeIndex)
     shapeIndex <- shapeIndex$logFC > 0
-    
+
     igraph::V(subNet)$shape <- ifelse(shapeIndex, "square", "circle")
-    
+
     if (plot == TRUE) {
         legend_cats <- data.frame(
             attr = c("Up-regulated", "Down-regulated"),
             shape = unique(igraph::V(subNet)$shape)
         )
         nodeColors <- cols[clusts$membership]
-        
+
         small.clust <-
             which(table(clusts$membership) <= table(clusts$membership)[5],
                   useNames = TRUE)
-        
+
         nodeColors[clusts$membership %in% small.clust] <- NA
 
         grDevices::pdf(
@@ -156,31 +156,31 @@ mappingPathwaysClusters <- function(pcxn,
         )
         grDevices::dev.off()
     }
-    
+
     valTab <- as.data.frame(igraph::ends((subNet), igraph::E(subNet)))
     valTab$cor <- ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, 1, 0)
     valTab$V2 <- as.character(valTab$V2)
     valTab$V1 <- as.character(valTab$V1)
-    
+
     igraph::V(subNet)$shape <- ifelse(shapeIndex, "square", "circle")
 
     if (subplot == TRUE) {
         for (k in seq_len(topClusters)) {
             keep     <- which((clusts$membership) == k)
             subNet2 <- igraph::induced_subgraph(subNet, keep)
-            
+
             if (length(igraph::V(subNet2)) < 2) next
-            
+
             pathsOut <- igraph::V(subNet)$name
-            
+
             pathsOut <-
                 as.data.frame(cbind("Pathway" = pathsOut,
                                     "cluster" = clusts$membership))
-            
+
             grDevices::pdf(
                 paste0(figDir, "PCxNCorGraph_", "Cluster_", k, ".pdf")
             )
-            
+
             set.seed(seed + 1)
             plot(subNet2,
                  edge.width = 1.3, vertex.size = 5, vertex.label = NA,
@@ -207,24 +207,25 @@ mappingPathwaysClusters <- function(pcxn,
             grDevices::dev.off()
         }
     }
-    
+
     "%notin%" <- Negate("%in%")
-    
+
     remove <- which(table(clusts$membership) < 4)
     remove <- which((clusts$membership %notin% remove))
-    
+
     subNet2 <- igraph::induced_subgraph(subNet, remove)
-    
+
     pathsOut <- igraph::V(subNet)$name
-    
-    pathsOut <-
-        as.data.frame(cbind("Pathway" = pathsOut,
-                            "cluster" = clusts$membership))
-    
+
+    pathsOut <- as.data.frame(cbind(
+        "Pathway" = pathsOut,
+        "cluster" = clusts$membership
+    ))
+
     if (!is.null(saveNameCSV)) {
         utils::write.csv(pathsOut, paste0(outDir, saveNameCSV))
     }
-    
+
     if (subplot == TRUE) {
         grDevices::pdf(paste0(figDir, "ConnectedPathways_PCxNCorGraph.pdf"),
                        width = 18, height = 11
