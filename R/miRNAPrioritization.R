@@ -180,7 +180,7 @@ prioritizeMicroRNA <- function(enriches0,
             print(paste0(m, " Method Done"))
             
             # perform jack-knife
-            if (runJackKnife == TRUE) {
+            if ((runJackKnife == TRUE) && (me != "sumz") && (me != "sumlog")) {
                 samplingData <- samplingDataBase(enrichNull,
                                                  mSelector,
                                                  sampRate,
