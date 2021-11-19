@@ -39,12 +39,12 @@ miRNAPathwayEnrichment <- function(mirSets,
     pathsSel <- sapply(pathwaySets, length)
     pathwaySets <- pathwaySets[pathsSel > minPathSize]
     pathsRef <- Reduce(union, pathwaySets)
-    
+
     # select miRNAs with targets in pathways
     mirSets <- lapply(mirSets, function(X) {
         X[X %in% pathsRef]
     })
-    
+
     # select pathways with selected genes of interest
     if (!is.null(geneSelection)) {
         geneDF <- clusterProfiler::bitr(
@@ -56,24 +56,24 @@ miRNAPathwayEnrichment <- function(mirSets,
         pathwaySets <- lapply(pathwaySets, function(X) {
             X[X %in% geneDF[, c(toID)]]
         })
-        
+
         mirSets <- lapply(mirSets, function(X) {
             X[X %in% geneDF[, c(toID)]]
         })
         pathsRef <- Reduce(union, pathwaySets)
     }
-    
+
     # select miRNAs of interest
     if (!is.null(mirSelection)) {
         mirSets <- mirSets[names(mirSets) %in% mirSelection]
     }
-    
+
     selVec <- sapply(mirSets, length)
     mirSets <- mirSets[selVec > minPathSize]
     iterator <- (merge(names(mirSets), names(pathwaySets)))
     iterator <- iterator %>% dplyr::mutate_all(., as.character)
     all <- length(pathsRef)
-    
+
     # find enrichment p-value of each miRNA target set and each pathway set
     enrichs <- parallel::mclapply(
         seq_len(nrow(iterator)),
@@ -102,11 +102,11 @@ miRNAPathwayEnrichment <- function(mirSets,
         },
         mc.cores = numCores
     )
-    
+
     temp <- do.call(rbind, enrichs)
     temp <- as.data.frame(temp)
     iterator <- cbind(iterator, temp)
-    
+
     if (!is.null(saveOutName)) {
         saveRDS(iterator, paste0(outDir, saveOutName))
     }
