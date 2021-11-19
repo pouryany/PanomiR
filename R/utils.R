@@ -408,7 +408,7 @@ samplingDataBase <- function(enrichNull,
 
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
-            temp <- parallel::mclapply(1:(sampRate), function(Y) {
+            temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
                 set.seed(Y)
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
 
