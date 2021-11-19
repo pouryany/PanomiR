@@ -5,7 +5,7 @@
 \title{The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via log aggregation method.}
 \usage{
-aggLogFn(enriches, pathways, isSelector, thresh = 0.1)
+aggLogFn(enriches, pathways, isSelector, thresh = 0)
 }
 \arguments{
 \item{enriches}{a table of miRNA pathway enrichments. Universe}

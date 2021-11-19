@@ -231,7 +231,7 @@ aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
 #' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
-aggLogFn <- function(enriches, pathways, isSelector, thresh = 0.1) {
+aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
     enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
     if (isSelector == TRUE) {
         enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
@@ -244,7 +244,7 @@ aggLogFn <- function(enriches, pathways, isSelector, thresh = 0.1) {
     
     if (isSelector == TRUE) {
         selector <- selector %>%
-            dplyr::filter(., k * n > thresh * length(pathways))
+            dplyr::filter(., k * n >= thresh * length(pathways))
         return(list("selector" = selector, "enriches0" = enriches))
     } else {
         return(selector)
