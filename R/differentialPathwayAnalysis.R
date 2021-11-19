@@ -50,150 +50,154 @@ differentialPathwayAnalysis <- function(geneCounts,
                                         trim = 0.025,
                                         geneCountsLog = TRUE,
                                         contrastConds = NA) {
-  if (substring(outDir, nchar(outDir)) != "/") {
-    outDir <- paste0(outDir, "/")
-  }
-  if (!dir.exists(outDir)) {
-    stop("Output directory does not exist.")
-  }
-
-  # select pathways with genes in the gene count data and a minimum
-  # pathway set size
-  pathways <- as.data.frame(pathways)
-  genesPathways <- pathways[pathways[, id] %in% rownames(geneCounts), ]
-
-  genesPathways %<>% dplyr::group_by(., Pathway) %>%
-    dplyr::summarise(., n = n()) %>%
-    dplyr::filter(., n >= minPathSize)
-
-  pathways <- pathways %>%
-    dplyr::filter(., Pathway %in% genesPathways$Pathway)
-
-  # use de genes as a filter
-  if (!is.null(deGenes)) {
-    tScores <- deGenes %>%
-      dplyr::mutate(., !!id := rownames(deGenes)) %>%
-      dplyr::select(., c(ENSEMBL, t))
-  }
-
-  # log gene counts if gene counts are not log-transformed yet; essential for
-  # path summary statistics
-  if (geneCountsLog == TRUE) {
-    geneCounts <- log(geneCounts)
-  }
-
-  # generate pathway summary statistics
-  pathwaySummaryStats <- pathwaySummary(geneCounts,
-    pathways,
-    id = id,
-    method = method,
-    deGenes = deGenes,
-    zNormalize = FALSE,
-    trim = trim,
-    tScores = tScores
-  )
-
-  # filter pathways with na values in the pathway summary statistics and
-  # z-normalize the pathway summary statistics
-  pathwaySummaryStats <-
-    pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats)) == 0, ]
-
-  pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X) {
-    (X - mean(X)) / stats::sd(X)
-  })
-
-  # perform quantile normalization if needed
-  # Add importing
-  if (quantileNorm == TRUE) {
-    pathwayNames <- rownames(pathwaySummaryStats)
-
+    if (substring(outDir, nchar(outDir)) != "/") {
+        outDir <- paste0(outDir, "/")
+    }
+    if (!dir.exists(outDir)) {
+        stop("Output directory does not exist.")
+    }
+    
+    # select pathways with genes in the gene count data and a minimum
+    # pathway set size
+    pathways <- as.data.frame(pathways)
+    genesPathways <- pathways[pathways[, id] %in% rownames(geneCounts), ]
+    
+    genesPathways %<>% dplyr::group_by(., Pathway) %>%
+        dplyr::summarise(., n = n()) %>%
+        dplyr::filter(., n >= minPathSize)
+    
+    pathways <- pathways %>%
+        dplyr::filter(., Pathway %in% genesPathways$Pathway)
+    
+    # use de genes as a filter
+    if (!is.null(deGenes)) {
+        tScores <- deGenes %>%
+            dplyr::mutate(., !!id := rownames(deGenes)) %>%
+            dplyr::select(., c(ENSEMBL, t))
+    }
+    
+    # log gene counts if gene counts are not log-transformed yet; essential for
+    # path summary statistics
+    if (geneCountsLog == TRUE) {
+        geneCounts <- log(geneCounts)
+    }
+    
+    # generate pathway summary statistics
+    pathwaySummaryStats <- pathwaySummary(geneCounts,
+                                          pathways,
+                                          id = id,
+                                          method = method,
+                                          deGenes = deGenes,
+                                          zNormalize = FALSE,
+                                          trim = trim,
+                                          tScores = tScores
+    )
+    
+    # filter pathways with na values in the pathway summary statistics and
+    # z-normalize the pathway summary statistics
     pathwaySummaryStats <-
-      preprocessCore::normalize.quantiles(pathwaySummaryStats)
-
-    rownames(pathwaySummaryStats) <- pathwayNames
-    colnames(pathwaySummaryStats) <- rownames(covariates)
-  }
-
-  # set factors in covariates if needed
-
-  # perform covariates correction, create design matrix for limma DE analysis;
-  # if no adjustCovars are available, then design matrix only consider the
-  # condition in question.
-  fitResiduals <- NULL
-  if (covariateCorrection == TRUE) {
-    stop("Under development. Please use covariateCorrection = FALSE option")
-  } else {
-    if (is.null(adjustCovars)) {
-      conditions <- as.data.frame(covariates[, condition])
-      colnames(conditions) <- condition
-      rownames(conditions) <- rownames(covariates)
-      designMat <- getDesignMatrix(conditions, Intercept = FALSE)
+        pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats)) == 0, ]
+    
+    pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X) {
+        (X - mean(X)) / stats::sd(X)
+    })
+    
+    # perform quantile normalization if needed
+    # Add importing
+    if (quantileNorm == TRUE) {
+        pathwayNames <- rownames(pathwaySummaryStats)
+        
+        pathwaySummaryStats <-
+            preprocessCore::normalize.quantiles(pathwaySummaryStats)
+        
+        rownames(pathwaySummaryStats) <- pathwayNames
+        colnames(pathwaySummaryStats) <- rownames(covariates)
+    }
+    
+    # set factors in covariates if needed
+    
+    # perform covariates correction, create design matrix for limma DE analysis;
+    # if no adjustCovars are available, then design matrix only consider the
+    # condition in question.
+    fitResiduals <- NULL
+    if (covariateCorrection == TRUE) {
+        stop("Under development. Please use covariateCorrection = FALSE option")
     } else {
-      designMat <- getDesignMatrix(covariates[,
-                                               c(condition,
-                                                 adjustCovars),
-                                               drop = FALSE],
-                                    Intercept = FALSE)
-
-      designMat$design <-
-        designMat$design[, linColumnFinder(designMat$design)$indepCols]
-
-      # Getting pathway residuals
-      resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars),
-        drop = FALSE
-      ],
-      Intercept = FALSE
-      )
-      resDesingMat$design <- resDesingMat$design[
-        ,
-        linColumnFinder(resDesingMat$design)$indepCols
-      ]
-      fitResiduals <- limma::lmFit(pathwaySummaryStats, resDesingMat$design)
-      fitResiduals <- limma::residuals.MArrayLM(fitResiduals,
-                                                pathwaySummaryStats)
+        if (is.null(adjustCovars)) {
+            conditions <- as.data.frame(covariates[, condition])
+            colnames(conditions) <- condition
+            rownames(conditions) <- rownames(covariates)
+            designMat <- getDesignMatrix(conditions, Intercept = FALSE)
+        } else {
+            designMat <- getDesignMatrix(covariates[,
+                                                    c(condition,
+                                                      adjustCovars),
+                                                    drop = FALSE],
+                                         Intercept = FALSE)
+            
+            designMat$design <-
+                designMat$design[, linColumnFinder(designMat$design)$indepCols]
+            
+            # Getting pathway residuals
+            resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars),
+                                                       drop = FALSE
+            ],
+            Intercept = FALSE
+            )
+            resDesingMat$design <- resDesingMat$design[
+                ,
+                linColumnFinder(resDesingMat$design)$indepCols
+            ]
+            fitResiduals <- limma::lmFit(
+              pathwaySummaryStats,
+              resDesingMat$design
+            )
+            fitResiduals <- limma::residuals.MArrayLM(
+              fitResiduals,
+              pathwaySummaryStats
+            )
+        }
     }
-  }
-
-  conditionsTypes <- as.character(unique(covariates[, condition]))
-  if (is.na(contrastConds)) {
-    if (length(conditionsTypes) > 2) {
-      stop("Please compare only 2 conditions at once.")
+    
+    conditionsTypes <- as.character(unique(covariates[, condition]))
+    if (is.na(contrastConds)) {
+        if (length(conditionsTypes) > 2) {
+            stop("Please compare only 2 conditions at once.")
+        }
+        cond1 <- paste0(condition, conditionsTypes[1])
+        cond2 <- paste0(condition, conditionsTypes[2])
+        contrastsName <- paste0(cond1, "-", cond2)
+    } else {
+        contrastsName <- contrastConds
     }
-    cond1 <- paste0(condition, conditionsTypes[1])
-    cond2 <- paste0(condition, conditionsTypes[2])
-    contrastsName <- paste0(cond1, "-", cond2)
-  } else {
-    contrastsName <- contrastConds
-  }
+    
+    # limma DE analysis
+    FIT <- limma::lmFit(pathwaySummaryStats, designMat$design)
+    
+    colnames(FIT$coefficients) <- gsub("-", "_", colnames(FIT$coefficients))
+    
+    contrast <- limma::makeContrasts(
+        contrasts = c(contrastsName),
+        levels = colnames(FIT$coefficients)
+    )
+    fitContrast <- limma::contrasts.fit(FIT, contrasts = contrast)
+    fitContrast <- limma::eBayes(fitContrast)
+    tT <- limma::topTable(fitContrast,
+                          adjust = "fdr",
+                          sort.by = "p",
+                          number = Inf)
+    # }
+    tT$contrast <- contrastsName
+    
+    output <- list(
+        "DEP" = tT,
+        "pathwaySummaryStats" = pathwaySummaryStats,
+        "contrast" = contrastsName,
+        "PathwayResiduals" = fitResiduals
+    )
 
-  # limma DE analysis
-  FIT <- limma::lmFit(pathwaySummaryStats, designMat$design)
-
-  colnames(FIT$coefficients) <- gsub("-", "_", colnames(FIT$coefficients))
-
-  contrast <- limma::makeContrasts(
-    contrasts = c(contrastsName),
-    levels = colnames(FIT$coefficients)
-  )
-  fitContrast <- limma::contrasts.fit(FIT, contrasts = contrast)
-  fitContrast <- limma::eBayes(fitContrast)
-  tT <- limma::topTable(fitContrast,
-                        adjust = "fdr",
-                        sort.by = "p",
-                        number = Inf)
-  # }
-  tT$contrast <- contrastsName
-
-  output <- list(
-    "DEP" = tT,
-    "pathwaySummaryStats" = pathwaySummaryStats,
-    "contrast" = contrastsName,
-    "PathwayResiduals" = fitResiduals
-  )
-
-
-  if (!is.null(saveOutName)) {
-    saveRDS(output, paste0(outDir, saveOutName))
-  }
-  return(output)
+    if (!is.null(saveOutName)) {
+        saveRDS(output, paste0(outDir, saveOutName))
+    }
+    return(output)
 }
