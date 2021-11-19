@@ -36,4 +36,3 @@ Imports:
 Depends:
     R (>= 4.1.0)
 VignetteBuilder: knitr
-
