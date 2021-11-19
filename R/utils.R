@@ -21,19 +21,19 @@ pathwayGeneTab <- function(pathAdress = NA,
     #       check and throw errors if the address is valid
     #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
     #       Make a  pathwayGeneTab going out with the package.
-    
+
     if (!is.na(pathAdress)) {
         pathList <- readRDS(pathAdress)
     }
-    
+
     if (is.na(pathAdress) && !any(is.na(pathwayList))) {
         pathList <- pathwayList
     }
-    
+
     if (!is.na(pathAdress) && !any(is.na(pathwayList))) {
         stop("provide a valid input list.")
     }
-    
+
     pathList2 <- lapply(
         pathList,
         function(X) {
@@ -45,7 +45,7 @@ pathwayGeneTab <- function(pathAdress = NA,
             )
         }
     )
-    
+
     temp <- lapply(
         names(pathList2),
         function(X) {
@@ -57,11 +57,11 @@ pathwayGeneTab <- function(pathAdress = NA,
     )
     temp <- do.call(rbind, (temp))
     pathExpTab <- tibble::as_tibble(temp)
-    
+
     if (!is.na(outDir)) {
         saveRDS(pathExpTab, outDir)
     }
-    
+
     return(pathExpTab)
 }
 
@@ -93,26 +93,26 @@ pathwaySummary <- function(exprsMat,
                            deGenes = NULL,
                            trim = 0,
                            tScores = NULL) {
-    
+
     # There is a confusion about the data format here.
     # Make sure it is consistent.
     # Current version only works with ENSEMBL.
     exprsMat <- tibble::rownames_to_column(as.data.frame(exprsMat), var = id)
-    
+
     if (!is.null(deGenes)) {
         if (is.null(tScores)) {
             stop("Provide tscores/pvalues")
         }
-        
+
         pathwayRef <- dplyr::inner_join(pathwayRef, tScores,
                                         by = c("ENSEMBL")
         )
-        
+
         pathwayRef %<>% dplyr::group_by(., Pathway) %>%
             dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
             dplyr::select(., -t)
     }
-    
+
     if (method == "none") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, function(X) {
@@ -133,24 +133,22 @@ pathwaySummary <- function(exprsMat,
     } else {
         stop("invalid choice of summarization function")
     }
-    
-    
+
     pathExpTab <- dplyr::inner_join(pathwayRef, exprsMat, by = id)
-    
+
     pathExpTab <- pathExpTab %>%
         dplyr::group_by(., Pathway) %>%
         dplyr::summarise_if(is.numeric, mean, na.rm = TRUE, trim = trim)
-    
-    
+
     pathExp <- as.data.frame(pathExpTab[, -1])
     rownames(pathExp) <- as.character(dplyr::pull(pathExpTab[, 1]))
-    
+
     if (zNormalize) {
         pathExp <- apply(pathExp, 2, function(X) {
             (X - mean(X)) / stats::sd(X)
         })
     }
-    
+
     return(pathExp)
 }
 
@@ -179,13 +177,13 @@ pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
         enriches <- enriches %>%
             dplyr::mutate(., hit2 = ifelse(pval < thresh, 1, 0))
     }
-    
+
     tempEnrich <- enriches[enriches$y %in% pathways, ]
     selector <- tempEnrich %>%
         dplyr::group_by(x) %>%
         dplyr::summarise(n = n(), k = sum(hit2)) %>%
         dplyr::arrange(., x)
-    
+
     if (isSelector == TRUE) {
         selector <- selector %>% dplyr::filter(., k > thresh * length(pathways))
         return(list("selector" = selector, "enriches0" = enriches))
@@ -209,13 +207,13 @@ aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
         enriches <- enriches %>%
             dplyr::mutate(., ES2 = ifelse(is.infinite(.$ES2), minES, .$ES2))
     }
-    
+
     tempEnrich <- enriches[enriches$y %in% pathways, ]
     selector <- tempEnrich %>%
         dplyr::group_by(x) %>%
         dplyr::summarise(n = n(), k = mean(ES2)) %>%
         dplyr::arrange(., x)
-    
+
     if (isSelector == TRUE) {
         return(list("selector" = selector, "enriches0" = enriches))
     } else {
@@ -236,12 +234,12 @@ aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
     if (isSelector == TRUE) {
         enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
     }
-    
+
     tempEnrich <- enriches[enriches$y %in% pathways, ]
     selector <- tempEnrich %>%
         dplyr::group_by(x) %>%
         dplyr::summarise(n = n(), k = mean(ES))
-    
+
     if (isSelector == TRUE) {
         selector <- selector %>%
             dplyr::filter(., k * n >= thresh * length(pathways))
@@ -302,7 +300,7 @@ sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
     enriches1 <- enriches1 %>% dplyr::mutate(., pval = ifelse(pval <= 1.0e-16,
                                                               1.0e-16, pval
     ))
-    
+
     tempEnrich <- enriches1[enriches1$y %in% pathways, ]
     aggPTab <- vector()
     for (i in unique(tempEnrich$x)) {
@@ -310,13 +308,13 @@ sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
         tPVal <- metap::sumlog(temp$pval)
         aggPTab <- rbind(aggPTab, c(i, tPVal$p, nrow(temp)))
     }
-    
+
     selector <- tibble::tibble(
         "x" = aggPTab[, 1],
         "pval" = signif(as.numeric(aggPTab[, 2]), 4),
         "n" =  aggPTab[, 3]
     )
-    
+
     if (isSelector == TRUE) {
         return(list("selector" = selector, "enriches0" = enriches))
     } else {
@@ -402,18 +400,18 @@ samplingDataBase <- function(enrichNull,
 
     if (!file.exists(samplingDataFile)) {
         allPaths <- unique(enrichNull$y)
-        
+
         if (jackKnife == TRUE) {
             nPathsTemp <- nPaths - 1
         }
         sampSizeVec <- c(nPaths, nPaths - 1, 100, 50)
-        
+
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
-            temp <- parallel::mclapply(1:(sampRate), function(Y) {
+            temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
                 set.seed(Y)
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
-                
+
                 selNull <- fn(
                     enriches = enrichNull,
                     pathways = nullPaths,
@@ -424,13 +422,13 @@ samplingDataBase <- function(enrichNull,
             # build null distribution of K
             temp <- do.call(rbind, temp)
             temp <- t(temp)
-            
+
             rownames(temp) <- selector$x
             colnames(temp) <- sapply(seq_len(sampRate), function(Y) {
                 paste0("sample_", Y)
             })
             sampTag <- paste0("SampSize_", nPathsTemp)
-            
+
             outList[[sampTag]] <- temp
         }
         if (saveSampling == TRUE) {
@@ -442,7 +440,6 @@ samplingDataBase <- function(enrichNull,
         outList <- readRDS(samplingDataFile)
         print(paste0(samplingDataFile, " loaded."))
     }
-    
     return(outList)
 }
 
@@ -536,7 +533,7 @@ jackKnifeBase <- function(selector,
     # contain p-values
     temp1 <- do.call(rbind, temp1)
     temp1 <- t(temp1)
-    
+
     ## added from here
     jackKnifeName <- paste0(m, "_pval_jk")
 
@@ -544,7 +541,7 @@ jackKnifeBase <- function(selector,
     means <- rowMeans(temp1)
     selector <- selector %>%
         dplyr::mutate(., !!jackKnifeName := means)
-    
+
     return(selector)
 }
 
@@ -563,10 +560,10 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                             RELEVELS = list()) {
     rowNamesTemp <- rownames(covariatesDataFrame)
     colNamesTemp <- colnames(covariatesDataFrame)
-    
+
     factorCovariateNames <-
         names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
-    
+
     factorCovariateNames <-
         setdiff(
             factorCovariateNames,
@@ -574,9 +571,9 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                 !(factorCovariateNames %in% colnames(covariatesDataFrame))
             ]
         )
-    
+
     numericCovariateNames <- setdiff(colNamesTemp, factorCovariateNames)
-    
+
     # Ensure the factors are in fact of type factor, and the quantitative
     # variables are numeric:
     covariatesDataFrame <-
@@ -591,10 +588,10 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                 return(as.numeric(covariatesDataFrame[, column]))
             }
         }))
-    
+
     rownames(covariatesDataFrame) <- rowNamesTemp
     colnames(covariatesDataFrame) <- colNamesTemp
-    
+
     contra <- NULL
     maxNumCat <- Inf
     catData <- covariatesDataFrame[, factorCovariateNames, drop = FALSE]
@@ -603,10 +600,10 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
             colnames(catData),
             function(col) nlevels(factor(catData[, col]))
         )
-        
+
         excludeCategoricalCols <-
             names(numCats)[numCats <= 1 | numCats > maxNumCat]
-        
+
         if (!is.null(excludeCategoricalCols) &&
             length(excludeCategoricalCols) > 0) {
             warning(paste("Excluding categorical variables with less than 2",
@@ -620,7 +617,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                           ),
                           sep = ""
             ))
-            
+
             factorCovariateNames <- setdiff(
                 factorCovariateNames,
                 excludeCategoricalCols
@@ -631,7 +628,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                 drop = FALSE
               ]
         }
-        
+
         # Inspired by http://stackoverflow.com/questions/4560459/
         #
         # And, already ensured above that
@@ -657,12 +654,12 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
         }
         names(contra) <- factorCovariateNames
     }
-    
+
     # Inspired by http://stackoverflow.com/questions/5616210/
     currentNAAction <- getOption("na.action")
     # Model matrix will now include "NA":
     options(na.action = "na.pass")
-    
+
     if (Intercept) {
         design <- stats::model.matrix(~.,
                                       data = covariatesDataFrame,
@@ -674,11 +671,11 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                                       contrasts.arg = contra
         )
     }
-    
+
     rownames(design) <- rownames(covariatesDataFrame)
-    
+
     options(na.action = currentNAAction)
-    
+
     return(list(
         design = design,
         covariates = colNamesTemp,
@@ -697,7 +694,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
 #' @export
 linColumnFinder <- function(mat) {
     mat[is.na(mat)] <- 0
-    
+
     # If the matrix is full rank then we're done
     if (qr(mat)$rank == ncol(mat)) {
         return(list(
@@ -705,7 +702,7 @@ linColumnFinder <- function(mat) {
             relations = "Matrix is of full rank"
         ))
     }
-    
+
     m <- ncol(mat)
     # cols keeps track of which columns are linearly independent
     cols <- 1

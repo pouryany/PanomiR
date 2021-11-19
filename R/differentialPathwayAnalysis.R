@@ -56,32 +56,32 @@ differentialPathwayAnalysis <- function(geneCounts,
     if (!dir.exists(outDir)) {
         stop("Output directory does not exist.")
     }
-    
+
     # select pathways with genes in the gene count data and a minimum
     # pathway set size
     pathways <- as.data.frame(pathways)
     genesPathways <- pathways[pathways[, id] %in% rownames(geneCounts), ]
-    
+
     genesPathways %<>% dplyr::group_by(., Pathway) %>%
         dplyr::summarise(., n = n()) %>%
         dplyr::filter(., n >= minPathSize)
-    
+
     pathways <- pathways %>%
         dplyr::filter(., Pathway %in% genesPathways$Pathway)
-    
+
     # use de genes as a filter
     if (!is.null(deGenes)) {
         tScores <- deGenes %>%
             dplyr::mutate(., !!id := rownames(deGenes)) %>%
             dplyr::select(., c(ENSEMBL, t))
     }
-    
+
     # log gene counts if gene counts are not log-transformed yet; essential for
     # path summary statistics
     if (geneCountsLog == TRUE) {
         geneCounts <- log(geneCounts)
     }
-    
+
     # generate pathway summary statistics
     pathwaySummaryStats <- pathwaySummary(geneCounts,
                                           pathways,
@@ -92,30 +92,30 @@ differentialPathwayAnalysis <- function(geneCounts,
                                           trim = trim,
                                           tScores = tScores
     )
-    
+
     # filter pathways with na values in the pathway summary statistics and
     # z-normalize the pathway summary statistics
     pathwaySummaryStats <-
         pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats)) == 0, ]
-    
+
     pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X) {
         (X - mean(X)) / stats::sd(X)
     })
-    
+
     # perform quantile normalization if needed
     # Add importing
     if (quantileNorm == TRUE) {
         pathwayNames <- rownames(pathwaySummaryStats)
-        
+
         pathwaySummaryStats <-
             preprocessCore::normalize.quantiles(pathwaySummaryStats)
-        
+
         rownames(pathwaySummaryStats) <- pathwayNames
         colnames(pathwaySummaryStats) <- rownames(covariates)
     }
-    
+
     # set factors in covariates if needed
-    
+
     # perform covariates correction, create design matrix for limma DE analysis;
     # if no adjustCovars are available, then design matrix only consider the
     # condition in question.
@@ -134,10 +134,10 @@ differentialPathwayAnalysis <- function(geneCounts,
                                                       adjustCovars),
                                                     drop = FALSE],
                                          Intercept = FALSE)
-            
+
             designMat$design <-
                 designMat$design[, linColumnFinder(designMat$design)$indepCols]
-            
+
             # Getting pathway residuals
             resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars),
                                                        drop = FALSE
@@ -149,16 +149,16 @@ differentialPathwayAnalysis <- function(geneCounts,
                 linColumnFinder(resDesingMat$design)$indepCols
             ]
             fitResiduals <- limma::lmFit(
-              pathwaySummaryStats,
-              resDesingMat$design
+                pathwaySummaryStats,
+                resDesingMat$design
             )
             fitResiduals <- limma::residuals.MArrayLM(
-              fitResiduals,
-              pathwaySummaryStats
+                fitResiduals,
+                pathwaySummaryStats
             )
         }
     }
-    
+
     conditionsTypes <- as.character(unique(covariates[, condition]))
     if (is.na(contrastConds)) {
         if (length(conditionsTypes) > 2) {
@@ -170,12 +170,12 @@ differentialPathwayAnalysis <- function(geneCounts,
     } else {
         contrastsName <- contrastConds
     }
-    
+
     # limma DE analysis
     FIT <- limma::lmFit(pathwaySummaryStats, designMat$design)
-    
+
     colnames(FIT$coefficients) <- gsub("-", "_", colnames(FIT$coefficients))
-    
+
     contrast <- limma::makeContrasts(
         contrasts = c(contrastsName),
         levels = colnames(FIT$coefficients)
@@ -188,7 +188,7 @@ differentialPathwayAnalysis <- function(geneCounts,
                           number = Inf)
     # }
     tT$contrast <- contrastsName
-    
+
     output <- list(
         "DEP" = tT,
         "pathwaySummaryStats" = pathwaySummaryStats,
