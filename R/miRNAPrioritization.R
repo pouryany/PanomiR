@@ -96,8 +96,8 @@ prioritizeMicroRNA <- function(enriches0,
             dplyr::group_by(x) %>%
             dplyr::summarise(., "cluster_hits" = sum(hit))
 
-        # perform p-value aggregation based on methodlogy provided
-        for (i in 1:length(method)) {
+        # perform p-value aggregation based on methodology provided
+        for (i in seq_along(method)) {
             m <- method[i]
 
             print(paste0("Performing ", m, " function."))
