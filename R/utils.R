@@ -428,9 +428,9 @@ samplingDataBase <- function(enrichNull,
             temp <- t(temp)
 
             rownames(temp) <- selector$x
-            colnames(temp) <- sapply(seq_len(sampRate), function(Y) {
+            colnames(temp) <- vapply(seq_len(sampRate), function(Y) {
                 paste0("sample_", Y)
-            })
+            },FUN.VALUE = "character")
             sampTag <- paste0("SampSize_", nPathsTemp)
 
             outList[[sampTag]] <- temp
@@ -566,7 +566,9 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     colNamesTemp <- colnames(covariatesDataFrame)
 
     factorCovariateNames <-
-        names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
+        names(covariatesDataFrame)[vapply(covariatesDataFrame,
+                                          is.factor,
+                                          logical(1))]
 
     factorCovariateNames <-
         setdiff(
@@ -600,9 +602,10 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     maxNumCat <- Inf
     catData <- covariatesDataFrame[, factorCovariateNames, drop = FALSE]
     if (ncol(catData) > 0) {
-        numCats <- sapply(
+        numCats <- vapply(
             colnames(catData),
-            function(col) nlevels(factor(catData[, col]))
+            function(col) nlevels(factor(catData[, col])),
+            numeric(1)
         )
 
         excludeCategoricalCols <-
@@ -683,7 +686,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     return(list(
         design = design,
         covariates = colNamesTemp,
-        factorsLevels = sapply(contra, colnames, simplify = FALSE),
+        factorsLevels = lapply(contra, colnames),
         numericCovars = numericCovariateNames,
         covariatesDataFrame = covariatesDataFrame
     ))
