@@ -20,7 +20,7 @@ clusterPlot <- function(subNet,
         stop("Output directory does not exist.")
     }
     
-    figDir <- outDir
+    figDir <- paste0(outDir,prefix)
 
     legend_cats <- data.frame(
         attr = c("Up-regulated", "Down-regulated"),

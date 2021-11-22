@@ -13,7 +13,8 @@ samplingDataBase(
   samplingDataFile,
   jackKnife = FALSE,
   saveSampling,
-  numCores = 1
+  numCores = 1,
+  autoSeed = TRUE
 )
 }
 \arguments{
@@ -36,6 +37,9 @@ jack knifing}
 \item{saveSampling}{If TRUE, data is saved.}
 
 \item{numCores}{number of cores used}
+
+\item{autoSeed}{random permutations are generated based on predetermined 
+seeds. TRUE will give identifcal results in different runs.}
 }
 \value{
 Outputs of sampling data.

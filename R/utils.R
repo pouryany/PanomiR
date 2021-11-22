@@ -378,6 +378,8 @@ sumlogCoverFn <- aggInvCoverFn
 #' @param jackKnife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
 #' @param numCores number of cores used
+#' @param autoSeed random permutations are generated based on predetermined 
+#'   seeds. TRUE will give identifcal results in different runs.
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrichNull,
                              selector,
@@ -387,7 +389,8 @@ samplingDataBase <- function(enrichNull,
                              samplingDataFile,
                              jackKnife = FALSE,
                              saveSampling,
-                             numCores = 1) {
+                             numCores = 1,
+                             autoSeed = TRUE) {
     if (!all(utils::hasName(selector, c("x")))) {
         stop("The selector table needs a column x (miRNA name)")
     }
@@ -409,7 +412,8 @@ samplingDataBase <- function(enrichNull,
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
             temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
-                set.seed(Y)
+                if(autoSeed){
+                  set.seed(Y)}
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
 
                 selNull <- fn(

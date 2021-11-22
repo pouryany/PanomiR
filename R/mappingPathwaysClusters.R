@@ -49,8 +49,6 @@ mappingPathwaysClusters <- function(pcxn,
         dir.create(figDir, recursive = TRUE)
     }
 
-    figDir <- paste0(figDir, prefix)
-
     # filter pcxn edges with edge fdr threshold and correlation threshold
     pcxn$p.Adjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
     res <- pcxn[pcxn$p.Adjust < edgeFDR, ]
@@ -111,8 +109,8 @@ mappingPathwaysClusters <- function(pcxn,
     names(shapeDirs) <- rownames(shapeIndex)
     shapeIndex <- shapeIndex$logFC > 0
 
-    igraph::V(subNet)$shape <- ifelse(shapeIndex, "square", "circle")
-    
+    igraph::V(subNet)$shape   <- ifelse(shapeIndex, "square", "circle")
+    igraph::V(subNet)$cluster <- clusts$membership
     pathsOut <- igraph::V(subNet)$name
     pathsOut <- as.data.frame(cbind(
         "Pathway" = pathsOut,
@@ -123,7 +121,8 @@ mappingPathwaysClusters <- function(pcxn,
         clusterPlot(subNet = subNet,
                     subplot = subplot,
                     topClusters = topClusters,
-                    outDir = figDir)
+                    outDir = figDir, 
+                    prefix = prefix)
     }
 
     if (!is.null(saveNameCSV)) {
