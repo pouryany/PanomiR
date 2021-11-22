@@ -1,7 +1,6 @@
 #' Plots clusters of pathways with associated directionality.
 #'
 #' @param subNet pathways network (edge list of pathways)
-#' @param plot if TRUE, store graph plot in Figures directory of plots
 #' @param subplot if TRUE, store individual clusters plots and connected plots
 #'   in Figures directory of plots
 #' @param topClusters plot figures for top x clusters
@@ -65,26 +64,13 @@ clusterPlot <- function(subNet,
     )
     grDevices::dev.off()
 
-
-    valTab <- as.data.frame(igraph::ends((subNet), igraph::E(subNet)))
-    valTab$cor <- ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, 1, 0)
-    valTab$V2 <- as.character(valTab$V2)
-    valTab$V1 <- as.character(valTab$V1)
-    
-
     if (subplot == TRUE) {
         for (k in seq_len(topClusters)) {
             keep     <- which((clustMems) == k)
             subNet2 <- igraph::induced_subgraph(subNet, keep)
             
             if (length(igraph::V(subNet2)) < 2) next
-            
-            # pathsOut <- igraph::V(subNet)$name
-            # 
-            # pathsOut <-
-            #     as.data.frame(cbind("Pathway" = pathsOut,
-            #                         "cluster" = clusts$membership))
-            
+      
             grDevices::pdf(
                 paste0(figDir, "PCxNCorGraph_", "Cluster_", k, ".pdf")
             )

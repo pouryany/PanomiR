@@ -16,8 +16,6 @@ clusterPlot(
 \arguments{
 \item{subNet}{pathways network (edge list of pathways)}
 
-\item{plot}{if TRUE, store graph plot in Figures directory of plots}
-
 \item{subplot}{if TRUE, store individual clusters plots and connected plots
 in Figures directory of plots}
 

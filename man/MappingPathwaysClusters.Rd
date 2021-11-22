@@ -12,7 +12,6 @@ mappingPathwaysClusters(
   correlationCutOff = 0.316,
   pathwayFDR = 0.05,
   topPathways = 200,
-  seed = 2,
   plot = TRUE,
   subplot = TRUE,
   topClusters = 2,
@@ -40,8 +39,6 @@ filter pathways with correlation less than given threshold}
 filter pathways with adjusted p-values less than given threshold}
 
 \item{topPathways}{use only top x paths; if NULL, use all paths}
-
-\item{seed}{set seed}
 
 \item{plot}{if TRUE, store graph plot in Figures directory of plots}
 
