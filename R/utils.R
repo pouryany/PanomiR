@@ -379,7 +379,7 @@ sumlogCoverFn <- aggInvCoverFn
 #'   jack knifing
 #' @param numCores number of cores used
 #' @param autoSeed random permutations are generated based on predetermined 
-#'   seeds. TRUE will give identifcal results in different runs.
+#'   seeds. TRUE will give identical results in different runs.
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrichNull,
                              selector,
