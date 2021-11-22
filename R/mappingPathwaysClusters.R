@@ -13,14 +13,15 @@
 #' @param topPathways  use only top x paths; if NULL, use all paths
 #' @param seed set seed
 #' @param plot if TRUE, store graph plot in Figures directory of plots
-#' @param subplot if TRUE, store inidividual clusters plots and connected plots
+#' @param subplot if TRUE, store individual clusters plots and connected plots
 #'   in Figures directory of plots
 #' @param topClusters plot figures for top x clusters
 #' @param outDir output directory
 #' @param saveNameCSV if not NULL, saves output as csv using save name
 #' @param prefix add prefix to plots
 #' @param weighted True if you wish to include correlation weights in clustering
-#' @return a table with each row containing a pathway and its respective cluster
+#' @return a list where the first item is a table with each row containing
+#'   a pathway and its respective cluster. The second item is an igraph object.
 #' @export
 mappingPathwaysClusters <- function(pcxn,
                                     dePathways,
@@ -91,7 +92,7 @@ mappingPathwaysClusters <- function(pcxn,
     if (is.null(clusteringFunction)) {
         clusts <- igraph::cluster_edge_betweenness(subNet)
     } else {
-        clusts <- clusteringFunction(subNet)
+        clusts <- utils::getFromNamespace(clusteringFunction,"igraph")(subNet)
     }
 
     # setting up plot
@@ -214,6 +215,8 @@ mappingPathwaysClusters <- function(pcxn,
     remove <- which((clusts$membership %notin% remove))
 
     subNet2 <- igraph::induced_subgraph(subNet, remove)
+    
+    igraph::V(subNet)$cluster <- clusts$membership
 
     pathsOut <- igraph::V(subNet)$name
 
@@ -256,5 +259,7 @@ mappingPathwaysClusters <- function(pcxn,
         )
         grDevices::dev.off()
     }
-    return(pathsOut)
+    return(list("Clustering" = pathsOut,
+                "DE-PCXN" = subNet,
+                "Cluter_method" = eval(clusteringFunction) ))
 }
