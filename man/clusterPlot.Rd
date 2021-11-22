@@ -4,14 +4,7 @@
 \alias{clusterPlot}
 \title{Plots clusters of pathways with associated directionality.}
 \usage{
-clusterPlot(
-  subNet,
-  plot = TRUE,
-  subplot = FALSE,
-  topClusters = 2,
-  prefix = "",
-  outDir = ""
-)
+clusterPlot(subNet, subplot = FALSE, topClusters = 2, prefix = "", outDir = "")
 }
 \arguments{
 \item{subNet}{pathways network (edge list of pathways)}

@@ -9,7 +9,6 @@
 #' @return a set of plots for DE-PCXN and subclusters
 #' @export
 clusterPlot <- function(subNet,
-                        plot = TRUE,
                         subplot = FALSE,
                         topClusters = 2,
                         prefix = "",
