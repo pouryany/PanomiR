@@ -25,6 +25,8 @@
 #' @param saveJackKnife If TRUE, saves jack-knifed sampling data as RDS for each
 #'   cluster in topClust in dataDir.
 #' @param prefix Prefix for all saved data.
+#' @param autoSeed random permutations are generated based on predetermined 
+#'   seeds. TRUE will give identical results in different runs.
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
 #'   associated p-values from the methods.
 #' @export
@@ -42,7 +44,8 @@ prioritizeMicroRNA <- function(enriches0,
                                saveJackKnife = FALSE,
                                numCores = 1,
                                saveCSV = TRUE,
-                               prefix = "") {
+                               prefix = "",
+                               autoSeed = TRUE) {
     if (substring(outDir, nchar(outDir)) != "/") {
         outDir <- paste0(outDir, "/")
     }
@@ -163,7 +166,8 @@ prioritizeMicroRNA <- function(enriches0,
                                                  samplingDataFile,
                                                  jackKnife = FALSE,
                                                  saveSampling = saveSampling,
-                                                 numCores = 8
+                                                 numCores = numCores,
+                                                 autoSeed = autoSeed
                 )
 
                 mSelector <- methodProbBase(
@@ -189,7 +193,8 @@ prioritizeMicroRNA <- function(enriches0,
                                                  samplingDataFile,
                                                  jackKnife = FALSE,
                                                  saveSampling = saveSampling,
-                                                 numCores = 8
+                                                 numCores = numCores,
+                                                 autoSeed = autoSeed
                 )
                 mSelector <- jackKnifeBase(
                     selector = mSelector,
@@ -198,7 +203,7 @@ prioritizeMicroRNA <- function(enriches0,
                     fn = fn,
                     jackKnifeData = samplingData[[paste0("SampSize_", 100)]],
                     m = m,
-                    numCores = 8
+                    numCores = numCores
                 )
 
                 print(paste0(m, " JackKnifing Method Done!"))

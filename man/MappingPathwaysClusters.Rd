@@ -12,7 +12,6 @@ mappingPathwaysClusters(
   correlationCutOff = 0.316,
   pathwayFDR = 0.05,
   topPathways = 200,
-  seed = 2,
   plot = TRUE,
   subplot = TRUE,
   topClusters = 2,
@@ -41,11 +40,9 @@ filter pathways with adjusted p-values less than given threshold}
 
 \item{topPathways}{use only top x paths; if NULL, use all paths}
 
-\item{seed}{set seed}
-
 \item{plot}{if TRUE, store graph plot in Figures directory of plots}
 
-\item{subplot}{if TRUE, store inidividual clusters plots and connected plots
+\item{subplot}{if TRUE, store individual clusters plots and connected plots
 in Figures directory of plots}
 
 \item{topClusters}{plot figures for top x clusters}
@@ -59,7 +56,8 @@ in Figures directory of plots}
 \item{weighted}{True if you wish to include correlation weights in clustering}
 }
 \value{
-a table with each row containing a pathway and its respective cluster
+a list where the first item is a table with each row containing
+  a pathway and its respective cluster. The second item is an igraph object.
 }
 \description{
 Outputs a table with pathways and their respective clusters

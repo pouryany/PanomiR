@@ -378,6 +378,8 @@ sumlogCoverFn <- aggInvCoverFn
 #' @param jackKnife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
 #' @param numCores number of cores used
+#' @param autoSeed random permutations are generated based on predetermined 
+#'   seeds. TRUE will give identical results in different runs.
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrichNull,
                              selector,
@@ -387,7 +389,8 @@ samplingDataBase <- function(enrichNull,
                              samplingDataFile,
                              jackKnife = FALSE,
                              saveSampling,
-                             numCores = 1) {
+                             numCores = 1,
+                             autoSeed = TRUE) {
     if (!all(utils::hasName(selector, c("x")))) {
         stop("The selector table needs a column x (miRNA name)")
     }
@@ -409,7 +412,8 @@ samplingDataBase <- function(enrichNull,
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
             temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
-                set.seed(Y)
+                if(autoSeed){
+                    set.seed(Y)}
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
 
                 selNull <- fn(
@@ -424,9 +428,9 @@ samplingDataBase <- function(enrichNull,
             temp <- t(temp)
 
             rownames(temp) <- selector$x
-            colnames(temp) <- sapply(seq_len(sampRate), function(Y) {
+            colnames(temp) <- vapply(seq_len(sampRate), function(Y) {
                 paste0("sample_", Y)
-            })
+            }, FUN.VALUE = "character")
             sampTag <- paste0("SampSize_", nPathsTemp)
 
             outList[[sampTag]] <- temp
@@ -562,7 +566,9 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     colNamesTemp <- colnames(covariatesDataFrame)
 
     factorCovariateNames <-
-        names(covariatesDataFrame)[sapply(covariatesDataFrame, is.factor)]
+        names(covariatesDataFrame)[vapply(covariatesDataFrame,
+                                          is.factor,
+                                          logical(1))]
 
     factorCovariateNames <-
         setdiff(
@@ -596,9 +602,10 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     maxNumCat <- Inf
     catData <- covariatesDataFrame[, factorCovariateNames, drop = FALSE]
     if (ncol(catData) > 0) {
-        numCats <- sapply(
+        numCats <- vapply(
             colnames(catData),
-            function(col) nlevels(factor(catData[, col]))
+            function(col) nlevels(factor(catData[, col])),
+            numeric(1)
         )
 
         excludeCategoricalCols <-
@@ -679,7 +686,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     return(list(
         design = design,
         covariates = colNamesTemp,
-        factorsLevels = sapply(contra, colnames, simplify = FALSE),
+        factorsLevels = lapply(contra, colnames),
         numericCovars = numericCovariateNames,
         covariatesDataFrame = covariatesDataFrame
     ))

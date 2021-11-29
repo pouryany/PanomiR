@@ -19,7 +19,8 @@ prioritizeMicroRNA(
   saveJackKnife = FALSE,
   numCores = 1,
   saveCSV = TRUE,
-  prefix = ""
+  prefix = "",
+  autoSeed = TRUE
 )
 }
 \arguments{
@@ -59,6 +60,9 @@ cluster in topClust in dataDir.}
 outDir.}
 
 \item{prefix}{Prefix for all saved data.}
+
+\item{autoSeed}{random permutations are generated based on predetermined 
+seeds. TRUE will give identical results in different runs.}
 }
 \value{
 Table of miRNA and p-values, each row contains a miRNA and its
