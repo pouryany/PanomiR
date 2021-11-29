@@ -65,7 +65,7 @@ clusterPlot <- function(subNet,
 
     if (subplot == TRUE) {
         for (k in seq_len(topClusters)) {
-            keep     <- which((clustMems) == k)
+            keep <- which((clustMems) == k)
             subNet2 <- igraph::induced_subgraph(subNet, keep)
             
             if (length(igraph::V(subNet2)) < 2) next
@@ -103,7 +103,6 @@ clusterPlot <- function(subNet,
      
      remove <- which(table(clustMems) < 4)
      remove <- which((clustMems %notin% remove))
-    # 
      subNet2 <- igraph::induced_subgraph(subNet, remove)
   
     if (subplot == TRUE) {
@@ -135,5 +134,4 @@ clusterPlot <- function(subNet,
         )
         grDevices::dev.off()
     }
-    return(NULL)
 }

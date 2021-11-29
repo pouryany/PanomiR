@@ -87,7 +87,7 @@ mappingPathwaysClusters <- function(pcxn,
     if (is.null(clusteringFunction)) {
         clusts <- igraph::cluster_edge_betweenness(subNet)
     } else {
-        clusts <- utils::getFromNamespace(clusteringFunction,"igraph")(subNet)
+        clusts <- utils::getFromNamespace(clusteringFunction, "igraph")(subNet)
     }
 
     # setting up plot

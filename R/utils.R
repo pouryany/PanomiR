@@ -413,7 +413,7 @@ samplingDataBase <- function(enrichNull,
         for (nPathsTemp in sampSizeVec) {
             temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
                 if(autoSeed){
-                  set.seed(Y)}
+                    set.seed(Y)}
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
 
                 selNull <- fn(
@@ -430,7 +430,7 @@ samplingDataBase <- function(enrichNull,
             rownames(temp) <- selector$x
             colnames(temp) <- vapply(seq_len(sampRate), function(Y) {
                 paste0("sample_", Y)
-            },FUN.VALUE = "character")
+            }, FUN.VALUE = "character")
             sampTag <- paste0("SampSize_", nPathsTemp)
 
             outList[[sampTag]] <- temp

@@ -36,7 +36,7 @@ miRNAPathwayEnrichment <- function(mirSets,
         stop("Output directory does not exist.")
     }
     # select pathways with minimum set size
-    pathsSel <- vapply(pathwaySets, length,numeric(1))
+    pathsSel <- vapply(pathwaySets, length, numeric(1))
     pathwaySets <- pathwaySets[pathsSel > minPathSize]
     pathsRef <- Reduce(union, pathwaySets)
 
