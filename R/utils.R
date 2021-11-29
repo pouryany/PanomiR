@@ -378,7 +378,7 @@ sumlogCoverFn <- aggInvCoverFn
 #' @param jackKnife If TRUE, conduct sampling with one less pathway, used for
 #'   jack knifing
 #' @param numCores number of cores used
-#' @param autoSeed random permutations are generated based on predetermined 
+#' @param autoSeed random permutations are generated based on predetermined
 #'   seeds. TRUE will give identical results in different runs.
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrichNull,
@@ -412,8 +412,9 @@ samplingDataBase <- function(enrichNull,
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
             temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
-                if(autoSeed){
-                    set.seed(Y)}
+                if (autoSeed) {
+                    set.seed(Y)
+                }
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
 
                 selNull <- fn(
@@ -619,8 +620,9 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
                                  paste(" or more than ", maxNumCat, sep = "")
                           ),
                           " categories: ",
-                          paste(paste("'", excludeCategoricalCols, "'", sep = ""),
-                                collapse = ", "
+                          paste(
+                              paste("'", excludeCategoricalCols, "'", sep = ""),
+                              collapse = ", "
                           ),
                           sep = ""
             ))
