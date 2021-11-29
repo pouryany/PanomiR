@@ -25,5 +25,5 @@ jobs:
           extra-packages: lintr
 
       - name: Lint
-        run: "options(error_on_lint=TRUE); lintr::lint_package()
+        run: "options(error_on_lint=TRUE); lintr::lint_package()"
         shell: Rscript {0}
