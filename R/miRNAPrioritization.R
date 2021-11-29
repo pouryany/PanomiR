@@ -25,7 +25,7 @@
 #' @param saveJackKnife If TRUE, saves jack-knifed sampling data as RDS for each
 #'   cluster in topClust in dataDir.
 #' @param prefix Prefix for all saved data.
-#' @param autoSeed random permutations are generated based on predetermined 
+#' @param autoSeed random permutations are generated based on predetermined
 #'   seeds. TRUE will give identical results in different runs.
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
 #'   associated p-values from the methods.

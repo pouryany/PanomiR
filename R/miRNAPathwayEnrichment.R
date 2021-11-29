@@ -68,7 +68,7 @@ miRNAPathwayEnrichment <- function(mirSets,
         mirSets <- mirSets[names(mirSets) %in% mirSelection]
     }
 
-    selVec <- vapply(mirSets, length,numeric(1))
+    selVec <- vapply(mirSets, length, numeric(1))
     mirSets <- mirSets[selVec > minPathSize]
     iterator <- (merge(names(mirSets), names(pathwaySets)))
     iterator <- iterator %>% dplyr::mutate_all(., as.character)
