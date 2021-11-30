@@ -98,8 +98,8 @@ differentialPathwayAnalysis <- function(geneCounts,
     pathwaySummaryStats <-
         pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats)) == 0, ]
 
-    pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(X) {
-        (X - mean(X)) / stats::sd(X)
+    pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(x) {
+        (x - mean(x)) / stats::sd(x)
     })
 
     # perform quantile normalization if needed
@@ -127,7 +127,7 @@ differentialPathwayAnalysis <- function(geneCounts,
             conditions <- as.data.frame(covariates[, condition])
             colnames(conditions) <- condition
             rownames(conditions) <- rownames(covariates)
-            designMat <- getDesignMatrix(conditions, Intercept = FALSE)
+            designMat <- getDesignMatrix(conditions, intercept = FALSE)
         } else {
             designMat <- getDesignMatrix(covariates[,
                                                     c(condition,
@@ -172,15 +172,15 @@ differentialPathwayAnalysis <- function(geneCounts,
     }
 
     # limma DE analysis
-    FIT <- limma::lmFit(pathwaySummaryStats, designMat$design)
+    fits <- limma::lmFit(pathwaySummaryStats, designMat$design)
 
-    colnames(FIT$coefficients) <- gsub("-", "_", colnames(FIT$coefficients))
+    colnames(fits$coefficients) <- gsub("-", "_", colnames(fits$coefficients))
 
     contrast <- limma::makeContrasts(
         contrasts = c(contrastsName),
-        levels = colnames(FIT$coefficients)
+        levels = colnames(fits$coefficients)
     )
-    fitContrast <- limma::contrasts.fit(FIT, contrasts = contrast)
+    fitContrast <- limma::contrasts.fit(fits, contrasts = contrast)
     fitContrast <- limma::eBayes(fitContrast)
     tT <- limma::topTable(fitContrast,
                           adjust = "fdr",

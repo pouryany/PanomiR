@@ -96,8 +96,6 @@ mappingPathwaysClusters <- function(pcxn,
     levels(zz) <- seq_along(unique(zz))
     clusts$membership <- as.numeric(zz)
 
-    cols <- RColorBrewer::brewer.pal(8, "Set2")
-
     igraph::E(subNet)$color <-
         ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, "#E41A1C", "#377EB8")
 
