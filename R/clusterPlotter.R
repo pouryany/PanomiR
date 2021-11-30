@@ -30,10 +30,10 @@ clusterPlot <- function(subNet,
     clustMems  <- igraph::V(subNet)$cluster
     nodeColors <- cols[clustMems]
 
-    small.clust <-
+    smallClust <-
         which(table(clustMems) <= table(clustMems)[5], useNames = TRUE)
 
-    nodeColors[clustMems %in% small.clust] <- NA
+    nodeColors[clustMems %in% smallClust] <- NA
 
     grDevices::pdf(
         paste0(figDir, "PCxNCorGraph.pdf"),

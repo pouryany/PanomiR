@@ -50,11 +50,11 @@ mappingPathwaysClusters <- function(pcxn,
     }
 
     # filter pcxn edges with edge fdr threshold and correlation threshold
-    pcxn$p.Adjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
-    res <- pcxn[pcxn$p.Adjust < edgeFDR, ]
+    pcxn$pAdjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
+    res <- pcxn[pcxn$pAdjust < edgeFDR, ]
     res <- res[abs(res$PathCor) > correlationCutOff, ]
     allPathways <- union(unique(res$Pathway.B), unique(res$Pathway.A))
-    net <- res[, c(1, 2, 4)]
+    net <- res[, c("Pathway.A", "Pathway.B", "PathCor")]
     if (weighted) {
         net$weight <- abs(net$PathCor)
     }

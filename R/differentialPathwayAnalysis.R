@@ -133,7 +133,7 @@ differentialPathwayAnalysis <- function(geneCounts,
                                                     c(condition,
                                                       adjustCovars),
                                                     drop = FALSE],
-                                         Intercept = FALSE)
+                                         intercept = FALSE)
 
             designMat$design <-
                 designMat$design[, linColumnFinder(designMat$design)$indepCols]
@@ -142,7 +142,7 @@ differentialPathwayAnalysis <- function(geneCounts,
             resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars),
                                                        drop = FALSE
             ],
-            Intercept = FALSE
+            intercept = FALSE
             )
             resDesingMat$design <- resDesingMat$design[
                 ,

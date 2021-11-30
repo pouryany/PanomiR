@@ -4,14 +4,14 @@
 \alias{getDesignMatrix}
 \title{Obtain Design Matrix}
 \usage{
-getDesignMatrix(covariatesDataFrame, Intercept = TRUE, RELEVELS = list())
+getDesignMatrix(covariatesDataFrame, intercept = TRUE, reLevels = list())
 }
 \arguments{
 \item{covariatesDataFrame}{Dataframe of covariates.}
 
-\item{Intercept}{Intercept in the linear model.}
+\item{intercept}{intercept in the linear model.}
 
-\item{RELEVELS}{TBA.}
+\item{reLevels}{TBA.}
 }
 \value{
 List containing a design matrix.
