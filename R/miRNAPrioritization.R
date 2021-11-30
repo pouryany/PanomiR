@@ -1,13 +1,13 @@
 #' Prioritize miRNA
 #'
-#' Outputs a table of miRNA (ordered) with respective p-values derived from
+#' Outputs a table of miRNA ordered with respective p-values derived from
 #'   method for prioritization
 #'
 #' @param enriches0 miRNA-pathway enrichment dataset obtained from
 #'   miRNAPathwayEnrichment.
 #' @param pathwayClusters Pathway clusters, obtained from
 #'   MappingPathwaysClusters.
-#' @param method Vector of methods (pCut, AggInv, AggLog, sumz, sumlog).
+#' @param method Vector of methods pCut, AggInv, AggLog, sumz, sumlog.
 #' @param methodThresh Vector of methods threshold for each method in method,
 #'   if NULL use default thresh values in method.
 #' @param enrichmentFDR FDR cut-off calculating miRNA-pathway hits
