@@ -116,12 +116,12 @@ mappingPathwaysClusters <- function(pcxn,
         "Pathway" = pathsOut,
         "cluster" = clusts$membership
     ))
-    
+
     if (plot == TRUE) {
         clusterPlot(subNet = subNet,
                     subplot = subplot,
                     topClusters = topClusters,
-                    outDir = figDir, 
+                    outDir = figDir,
                     prefix = prefix)
     }
 
@@ -131,5 +131,5 @@ mappingPathwaysClusters <- function(pcxn,
 
     return(list("Clustering" = pathsOut,
                 "DE-PCXN" = subNet,
-                "Cluter_method" = eval(clusteringFunction) ))
+                "Cluter_method" = eval(clusteringFunction)))
 }
