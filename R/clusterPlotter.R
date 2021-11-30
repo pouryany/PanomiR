@@ -22,7 +22,7 @@ clusterPlot <- function(subNet,
 
     figDir <- paste0(outDir, prefix)
 
-    legend_cats <- data.frame(
+    legendCats <- data.frame(
         attr = c("Up-regulated", "Down-regulated"),
         shape = unique(igraph::V(subNet)$shape)
     )
@@ -30,10 +30,10 @@ clusterPlot <- function(subNet,
     clustMems  <- igraph::V(subNet)$cluster
     nodeColors <- cols[clustMems]
 
-    small.clust <-
+    smallClust <-
         which(table(clustMems) <= table(clustMems)[5], useNames = TRUE)
 
-    nodeColors[clustMems %in% small.clust] <- NA
+    nodeColors[clustMems %in% smallClust] <- NA
 
     grDevices::pdf(
         paste0(figDir, "PCxNCorGraph.pdf"),
@@ -46,7 +46,7 @@ clusterPlot <- function(subNet,
     )
     graphics::legend(
         x = "bottomleft", # position, also takes x,y coordinates
-        legend = legend_cats$attr,
+        legend = legendCats$attr,
         pch = c(0, 1),
         bty = "n",
         cex = 1.6
@@ -81,7 +81,7 @@ clusterPlot <- function(subNet,
             )
             graphics::legend(
                 x = "bottomleft", # position, also takes x,y coordinates
-                legend = legend_cats$attr,
+                legend = legendCats$attr,
                 pch = c(0, 1),
                 bty = "n",
                 cex = 1.4
@@ -117,7 +117,7 @@ clusterPlot <- function(subNet,
         graphics::legend(
             x = "bottomright",
             y = 200, ## position, also takes x,y coordinates
-            legend = legend_cats$attr,
+            legend = legendCats$attr,
             pch = c(0, 1),
             bty = "n",
             cex = 1.4

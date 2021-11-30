@@ -36,9 +36,9 @@ pathwayGeneTab <- function(pathAdress = NA,
 
     pathList2 <- lapply(
         pathList,
-        function(X) {
+        function(x) {
             clusterProfiler::bitr(
-                X,
+                x,
                 "ENTREZID",
                 "ENSEMBL",
                 OrgDb = org.Hs.eg.db::org.Hs.eg.db
@@ -48,10 +48,10 @@ pathwayGeneTab <- function(pathAdress = NA,
 
     temp <- lapply(
         names(pathList2),
-        function(X) {
+        function(x) {
             data.frame(
-                Pathway = (X),
-                pathList2[[X]]
+                Pathway = (x),
+                pathList2[[x]]
             )
         }
     )
@@ -115,20 +115,20 @@ pathwaySummary <- function(exprsMat,
 
     if (method == "none") {
         exprsMat <- exprsMat %>%
-            dplyr::mutate_if(., is.numeric, function(X) {
-                X
+            dplyr::mutate_if(., is.numeric, function(x) {
+                x
             })
     } else if (method == "x") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
-            dplyr::mutate_if(., is.numeric, function(X) {
-                X
+            dplyr::mutate_if(., is.numeric, function(x) {
+                x
             })
     } else if (method == "x2") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
-            dplyr::mutate_if(., is.numeric, function(X) {
-                X * X
+            dplyr::mutate_if(., is.numeric, function(x) {
+                x * x
             })
     } else {
         stop("invalid choice of summarization function")
@@ -144,8 +144,8 @@ pathwaySummary <- function(exprsMat,
     rownames(pathExp) <- as.character(dplyr::pull(pathExpTab[, 1]))
 
     if (zNormalize) {
-        pathExp <- apply(pathExp, 2, function(X) {
-            (X - mean(X)) / stats::sd(X)
+        pathExp <- apply(pathExp, 2, function(x) {
+            (x - mean(x)) / stats::sd(x)
         })
     }
 
@@ -411,9 +411,9 @@ samplingDataBase <- function(enrichNull,
 
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
-            temp <- parallel::mclapply(seq_len(sampRate), function(Y) {
+            temp <- parallel::mclapply(seq_len(sampRate), function(y) {
                 if (autoSeed) {
-                    set.seed(Y)
+                    set.seed(y)
                 }
                 nullPaths <- sample(allPaths, nPathsTemp, replace = FALSE)
 
@@ -429,8 +429,8 @@ samplingDataBase <- function(enrichNull,
             temp <- t(temp)
 
             rownames(temp) <- selector$x
-            colnames(temp) <- vapply(seq_len(sampRate), function(Y) {
-                paste0("sample_", Y)
+            colnames(temp) <- vapply(seq_len(sampRate), function(y) {
+                paste0("sample_", y)
             }, FUN.VALUE = "character")
             sampTag <- paste0("SampSize_", nPathsTemp)
 
@@ -480,10 +480,10 @@ methodProbBase <- function(samplingData,
     coverName <- paste0(m, "_cover")
 
     # obtain p-vals
-    p_vals <-
+    pVals <-
         stats::pnorm(selector$k, mean = means, sd = sds, lower.tail = FALSE)
     selector <- selector %>%
-        dplyr::mutate(., !!pvalName := p_vals) %>%
+        dplyr::mutate(., !!pvalName := pVals) %>%
         coverFn(., coverName) %>%
         dplyr::select(., -c(k, n))
     return(selector)
@@ -519,19 +519,19 @@ jackKnifeBase <- function(selector,
     sampleSDs <- sampleSDs * 10 / sqrt(nPaths - 1)
 
     # remove one pathway at a time and obtain K for each miRNA
-    temp1 <- parallel::mclapply(seq_along(pathways), function(X) {
-        tempPathways <- pathways[-X]
+    temp1 <- parallel::mclapply(seq_along(pathways), function(x) {
+        tempPathways <- pathways[-x]
         tempSelector <- fn(
             enriches = enrichNull, pathways = tempPathways,
             isSelector = FALSE
         )
         # obtain p-values using the means and sds obtain above
-        p_vals <- stats::pnorm(tempSelector$k,
+        pVals  <- stats::pnorm(tempSelector$k,
                                mean = sampleMeans,
                                sd = sampleSDs,
                                lower.tail = FALSE
         )
-        return(p_vals)
+        return(pVals)
     }, mc.cores = numCores)
 
     # rows <- number of pathways; col <- number of miRNAs
@@ -557,12 +557,12 @@ jackKnifeBase <- function(selector,
 #' \url{https://github.com/th1vairam/CovariateAnalysis}
 #'
 #' @param covariatesDataFrame Dataframe of covariates.
-#' @param Intercept Intercept in the linear model.
-#' @param RELEVELS TBA.
+#' @param intercept intercept in the linear model.
+#' @param reLevels TBA.
 #' @return List containing a design matrix.
 #' @export
-getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
-                            RELEVELS = list()) {
+getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
+                            reLevels = list()) {
     rowNamesTemp <- rownames(covariatesDataFrame)
     colNamesTemp <- colnames(covariatesDataFrame)
 
@@ -587,8 +587,8 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
         as.data.frame(lapply(colnames(covariatesDataFrame), function(column) {
             if (column %in% factorCovariateNames) {
                 fac <- as.factor(covariatesDataFrame[, column])
-                if (column %in% names(RELEVELS)) {
-                    fac <- stats::relevel(fac, ref = RELEVELS[[column]])
+                if (column %in% names(reLevels)) {
+                    fac <- stats::relevel(fac, ref = reLevels[[column]])
                 }
                 return(fac)
             } else {
@@ -643,8 +643,8 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
         # And, already ensured above that
         # covariatesDataFrame[, factorCovariateNames] satisfies:
         # 1) fac is of type factor.
-        # 2) fac is releveled as designated in RELEVELS.
-        if (Intercept) {
+        # 2) fac is releveled as designated in reLevels.
+        if (intercept) {
             contra <- lapply(
                 factorCovariateNames,
                 function(column) {
@@ -669,7 +669,7 @@ getDesignMatrix <- function(covariatesDataFrame, Intercept = TRUE,
     # Model matrix will now include "NA":
     options(na.action = "na.pass")
 
-    if (Intercept) {
+    if (intercept) {
         design <- stats::model.matrix(~.,
                                       data = covariatesDataFrame,
                                       contrasts.arg = contra

@@ -50,11 +50,11 @@ mappingPathwaysClusters <- function(pcxn,
     }
 
     # filter pcxn edges with edge fdr threshold and correlation threshold
-    pcxn$p.Adjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
-    res <- pcxn[pcxn$p.Adjust < edgeFDR, ]
+    pcxn$pAdjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
+    res <- pcxn[pcxn$pAdjust < edgeFDR, ]
     res <- res[abs(res$PathCor) > correlationCutOff, ]
     allPathways <- union(unique(res$Pathway.B), unique(res$Pathway.A))
-    net <- res[, c(1, 2, 4)]
+    net <- res[, c("Pathway.A", "Pathway.B", "PathCor")]
     if (weighted) {
         net$weight <- abs(net$PathCor)
     }
@@ -95,8 +95,6 @@ mappingPathwaysClusters <- function(pcxn,
     zz <- forcats::fct_infreq(zz, ordered = NA)
     levels(zz) <- seq_along(unique(zz))
     clusts$membership <- as.numeric(zz)
-
-    cols <- RColorBrewer::brewer.pal(8, "Set2")
 
     igraph::E(subNet)$color <-
         ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, "#E41A1C", "#377EB8")

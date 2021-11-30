@@ -61,7 +61,7 @@ outDir.}
 
 \item{prefix}{Prefix for all saved data.}
 
-\item{autoSeed}{random permutations are generated based on predetermined 
+\item{autoSeed}{random permutations are generated based on predetermined
 seeds. TRUE will give identical results in different runs.}
 }
 \value{

@@ -41,8 +41,8 @@ miRNAPathwayEnrichment <- function(mirSets,
     pathsRef <- Reduce(union, pathwaySets)
 
     # select miRNAs with targets in pathways
-    mirSets <- lapply(mirSets, function(X) {
-        X[X %in% pathsRef]
+    mirSets <- lapply(mirSets, function(x) {
+        x[x %in% pathsRef]
     })
 
     # select pathways with selected genes of interest
@@ -53,12 +53,12 @@ miRNAPathwayEnrichment <- function(mirSets,
             toType = toID,
             OrgDb = org.Hs.eg.db::org.Hs.eg.db
         )
-        pathwaySets <- lapply(pathwaySets, function(X) {
-            X[X %in% geneDF[, c(toID)]]
+        pathwaySets <- lapply(pathwaySets, function(x) {
+            x[x %in% geneDF[, c(toID)]]
         })
 
-        mirSets <- lapply(mirSets, function(X) {
-            X[X %in% geneDF[, c(toID)]]
+        mirSets <- lapply(mirSets, function(x) {
+            x[x %in% geneDF[, c(toID)]]
         })
         pathsRef <- Reduce(union, pathwaySets)
     }
@@ -77,15 +77,15 @@ miRNAPathwayEnrichment <- function(mirSets,
     # find enrichment p-value of each miRNA target set and each pathway set
     enrichs <- parallel::mclapply(
         seq_len(nrow(iterator)),
-        function(Y) {
-            X <- iterator[Y, ]
+        function(y) {
+            x <- iterator[y, ]
             q <- length(intersect(
-                unlist(pathwaySets[X[[2]]]),
-                unlist(mirSets[X[[1]]])
+                unlist(pathwaySets[x[[2]]]),
+                unlist(mirSets[x[[1]]])
             ))
-            m <- length(unlist(mirSets[X[[1]]]))
+            m <- length(unlist(mirSets[x[[1]]]))
             n <- all - m
-            k <- length(unlist(pathwaySets[X[[2]]]))
+            k <- length(unlist(pathwaySets[x[[2]]]))
             pval <- stats::phyper(
                 q - 1, m, n, k, lower.tail = FALSE, log.p = FALSE
             )

@@ -46,27 +46,14 @@ prioritizeMicroRNA <- function(enriches0,
                                saveCSV = TRUE,
                                prefix = "",
                                autoSeed = TRUE) {
-    if (substring(outDir, nchar(outDir)) != "/") {
-        outDir <- paste0(outDir, "/")
-    }
+
     if (!dir.exists(outDir)) {
-        warning("Output directory does not exist.")
+        stop("Output directory does not exist.")
         dir.create(outDir, recursive = TRUE)
     }
 
-    if (outDir == "/") {
-        outDir <- ""
-    }
-
-    if (substring(dataDir, nchar(dataDir)) != "/") {
-        dataDir <- paste0(dataDir, "/")
-    }
     if (!dir.exists(dataDir)) {
         stop("Data directory does not exist.")
-    }
-
-    if (dataDir == "/") {
-        dataDir <- ""
     }
 
     output <- list()
@@ -136,10 +123,8 @@ prioritizeMicroRNA <- function(enriches0,
 
             samplingDataDir <- paste0(dataDir, prefix, "Sampling_Data/")
 
-            if (saveSampling == TRUE) {
-                if (!dir.exists(samplingDataDir)) {
-                    dir.create(samplingDataDir, recursive = TRUE)
-                }
+            if ((saveSampling == TRUE) && (!dir.exists(samplingDataDir))) {
+                dir.create(samplingDataDir, recursive = TRUE)
             }
 
             samplingDataFilename <- paste0(
