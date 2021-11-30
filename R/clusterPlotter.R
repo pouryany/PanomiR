@@ -19,8 +19,8 @@ clusterPlot <- function(subNet,
     if (!dir.exists(outDir)) {
         stop("Output directory does not exist.")
     }
-    
-    figDir <- paste0(outDir,prefix)
+
+    figDir <- paste0(outDir, prefix)
 
     legend_cats <- data.frame(
         attr = c("Up-regulated", "Down-regulated"),
@@ -29,13 +29,12 @@ clusterPlot <- function(subNet,
     cols <- RColorBrewer::brewer.pal(8, "Set2")
     clustMems  <- igraph::V(subNet)$cluster
     nodeColors <- cols[clustMems]
-    
+
     small.clust <-
-        which(table(clustMems) <= table(clustMems)[5],
-              useNames = TRUE)
-    
+        which(table(clustMems) <= table(clustMems)[5], useNames = TRUE)
+
     nodeColors[clustMems %in% small.clust] <- NA
-    
+
     grDevices::pdf(
         paste0(figDir, "PCxNCorGraph.pdf"),
         width = 18, height = 11
@@ -67,13 +66,13 @@ clusterPlot <- function(subNet,
         for (k in seq_len(topClusters)) {
             keep <- which((clustMems) == k)
             subNet2 <- igraph::induced_subgraph(subNet, keep)
-            
+
             if (length(igraph::V(subNet2)) < 2) next
-      
+
             grDevices::pdf(
                 paste0(figDir, "PCxNCorGraph_", "Cluster_", k, ".pdf")
             )
-            
+
             plot(subNet2,
                  edge.width = 1.3, vertex.size = 5, vertex.label = NA,
                  vertex.color = cols[clustMems[keep]],
@@ -99,12 +98,12 @@ clusterPlot <- function(subNet,
             grDevices::dev.off()
         }
     }
-     "%notin%" <- Negate("%in%")
-     
-     remove <- which(table(clustMems) < 4)
-     remove <- which((clustMems %notin% remove))
-     subNet2 <- igraph::induced_subgraph(subNet, remove)
-  
+    "%notin%" <- Negate("%in%")
+
+    remove <- which(table(clustMems) < 4)
+    remove <- which((clustMems %notin% remove))
+    subNet2 <- igraph::induced_subgraph(subNet, remove)
+
     if (subplot == TRUE) {
         grDevices::pdf(paste0(figDir, "ConnectedPathways_PCxNCorGraph.pdf"),
                        width = 18, height = 11
