@@ -123,7 +123,7 @@ prioritizeMicroRNA <- function(enriches0,
 
             samplingDataDir <- paste0(dataDir, prefix, "Sampling_Data/")
 
-            if((saveSampling == TRUE) && (!dir.exists(samplingDataDir))) {
+            if ((saveSampling == TRUE) && (!dir.exists(samplingDataDir))) {
                 dir.create(samplingDataDir, recursive = TRUE)
             }
 
