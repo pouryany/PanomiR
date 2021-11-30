@@ -18,3 +18,7 @@ knitr::opts_chunk$set(
 #library(PanomiR)
 
 ```
+```{r}
+devtools::session_info()
+
+```

@@ -38,7 +38,7 @@ jack knifing}
 
 \item{numCores}{number of cores used}
 
-\item{autoSeed}{random permutations are generated based on predetermined 
+\item{autoSeed}{random permutations are generated based on predetermined
 seeds. TRUE will give identical results in different runs.}
 }
 \value{
