@@ -23,7 +23,7 @@ biocViews:
     GeneTarget,
     Pathways
 Imports:
-    AnnotationDbi,
+    clusterProfiler,
     dplyr,
     forcats,
     igraph,
@@ -37,8 +37,6 @@ Imports:
     rlang,
     tibble,
     withr,
-    DOSE,
-    clusterProfiler,
     utils
 Depends:
     R (>= 4.1.0)
