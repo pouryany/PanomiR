@@ -5,7 +5,11 @@ Authors@R:
     person("Pourya", "Naderi", email = "pouryany@gmail.com",
            role = c("aut", "cre"))
 Description: PanomiR is a package to detect miRNAs that target groups of
-    pathways from gene expression data.
+    pathways from gene expression data. This package provides functionality 
+    for generating pathway activity profiles, determining differentially
+    activated pathways between user-specified conditions, determining 
+    clusters of pathways via PCxN package, and generating miRNAs targeting
+    clusters of pathways. Each function can be used on its own.
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.2
