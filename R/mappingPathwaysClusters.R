@@ -79,8 +79,8 @@ mappingPathwaysClusters <- function(pcxn,
     dePathways  <- dePathways[which(rownames(dePathways) %in% allPathways), ]
 
     igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% dePathways,
-                                   "square",
-                                   "circle")
+                                "square","circle")
+    
     subNet <- igraph::induced_subgraph(net, rownames(dePathways))
 
     # choose clustering function for nodes
@@ -116,18 +116,14 @@ mappingPathwaysClusters <- function(pcxn,
     ))
 
     if (plot == TRUE) {
-        clusterPlot(subNet = subNet,
-                    subplot = subplot,
-                    topClusters = topClusters,
-                    outDir = figDir,
-                    prefix = prefix)
+        clusterPlot(subNet = subNet, subplot = subplot,
+                topClusters = topClusters, outDir = figDir, prefix = prefix)
     }
 
     if (!is.null(saveNameCSV)) {
         utils::write.csv(pathsOut, paste0(outDir, saveNameCSV))
     }
 
-    return(list("Clustering" = pathsOut,
-                "DE-PCXN" = subNet,
+    return(list("Clustering" = pathsOut, "DE-PCXN" = subNet,
                 "Cluter_method" = eval(clusteringFunction)))
 }

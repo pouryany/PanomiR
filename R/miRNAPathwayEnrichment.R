@@ -20,15 +20,15 @@
 #'   enrichment p-values
 #' @export
 miRNAPathwayEnrichment <- function(mirSets,
-                                   pathwaySets,
-                                   geneSelection = NULL,
-                                   mirSelection = NULL,
-                                   fromID = "ENSEMBL",
-                                   toID = "ENTREZID",
-                                   minPathSize = 9,
-                                   numCores = 1,
-                                   outDir = "",
-                                   saveOutName = NULL) {
+                                    pathwaySets,
+                                    geneSelection = NULL,
+                                    mirSelection = NULL,
+                                    fromID = "ENSEMBL",
+                                    toID = "ENTREZID",
+                                    minPathSize = 9,
+                                    numCores = 1,
+                                    outDir = "",
+                                    saveOutName = NULL) {
     if (substring(outDir, nchar(outDir)) != "/") {
         outDir <- paste0(outDir, "/")
     }

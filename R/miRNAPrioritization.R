@@ -31,21 +31,21 @@
 #'   associated p-values from the methods.
 #' @export
 prioritizeMicroRNA <- function(enriches0,
-                               pathwayClusters,
-                               method = "AggInv",
-                               methodThresh = NULL,
-                               enrichmentFDR = 0.25,
-                               topClust = 2,
-                               sampRate = 1000,
-                               outDir = "",
-                               dataDir = "",
-                               saveSampling = TRUE,
-                               runJackKnife = TRUE,
-                               saveJackKnife = FALSE,
-                               numCores = 1,
-                               saveCSV = TRUE,
-                               prefix = "",
-                               autoSeed = TRUE) {
+                                pathwayClusters,
+                                method = "AggInv",
+                                methodThresh = NULL,
+                                enrichmentFDR = 0.25,
+                                topClust = 2,
+                                sampRate = 1000,
+                                outDir = "",
+                                dataDir = "",
+                                saveSampling = TRUE,
+                                runJackKnife = TRUE,
+                                saveJackKnife = FALSE,
+                                numCores = 1,
+                                saveCSV = TRUE,
+                                prefix = "",
+                                autoSeed = TRUE) {
 
     if (!dir.exists(outDir)) {
         stop("Output directory does not exist.")
@@ -143,16 +143,12 @@ prioritizeMicroRNA <- function(enriches0,
 
             if (m %in% c("aggInv", "aggLog")) {
                 # perform sampling
-                samplingData <- samplingDataBase(enrichNull,
-                                                 mSelector,
-                                                 sampRate,
-                                                 fn,
-                                                 nPaths,
-                                                 samplingDataFile,
-                                                 jackKnife = FALSE,
-                                                 saveSampling = saveSampling,
-                                                 numCores = numCores,
-                                                 autoSeed = autoSeed
+                samplingData <- samplingDataBase(enrichNull, mSelector,sampRate,
+                                    fn, nPaths, samplingDataFile,
+                                    jackKnife = FALSE,
+                                    saveSampling = saveSampling,
+                                    numCores = numCores,
+                                    autoSeed = autoSeed
                 )
 
                 mSelector <- methodProbBase(
@@ -170,16 +166,11 @@ prioritizeMicroRNA <- function(enriches0,
 
             # perform jack-knife
             if ((runJackKnife == TRUE) && (m != "sumz") && (m != "sumlog")) {
-                samplingData <- samplingDataBase(enrichNull,
-                                                 mSelector,
-                                                 sampRate,
-                                                 fn,
-                                                 nPaths,
-                                                 samplingDataFile,
-                                                 jackKnife = FALSE,
-                                                 saveSampling = saveSampling,
-                                                 numCores = numCores,
-                                                 autoSeed = autoSeed
+                samplingData <- samplingDataBase(enrichNull, mSelector,
+                                    sampRate, fn, nPaths, samplingDataFile,
+                                    jackKnife = FALSE, 
+                                    saveSampling = saveSampling,
+                                    numCores = numCores, autoSeed = autoSeed
                 )
                 mSelector <- jackKnifeBase(
                     selector = mSelector,
