@@ -47,7 +47,6 @@
 #' data(pathwayClustersLIHC)
 "pathwayClustersLIHC"
 
-
 #' A table of miRNA-pathway enrichment.
 #' This is a reduced representation of TargetScan
 #' For full table use miRNAPathwayEnrichment function in the package

@@ -59,9 +59,7 @@ prioritizeMicroRNA <- function(enriches0,
                                 prefix = "",
                                 autoSeed = TRUE) {
 
-    if (!dir.exists(outDir) &&
-        saveSampling  &&
-        saveCSV ) {
+    if (!dir.exists(outDir) && saveCSV) {
         warning("Output directory does not exist.")
         dir.create(outDir, recursive = TRUE)
     }
