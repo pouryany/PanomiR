@@ -40,7 +40,7 @@ clusterPlot <- function(subNet,
 
     nodeColors[clustMems %in% smallClust] <- NA
 
-    if (plotSave){
+    if (plotSave) {
         grDevices::pdf(
             paste0(figDir, "PCxNCorGraph.pdf"),
             width = 18, height = 11

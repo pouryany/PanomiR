@@ -7,7 +7,7 @@
 differentially activated pathways from TCGA LIHC dataset to PCxN network
 using Louvain clustering algorithm}
 \format{
-A list of lists containing a list of cluster assignment to 
+A list of lists containing a list of cluster assignment to
     pathways. An igraph object of the mapped PCxN.
 }
 \source{
