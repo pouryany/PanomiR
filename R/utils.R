@@ -395,10 +395,7 @@ samplingDataBase <- function(enrichNull,
         stop("The selector table needs a column x (miRNA name)")
     }
     if (!all(utils::hasName(enrichNull, c("x", "y", "pval")))) {
-        stop(paste0(
-            "The enrichment table needs a column x (miRNA name)",
-            ",a column y (pathway name), and a pval column"
-        ))
+        stop("Bad formatting in the enrichment table")
     }
 
     if (!file.exists(samplingDataFile)) {
