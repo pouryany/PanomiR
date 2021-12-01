@@ -19,3 +19,8 @@ Function imported from https://github.com/th1vairam/CovariateAnalysis
 Modified from http://stackoverflow.com/questions/13088770/
 Function to find linearly dependednt columns of a matrix
 }
+\examples{
+data("iris")
+designMat <- getDesignMatrix(iris)
+linColumnFinder(designMat$design)
+}

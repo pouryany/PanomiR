@@ -687,6 +687,10 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
 #' Function to find linearly dependednt columns of a matrix
 #' @param mat an input design matrix.
 #' @return a list of independent columns
+#' @examples 
+#' data("iris")
+#' designMat <- getDesignMatrix(iris)
+#' linColumnFinder(designMat$design)
 #' @export
 linColumnFinder <- function(mat) {
     mat[is.na(mat)] <- 0
