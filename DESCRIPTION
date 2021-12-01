@@ -32,6 +32,7 @@ Imports:
     RColorBrewer,
     rlang,
     tibble,
+    withr,
     utils
 Depends:
     R (>= 4.1.0)
