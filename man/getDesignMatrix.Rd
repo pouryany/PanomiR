@@ -20,3 +20,7 @@ List containing a design matrix.
 Modified from covariates pipeline of Menachem Former. Imported from
 \url{https://github.com/th1vairam/CovariateAnalysis}
 }
+\examples{
+data(iris)
+getDesignMatrix(iris)
+}

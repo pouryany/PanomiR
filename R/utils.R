@@ -553,6 +553,9 @@ jackKnifeBase <- function(selector,
 #' @param intercept intercept in the linear model.
 #' @param reLevels TBA.
 #' @return List containing a design matrix.
+#' @examples 
+#' data(iris)
+#' getDesignMatrix(iris)
 #' @export
 getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
                             reLevels = list()) {
