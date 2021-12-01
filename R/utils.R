@@ -114,11 +114,15 @@ pathwaySummary <- function(exprsMat,
 
     if (method == "none") {
         exprsMat <- exprsMat %>%
-            dplyr::mutate_if(., is.numeric, function(x) {x})
+            dplyr::mutate_if(., is.numeric, function(x) {
+              x
+              })
     } else if (method == "x") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
-            dplyr::mutate_if(., is.numeric, function(x) {x})
+            dplyr::mutate_if(., is.numeric, function(x) {
+              x
+              })
     } else if (method == "x2") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
@@ -519,7 +523,7 @@ jackKnifeBase <- function(selector,
         # obtain p-values using the means and sds obtain above
         pVals  <- stats::pnorm(tempSelector$k, mean = sampleMeans,
                         sd = sampleSDs, lower.tail = FALSE)
-        
+
         return(pVals)
     }, mc.cores = numCores)
 
@@ -606,7 +610,7 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
             warning(paste("Excluding categorical variables with less than 2",
                 ifelse(is.infinite(maxNumCat), "",
                         paste(" or more than ", maxNumCat, sep = "")),
-                " categories: ", paste( paste("'", excludeCategoricalCols,
+                " categories: ", paste(paste("'", excludeCategoricalCols,
                                     "'", sep = ""), collapse = ", "),
                 sep = ""))
 

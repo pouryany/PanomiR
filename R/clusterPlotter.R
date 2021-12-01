@@ -69,15 +69,15 @@ clusterPlot <- function(subNet,
             plot(subNet2, edge.width = 1.3, vertex.size = 5, vertex.label = NA,
                 vertex.color = cols[clustMems[keep]], legend = TRUE,
                 layout = igraph::layout.fruchterman.reingold)
-            
+
             graphics::legend(x = "bottomleft", legend = legendCats$attr,
                 pch = c(0, 1), bty = "n", cex = 1.4)
-            
+
             graphics::legend(x = "topleft",
                 legend = c("Positive Cor", "Negative Cor"),
                 col = c("#E41A1C", "#377EB8"),
                 lty = 1, lwd = 2, cex = 1.4, bty = "n")
-            
+
             grDevices::dev.off()
         }
     }
@@ -90,19 +90,19 @@ clusterPlot <- function(subNet,
     if (subplot == TRUE) {
         grDevices::pdf(paste0(figDir, "ConnectedPathways_PCxNCorGraph.pdf"),
             width = 18, height = 11)
-        
+
         plot(subNet2, edge.width = 1.3, vertex.size = 5, vertex.label = NA,
             vertex.color = cols[clustMems[remove]], legend = TRUE,
             layout = igraph::layout_components)
-        
+
         graphics::legend(x = "bottomright", y = 200, legend = legendCats$attr,
             pch = c(0, 1), bty = "n", cex = 1.4)
-        
+
         graphics::legend(x = "topleft",
             legend = c("Positive Cor", "Negative Cor"),
             col = c("#E41A1C", "#377EB8"), lty = 1, lwd = 2, cex = 1.4,
             bty = "n")
-        
+
         grDevices::dev.off()
     }
 }

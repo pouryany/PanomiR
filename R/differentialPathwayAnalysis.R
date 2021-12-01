@@ -83,7 +83,7 @@ differentialPathwayAnalysis <- function(geneCounts,
     }
 
     # generate pathway summary statistics
-    pathwaySummaryStats <- pathwaySummary(geneCounts, pathways,id = id,
+    pathwaySummaryStats <- pathwaySummary(geneCounts, pathways, id = id,
                                         method = method,
                                         deGenes = deGenes,
                                         zNormalize = FALSE,

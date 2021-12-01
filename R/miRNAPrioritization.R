@@ -143,8 +143,8 @@ prioritizeMicroRNA <- function(enriches0,
 
             if (m %in% c("aggInv", "aggLog")) {
                 # perform sampling
-                samplingData <- samplingDataBase(enrichNull, mSelector,sampRate,
-                                    fn, nPaths, samplingDataFile,
+                samplingData <- samplingDataBase(enrichNull, mSelector,
+                                    sampRate, fn, nPaths, samplingDataFile,
                                     jackKnife = FALSE,
                                     saveSampling = saveSampling,
                                     numCores = numCores,
@@ -168,7 +168,7 @@ prioritizeMicroRNA <- function(enriches0,
             if ((runJackKnife == TRUE) && (m != "sumz") && (m != "sumlog")) {
                 samplingData <- samplingDataBase(enrichNull, mSelector,
                                     sampRate, fn, nPaths, samplingDataFile,
-                                    jackKnife = FALSE, 
+                                    jackKnife = FALSE,
                                     saveSampling = saveSampling,
                                     numCores = numCores, autoSeed = autoSeed
                 )

@@ -79,8 +79,8 @@ mappingPathwaysClusters <- function(pcxn,
     dePathways  <- dePathways[which(rownames(dePathways) %in% allPathways), ]
 
     igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% dePathways,
-                                "square","circle")
-    
+                                "square", "circle")
+
     subNet <- igraph::induced_subgraph(net, rownames(dePathways))
 
     # choose clustering function for nodes
