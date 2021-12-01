@@ -29,6 +29,18 @@
 #'   seeds. TRUE will give identical results in different runs.
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
 #'   associated p-values from the methods.
+#' @examples
+#' data(pathwayClustersLIHC)
+#' data(miniEnrich)
+#' prioritizeMicroRNA(enriches0 = miniEnrich,
+#'    pathwayClusters = pathwayClustersLIHC$Clustering,
+#'    topClust = 1,
+#'    sampRate = 50,
+#'    method = c("aggInv"),
+#'    saveSampling = FALSE,
+#'    runJackKnife = FALSE,
+#'    numCores = 1,
+#'    saveCSV = FALSE)
 #' @export
 prioritizeMicroRNA <- function(enriches0,
                                 pathwayClusters,
@@ -37,8 +49,8 @@ prioritizeMicroRNA <- function(enriches0,
                                 enrichmentFDR = 0.25,
                                 topClust = 2,
                                 sampRate = 1000,
-                                outDir = "",
-                                dataDir = "",
+                                outDir = ".",
+                                dataDir = ".",
                                 saveSampling = TRUE,
                                 runJackKnife = TRUE,
                                 saveJackKnife = FALSE,
@@ -47,12 +59,14 @@ prioritizeMicroRNA <- function(enriches0,
                                 prefix = "",
                                 autoSeed = TRUE) {
 
-    if (!dir.exists(outDir)) {
-        stop("Output directory does not exist.")
+    if (!dir.exists(outDir) &&
+        saveSampling  &&
+        saveCSV ) {
+        warning("Output directory does not exist.")
         dir.create(outDir, recursive = TRUE)
     }
 
-    if (!dir.exists(dataDir)) {
+    if (!dir.exists(dataDir) && saveSampling) {
         stop("Data directory does not exist.")
     }
 

@@ -46,3 +46,20 @@
 #' @examples
 #' data(pathwayClustersLIHC)
 "pathwayClustersLIHC"
+
+
+#' A table of miRNA-pathway enrichment.
+#' This is a reduced representation of TargetScan
+#' For full table use miRNAPathwayEnrichment function in the package
+#' along with msigdb_c2 and targetScan_03 datasets.
+#'
+#' @format A dataframe of 13170 rows and 10 variables:
+#' \describe{
+#'   \item{x}{A targetscan annotated miRNA}
+#'   \item{y}{An MSigDB annotated pathway}
+#'   \item{pval}{Fisher's Exact test p-value}
+#' }
+#' @usage data(miniEnrich)
+#' @examples
+#' data(miniEnrich)
+"miniEnrich"

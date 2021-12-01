@@ -12,8 +12,8 @@ prioritizeMicroRNA(
   enrichmentFDR = 0.25,
   topClust = 2,
   sampRate = 1000,
-  outDir = "",
-  dataDir = "",
+  outDir = ".",
+  dataDir = ".",
   saveSampling = TRUE,
   runJackKnife = TRUE,
   saveJackKnife = FALSE,
@@ -71,4 +71,17 @@ Table of miRNA and p-values, each row contains a miRNA and its
 \description{
 Outputs a table of miRNA ordered with respective p-values derived from
   method for prioritization
+}
+\examples{
+data(pathwayClustersLIHC)
+data(miniEnrich)
+prioritizeMicroRNA(enriches0 = miniEnrich,
+   pathwayClusters = pathwayClustersLIHC$Clustering,
+   topClust = 1,
+   sampRate = 50,
+   method = c("aggInv"),
+   saveSampling = FALSE,
+   runJackKnife = FALSE,
+   numCores = 1,
+   saveCSV = FALSE)
 }

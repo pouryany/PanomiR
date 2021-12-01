@@ -200,7 +200,7 @@ pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
     tempEnrich <- enriches[enriches$y %in% pathways, ]
     selector <- tempEnrich %>%
         dplyr::group_by(x) %>%
-        dplyr::summarise(n = n(), k = sum(hit2)) %>%
+        dplyr::summarise(n = dplyr::n(), k = sum(hit2)) %>%
         dplyr::arrange(., x)
 
     if (isSelector == TRUE) {
@@ -230,7 +230,7 @@ aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
     tempEnrich <- enriches[enriches$y %in% pathways, ]
     selector <- tempEnrich %>%
         dplyr::group_by(x) %>%
-        dplyr::summarise(n = n(), k = mean(ES2)) %>%
+        dplyr::summarise(n = dplyr::n(), k = mean(ES2)) %>%
         dplyr::arrange(., x)
 
     if (isSelector == TRUE) {
@@ -257,7 +257,7 @@ aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
     tempEnrich <- enriches[enriches$y %in% pathways, ]
     selector <- tempEnrich %>%
         dplyr::group_by(x) %>%
-        dplyr::summarise(n = n(), k = mean(ES))
+        dplyr::summarise(n = dplyr::n(), k = mean(ES))
 
     if (isSelector == TRUE) {
         selector <- selector %>%
