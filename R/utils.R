@@ -1,6 +1,6 @@
 utils::globalVariables(c(
-  "%<>%", ".", ":=", "ENSEMBL", "ES", "ES2", "Intersect", "Pathway", "hit",
-  "hit2", "k", "n", "path_fdr", "pval", "x", "y"
+    "%<>%", ".", ":=", "ENSEMBL", "ES", "ES2", "Intersect", "Pathway", "hit",
+    "hit2", "k", "n", "path_fdr", "pval", "x", "y"
 ))
 
 #' Pathway-Gene Associations
@@ -15,8 +15,8 @@ utils::globalVariables(c(
 #' @return pathExpTab Table of pathway-gene association.
 #' @export
 pathwayGeneTab <- function(pathAdress = NA,
-                           pathwayList = NA,
-                           outDir = NA) {
+                            pathwayList = NA,
+                            outDir = NA) {
     # Development notes: make compatible with direct data input
     #       check and throw errors if the address is valid
     #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
@@ -86,13 +86,13 @@ pathwayGeneTab <- function(pathAdress = NA,
 #' @export
 
 pathwaySummary <- function(exprsMat,
-                           pathwayRef,
-                           id = "ENSEMBL",
-                           zNormalize = FALSE,
-                           method = FALSE,
-                           deGenes = NULL,
-                           trim = 0,
-                           tScores = NULL) {
+                            pathwayRef,
+                            id = "ENSEMBL",
+                            zNormalize = FALSE,
+                            method = FALSE,
+                            deGenes = NULL,
+                            trim = 0,
+                            tScores = NULL) {
 
     # There is a confusion about the data format here.
     # Make sure it is consistent.
@@ -104,8 +104,7 @@ pathwaySummary <- function(exprsMat,
             stop("Provide tscores/pvalues")
         }
 
-        pathwayRef <- dplyr::inner_join(pathwayRef, tScores,
-                                        by = c("ENSEMBL")
+        pathwayRef <- dplyr::inner_join(pathwayRef, tScores, by = c("ENSEMBL")
         )
 
         pathwayRef %<>% dplyr::group_by(., Pathway) %>%
@@ -115,15 +114,11 @@ pathwaySummary <- function(exprsMat,
 
     if (method == "none") {
         exprsMat <- exprsMat %>%
-            dplyr::mutate_if(., is.numeric, function(x) {
-                x
-            })
+            dplyr::mutate_if(., is.numeric, function(x) {x})
     } else if (method == "x") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
-            dplyr::mutate_if(., is.numeric, function(x) {
-                x
-            })
+            dplyr::mutate_if(., is.numeric, function(x) {x})
     } else if (method == "x2") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
@@ -295,11 +290,9 @@ sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
 #' @return a  scoring of miRNAs in a cluster of pathways
 sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
     enriches1 <- enriches %>% dplyr::mutate(., pval = ifelse(pval >= 0.999,
-                                                             0.999, pval
-    ))
+                                    0.999, pval))
     enriches1 <- enriches1 %>% dplyr::mutate(., pval = ifelse(pval <= 1.0e-16,
-                                                              1.0e-16, pval
-    ))
+                                    1.0e-16, pval))
 
     tempEnrich <- enriches1[enriches1$y %in% pathways, ]
     aggPTab <- vector()
@@ -382,15 +375,15 @@ sumlogCoverFn <- aggInvCoverFn
 #'   seeds. TRUE will give identical results in different runs.
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrichNull,
-                             selector,
-                             sampRate,
-                             fn,
-                             nPaths,
-                             samplingDataFile,
-                             jackKnife = FALSE,
-                             saveSampling,
-                             numCores = 1,
-                             autoSeed = TRUE) {
+                            selector,
+                            sampRate,
+                            fn,
+                            nPaths,
+                            samplingDataFile,
+                            jackKnife = FALSE,
+                            saveSampling,
+                            numCores = 1,
+                            autoSeed = TRUE) {
     if (!all(utils::hasName(selector, c("x")))) {
         stop("The selector table needs a column x (miRNA name)")
     }
@@ -411,9 +404,8 @@ samplingDataBase <- function(enrichNull,
             temp <- parallel::mclapply(seq_len(sampRate), function(y) {
                 if (autoSeed) {
                     withr::with_seed(y, {
-                        nullPaths <- sample(allPaths,
-                                            nPathsTemp,
-                                            replace = FALSE)})
+                        nullPaths <- sample(allPaths, nPathsTemp,
+                                        replace = FALSE)})
                 }
 
                 selNull <- fn(
@@ -460,10 +452,10 @@ samplingDataBase <- function(enrichNull,
 #' @param coverFn Cover of methodology function.
 #' @return Outputs a new selector table with col x, pval and cover.
 methodProbBase <- function(samplingData,
-                           selector,
-                           m,
-                           nPaths = 100,
-                           coverFn = NULL) {
+                            selector,
+                            m,
+                            nPaths = 100,
+                            coverFn = NULL) {
     if (!all(utils::hasName(selector, c("x", "k")))) {
         stop(
             "The selector needs a column x (miRNA) and a column k (miRNA hits)"
@@ -505,12 +497,12 @@ methodProbBase <- function(samplingData,
 #' @param numCores number of cores
 #' @return Outputs a new selector table with col x, pval_jk
 jackKnifeBase <- function(selector,
-                          pathways,
-                          enrichNull,
-                          fn,
-                          jackKnifeData,
-                          m,
-                          numCores = 1) {
+                            pathways,
+                            enrichNull,
+                            fn,
+                            jackKnifeData,
+                            m,
+                            numCores = 1) {
     # obtain means and sds for distribution, assume CLT
     nPaths <- length(pathways)
     sampleMeans <- rowMeans(jackKnifeData)
@@ -525,11 +517,9 @@ jackKnifeBase <- function(selector,
             isSelector = FALSE
         )
         # obtain p-values using the means and sds obtain above
-        pVals  <- stats::pnorm(tempSelector$k,
-                               mean = sampleMeans,
-                               sd = sampleSDs,
-                               lower.tail = FALSE
-        )
+        pVals  <- stats::pnorm(tempSelector$k, mean = sampleMeans,
+                        sd = sampleSDs, lower.tail = FALSE)
+        
         return(pVals)
     }, mc.cores = numCores)
 
@@ -567,8 +557,8 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
 
     factorCovariateNames <-
         names(covariatesDataFrame)[vapply(covariatesDataFrame,
-                                          is.factor,
-                                          logical(1))]
+                                        is.factor,
+                                        logical(1))]
 
     factorCovariateNames <-
         setdiff(
@@ -614,27 +604,20 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
         if (!is.null(excludeCategoricalCols) &&
             length(excludeCategoricalCols) > 0) {
             warning(paste("Excluding categorical variables with less than 2",
-                          ifelse(is.infinite(maxNumCat),
-                                 "",
-                                 paste(" or more than ", maxNumCat, sep = "")
-                          ),
-                          " categories: ",
-                          paste(
-                              paste("'", excludeCategoricalCols, "'", sep = ""),
-                              collapse = ", "
-                          ),
-                          sep = ""
-            ))
+                ifelse(is.infinite(maxNumCat), "",
+                        paste(" or more than ", maxNumCat, sep = "")),
+                " categories: ", paste( paste("'", excludeCategoricalCols,
+                                    "'", sep = ""), collapse = ", "),
+                sep = ""))
 
             factorCovariateNames <- setdiff(
                 factorCovariateNames,
                 excludeCategoricalCols
             )
             covariatesDataFrame <-
-              covariatesDataFrame[,
+                covariatesDataFrame[,
                 !(colnames(covariatesDataFrame) %in% excludeCategoricalCols),
-                drop = FALSE
-              ]
+                drop = FALSE]
         }
 
         # Inspired by http://stackoverflow.com/questions/4560459/
@@ -669,14 +652,12 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
     options(na.action = "na.pass")
 
     if (intercept) {
-        design <- stats::model.matrix(~.,
-                                      data = covariatesDataFrame,
-                                      contrasts.arg = contra
+        design <- stats::model.matrix(~., data = covariatesDataFrame,
+                            contrasts.arg = contra
         )
     } else {
-        design <- stats::model.matrix(~ 0 + .,
-                                      data = covariatesDataFrame,
-                                      contrasts.arg = contra
+        design <- stats::model.matrix(~ 0 + ., data = covariatesDataFrame,
+                            contrasts.arg = contra
         )
     }
 
