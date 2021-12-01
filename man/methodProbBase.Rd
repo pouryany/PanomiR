@@ -2,8 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{methodProbBase}
 \alias{methodProbBase}
-\title{Outputs a table with col x, miRNA, probability of observing k, depending on
-methodology, against a random distribution and cover of methodology}
+\title{Outputs a table with col x, miRNA, probability of observing k
+  against a random distribution of the cover of methodology}
 \usage{
 methodProbBase(samplingData, selector, m, nPaths = 100, coverFn = NULL)
 }
@@ -24,6 +24,6 @@ each iteration. Default is set at 100.}
 Outputs a new selector table with col x, pval and cover.
 }
 \description{
-Outputs a table with col x, miRNA, probability of observing k, depending on
-methodology, against a random distribution and cover of methodology
+Outputs a table with col x, miRNA, probability of observing k
+  against a random distribution of the cover of methodology
 }
