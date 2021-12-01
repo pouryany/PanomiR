@@ -91,6 +91,18 @@ pathwayGeneTab <- function(pathAdress = NA,
 #'   pathway summary statistics.
 #' @param tScores Argument for-top-50-percent-genes method.
 #' @return pathExp Table of pathway activity profiles per sample.
+#' @examples
+#' pathTab <- tibble::tribble(
+#'  ~Pathway, ~ENTREZID,  ~ENSEMBL,
+#'  "Path1",   "125",      "ENSG00000196616",
+#'  "Path1",   "3099",     "ENSG00000159399",
+#'  "Path2",   "5230",     "ENSG00000102144",
+#'  "Path2",   "5162",     "ENSG00000168291"
+#'  )
+#' exprsMat <- matrix(2 * (seq_len(12)), 4, 3)
+#' rownames(exprsMat) <- pathTab$ENSEMBL
+#' colnames(exprsMat) <- LETTERS[seq_len(3)]
+#' pathwaySummary(exprsMat, pathTab, method = "x2")
 #' @export
 
 pathwaySummary <- function(exprsMat,
