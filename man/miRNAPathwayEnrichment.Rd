@@ -44,8 +44,13 @@ from given table.}
 }
 \value{
 Table of enrichment, each row contains mirna-pathway and its
-  enrichment p-values
+  enrichment p-values.
 }
 \description{
 Outputs enrichment probability of miRNAs based on pathway clusters.
+}
+\examples{
+data(msigdb_c2)
+data(targetScan_03)
+miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
 }

@@ -6,13 +6,18 @@
 #' @param topClusters plot figures for top x clusters
 #' @param outDir output directory
 #' @param prefix add prefix to plots
+#' @param plotSave saves the plot if set true. Otherwise display
 #' @return a set of plots for DE-PCXN and subclusters
+#' @examples
+#' data(pathwayClustersLIHC)
+#' clusterPlot(pathwayClustersLIHC$DE_PCXN, plotSave = FALSE)
 #' @export
 clusterPlot <- function(subNet,
                         subplot = FALSE,
                         topClusters = 2,
                         prefix = "",
-                        outDir = "") {
+                        outDir = ".",
+                        plotSave = TRUE) {
     if (substring(outDir, nchar(outDir)) != "/") {
         outDir <- paste0(outDir, "/")
     }
@@ -35,10 +40,13 @@ clusterPlot <- function(subNet,
 
     nodeColors[clustMems %in% smallClust] <- NA
 
-    grDevices::pdf(
-        paste0(figDir, "PCxNCorGraph.pdf"),
-        width = 18, height = 11
-    )
+    if (plotSave){
+        grDevices::pdf(
+            paste0(figDir, "PCxNCorGraph.pdf"),
+            width = 18, height = 11
+        )
+    }
+
     plot(
         subNet,
         vertex.size = 5, vertex.label = NA,
@@ -53,7 +61,8 @@ clusterPlot <- function(subNet,
     )
     graphics::legend(x = "topleft", legend = c("Positive Cor", "Negative Cor"),
         col = c("#E41A1C", "#377EB8"), lty = 1, lwd = 2, cex = 1.6, bty = "n")
-    grDevices::dev.off()
+    if (plotSave)
+        grDevices::dev.off()
 
     if (subplot == TRUE) {
         for (k in seq_len(topClusters)) {

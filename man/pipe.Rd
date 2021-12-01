@@ -17,4 +17,8 @@ The result of calling `rhs(lhs)`.
 \description{
 See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
 }
+\examples{
+data("mtcars")
+mtcars \%>\% nrow()
+}
 \keyword{internal}

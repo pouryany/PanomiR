@@ -4,7 +4,14 @@
 \alias{clusterPlot}
 \title{Plots clusters of pathways with associated directionality.}
 \usage{
-clusterPlot(subNet, subplot = FALSE, topClusters = 2, prefix = "", outDir = "")
+clusterPlot(
+  subNet,
+  subplot = FALSE,
+  topClusters = 2,
+  prefix = "",
+  outDir = ".",
+  plotSave = TRUE
+)
 }
 \arguments{
 \item{subNet}{pathways network (edge list of pathways)}
@@ -17,10 +24,16 @@ in Figures directory of plots}
 \item{prefix}{add prefix to plots}
 
 \item{outDir}{output directory}
+
+\item{plotSave}{saves the plot if set true. Otherwise display}
 }
 \value{
 a set of plots for DE-PCXN and subclusters
 }
 \description{
 Plots clusters of pathways with associated directionality.
+}
+\examples{
+data(pathwayClustersLIHC)
+clusterPlot(pathwayClustersLIHC$DE_PCXN, plotSave = FALSE)
 }

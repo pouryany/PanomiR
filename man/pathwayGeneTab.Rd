@@ -21,3 +21,12 @@ pathExpTab Table of pathway-gene association.
 \description{
 Generates a table of pathways and genes associations.
 }
+\examples{
+pathway1 <- c("125", "3099", "126")
+pathway2 <- c("5232", "5230", "5162")
+pathList <- list("Path1" = pathway1, "Path2" = pathway2)
+res <- pathwayGeneTab(pathwayList = pathList)
+
+data(msigdb_c2)
+pathwayGeneTab(pathwayList = msigdb_c2[1:2])
+}

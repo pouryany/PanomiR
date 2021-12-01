@@ -13,6 +13,14 @@ utils::globalVariables(c(
 #'   use this argument instead. The list must contain no NA values.
 #' @param outDir Address to save an RDS for a table of pathway-gene association
 #' @return pathExpTab Table of pathway-gene association.
+#' @examples
+#' pathway1 <- c("125", "3099", "126")
+#' pathway2 <- c("5232", "5230", "5162")
+#' pathList <- list("Path1" = pathway1, "Path2" = pathway2)
+#' res <- pathwayGeneTab(pathwayList = pathList)
+#' 
+#' data(msigdb_c2)
+#' pathwayGeneTab(pathwayList = msigdb_c2[1:2])
 #' @export
 pathwayGeneTab <- function(pathAdress = NA,
                             pathwayList = NA,
@@ -687,7 +695,7 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
 #' Function to find linearly dependednt columns of a matrix
 #' @param mat an input design matrix.
 #' @return a list of independent columns
-#' @examples 
+#' @examples
 #' data("iris")
 #' designMat <- getDesignMatrix(iris)
 #' linColumnFinder(designMat$design)

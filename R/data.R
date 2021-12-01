@@ -33,3 +33,16 @@
 #' @examples
 #' data(targetScan_03)
 "targetScan_03"
+
+
+#' An output of the mappingPathwayClusters method. containing mapped
+#' differentially activated pathways from TCGA LIHC dataset to PCxN network
+#' using Louvain clustering algorithm
+#' 
+#' @format A list of lists containing a list of cluster assignment to 
+#'     pathways. An igraph object of the mapped PCxN.
+#' @source \url{http://pcxn.org:8080/}
+#' @usage data(pathwayClustersLIHC)
+#' @examples
+#' data(pathwayClustersLIHC)
+"pathwayClustersLIHC"

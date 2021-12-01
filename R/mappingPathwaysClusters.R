@@ -124,6 +124,6 @@ mappingPathwaysClusters <- function(pcxn,
         utils::write.csv(pathsOut, paste0(outDir, saveNameCSV))
     }
 
-    return(list("Clustering" = pathsOut, "DE-PCXN" = subNet,
+    return(list("Clustering" = pathsOut, "DE_PCXN" = subNet,
                 "Cluter_method" = eval(clusteringFunction)))
 }
