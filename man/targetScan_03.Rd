@@ -21,4 +21,7 @@ The interactions are filtered to only human interactions.
 The interactions are filtered to have a
 Cumulative weighted context++ score of < -0.3
 }
+\examples{
+data(targetScan_03)
+}
 \keyword{datasets}

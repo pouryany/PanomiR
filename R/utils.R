@@ -115,14 +115,14 @@ pathwaySummary <- function(exprsMat,
     if (method == "none") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, function(x) {
-              x
-              })
+                x
+                })
     } else if (method == "x") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%
             dplyr::mutate_if(., is.numeric, function(x) {
-              x
-              })
+                x
+                })
     } else if (method == "x2") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, rank) %>%

@@ -18,4 +18,7 @@ data(path_gene_table)
 \description{
 A table of gene-pathway association. based on the pathways of MSigDB.
 }
+\examples{
+data(path_gene_table)
+}
 \keyword{datasets}

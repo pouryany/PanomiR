@@ -16,4 +16,7 @@ data(msigdb_c2)
 \description{
 Canonical pathways from Molecular Signatures Database, MsigDb V6.2
 }
+\examples{
+data(msigdb_c2)
+}
 \keyword{datasets}
