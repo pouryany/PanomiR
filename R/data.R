@@ -3,7 +3,7 @@
 #' @format A list of 1329 pathways
 #' @source \url{http://www.gsea-msigdb.org/gsea/index.jsp}
 #' @usage data(msigdb_c2)
-#' @examples 
+#' @examples
 #' data(msigdb_c2)
 "msigdb_c2"
 
@@ -16,7 +16,7 @@
 #'   \item{ENSEMBL}{The ENSEMBL of a gene belonging to the pathway}
 #' }
 #' @usage data(path_gene_table)
-#' @examples 
+#' @examples
 #' data(path_gene_table)
 "path_gene_table"
 
@@ -30,6 +30,6 @@
 #' @format A list of 439 items
 #' @source \url{http://www.targetscan.org/vert_72/}
 #' @usage data(targetScan_03)
-#' @examples 
+#' @examples
 #' data(targetScan_03)
 "targetScan_03"
