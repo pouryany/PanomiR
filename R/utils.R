@@ -450,8 +450,8 @@ samplingDataBase <- function(enrichNull,
 }
 
 
-#' Outputs a table with col x (miRNA), probability of observing k (depending on
-#' methodology) against a random distribution and cover of methodology
+#' Outputs a table with col x, miRNA, probability of observing k, depending on
+#' methodology, against a random distribution and cover of methodology
 #'
 #' @param samplingData Random distribution data.
 #' @param selector Table with x(miRNA) in pathway cluster and observed

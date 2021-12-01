@@ -5,7 +5,7 @@
 #' @usage data(msigdb_c2)
 "msigdb_c2"
 
-#' A table of gene-pathway association. Created based on the pathways of MSigDB.
+#' A table of gene-pathway association. based on the pathways of MSigDB.
 #'
 #' @format A matrix with 3 columns and 76926 rows:
 #' \describe{

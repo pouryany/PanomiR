@@ -30,7 +30,7 @@ miRNAPathwayEnrichment.}
 \item{pathwayClusters}{Pathway clusters, obtained from
 MappingPathwaysClusters.}
 
-\item{method}{Vector of methods (pCut, AggInv, AggLog, sumz, sumlog).}
+\item{method}{Vector of methods pCut, AggInv, AggLog, sumz, sumlog.}
 
 \item{methodThresh}{Vector of methods threshold for each method in method,
 if NULL use default thresh values in method.}
@@ -69,6 +69,6 @@ Table of miRNA and p-values, each row contains a miRNA and its
   associated p-values from the methods.
 }
 \description{
-Outputs a table of miRNA (ordered) with respective p-values derived from
+Outputs a table of miRNA ordered with respective p-values derived from
   method for prioritization
 }
