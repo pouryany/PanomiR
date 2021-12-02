@@ -14,7 +14,27 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, eval = FALSE}
+## PanomiR Package Walkthrough
+
+PanomiR is a package for pathway and microRNA Analysis of gene expression data.
+This document provides details about how to install and utilize various 
+functionality in PanomiR
+
+## Installation
+
+PanomiR can be accessed via Bioconductor. To install, start R (version > "4.1)
+and run the following code.
+
+```{r installation_bioc, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("PanomiR")
+```
+
+You can also install the latest development version of PanomiR using GitHub
+
+```{r bbb, eval = FALSE}
 #library(PanomiR)
 
 ```
