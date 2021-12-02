@@ -12,7 +12,7 @@ mappingPathwaysClusters(
   correlationCutOff = 0.316,
   pathwayFDR = 0.05,
   topPathways = 200,
-  plot = TRUE,
+  plotOut = TRUE,
   subplot = TRUE,
   topClusters = 2,
   prefix = "",
@@ -40,7 +40,7 @@ filter pathways with adjusted p-values less than given threshold}
 
 \item{topPathways}{use only top x paths; if NULL, use all paths}
 
-\item{plot}{if TRUE, store graph plot in Figures directory of plots}
+\item{plotOut}{if TRUE, store graph plot in Figures directory of plots}
 
 \item{subplot}{if TRUE, store individual clusters plots and connected plots
 in Figures directory of plots}
