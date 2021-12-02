@@ -33,7 +33,7 @@ mappingPathwaysClusters <- function(pcxn,
                                     subplot = TRUE,
                                     topClusters = 2,
                                     prefix = "",
-                                    outDir = "",
+                                    outDir = ".",
                                     saveNameCSV = NULL,
                                     weighted = FALSE) {
     if (substring(outDir, nchar(outDir)) != "/") {

@@ -62,7 +62,6 @@ cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
 # Pathway reference from the PanomiR package
 data("path_gene_table")
 
-
 # Generating pathway summary statistics 
 
 summaries <- pathwaySummary(TCGA_LIHC,path_gene_table,method = "x2")
@@ -84,14 +83,43 @@ pathway activity profiles in user-determined conditions.
 
 output0 <- differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
                                        pathways =  path_gene_table,
-                                       covariates = COV_TCGA_LIHC, 
+                                       covariates = cov_TCGA_LIHC, 
                                        condition = 'shortLetterCode',
                                        adjustCovars ='plate')
 
 de.paths <- output0$DEP
 
+head(de.paths)
+```
+
+## 3. Finding clusters of pathways
+
+PanomiR provides a function to find groups coordinated differentially 
+activated pathways based on the PCxN methodology. 
+
+```{r pcxn}
+
+
+# using an updated version of pcxn 
+pcxn_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/pcxn_panomir.RDS"))
+pcxn_net  <- readRDS(pcxn_url)
+
+set.seed(2)
+pathway.clusters <- mappingPathwaysClusters(pcxn = pcxn_net, 
+                            dePathways = de.paths[1:300,],
+                            topPathways = 200,
+                            outDir=".",
+                            subplot = F,
+                            prefix='',
+                            clusteringFunction = "cluster_louvain",
+                            correlationCutOff = 0.1)
+
+
+head(pathway.clusters$Clustering)
 
 ```
+
 
 ```{r sessionInfo}
 sessionInfo()

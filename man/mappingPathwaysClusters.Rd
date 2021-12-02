@@ -16,7 +16,7 @@ mappingPathwaysClusters(
   subplot = TRUE,
   topClusters = 2,
   prefix = "",
-  outDir = "",
+  outDir = ".",
   saveNameCSV = NULL,
   weighted = FALSE
 )
