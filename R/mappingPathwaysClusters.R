@@ -11,7 +11,7 @@
 #' @param pathwayFDR FDR threshold for DE pathways adjusted p-values;
 #'   filter pathways with adjusted p-values less than given threshold
 #' @param topPathways  use only top x paths; if NULL, use all paths
-#' @param plot if TRUE, store graph plot in Figures directory of plots
+#' @param plotOut if TRUE, store graph plot in Figures directory of plots
 #' @param subplot if TRUE, store individual clusters plots and connected plots
 #'   in Figures directory of plots
 #' @param topClusters plot figures for top x clusters
@@ -29,7 +29,7 @@ mappingPathwaysClusters <- function(pcxn,
                                     correlationCutOff = 0.316,
                                     pathwayFDR = 0.05,
                                     topPathways = 200,
-                                    plot = TRUE,
+                                    plotOut = TRUE,
                                     subplot = TRUE,
                                     topClusters = 2,
                                     prefix = "",
@@ -45,7 +45,7 @@ mappingPathwaysClusters <- function(pcxn,
 
     figDir <- paste0(outDir, "Figures/")
 
-    if (!dir.exists(figDir)) {
+    if (!dir.exists(figDir) && plotOut) {
         dir.create(figDir, recursive = TRUE)
     }
 
@@ -115,7 +115,7 @@ mappingPathwaysClusters <- function(pcxn,
         "cluster" = clusts$membership
     ))
 
-    if (plot == TRUE) {
+    if (plotOut == TRUE) {
         clusterPlot(subNet = subNet, subplot = subplot,
                 topClusters = topClusters, outDir = figDir, prefix = prefix)
     }

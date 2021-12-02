@@ -1,6 +1,8 @@
 ---
 title: "PanomiR Package Walkthrough"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{PanomiR}
   %\VignetteEngine{knitr::rmarkdown}
@@ -106,21 +108,100 @@ pcxn_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
 pcxn_net  <- readRDS(pcxn_url)
 
 set.seed(2)
-pathway.clusters <- mappingPathwaysClusters(pcxn = pcxn_net, 
+pathwayClustsLIHC <- mappingPathwaysClusters(pcxn = pcxn_net, 
                             dePathways = de.paths[1:300,],
                             topPathways = 200,
                             outDir=".",
-                            subplot = F,
+                            plot = FALSE,
+                            subplot = FALSE,
                             prefix='',
                             clusteringFunction = "cluster_louvain",
                             correlationCutOff = 0.1)
 
 
-head(pathway.clusters$Clustering)
+head(pathwayClustsLIHC$Clustering)
 
 ```
 
 
+## 4. Prioritizing miRNAs per cluster of pathways.
+
+PanomiR identifies miRNAs that target clusters of pathways, as defined in the 
+last section. In order to this, you would need a reference table of
+miRNA-Pathway association score (enrichment). We recommend using a customized
+miRNA-Pathway association table, tailored to your experimental data. Here, 
+we provide a pre-processed table for LIHC table and in the next section, we will
+explain how to generate the customized tables.
+
+Note that in the example below, we use a sampling rate of 50, the recommended
+rate is between 500-1000. Also, we set the saveSampling argument to FALSE. This
+argument should be set to TRUE if you wish to save your sampling and check for
+different outputs from the clustering algorithms or pathway thresholds.
+
+
+```{r miRNA}
+
+
+# using an updated version of pcxn 
+enrch_url    <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/LIHC_ENRICHMENT_TargetScan03.RDS"))
+tableEnrich  <- readRDS(enrch_url)
+
+set.seed(1)
+output2 <- prioritizeMicroRNA(enriches0 = tableEnrich,
+                              pathwayClusters = pathwayClustsLIHC$Clustering,
+                              topClust = 1,
+                              sampRate = 50, 
+                              method = c("aggInv"),
+                              outDir = "Output/",
+                              dataDir = "outData/",
+                              saveSampling = FALSE,
+                              runJackKnife = FALSE,
+                              numCores = 1,
+                              prefix = "outmiR",
+                              saveCSV = FALSE)
+
+head(output2$Cluster1)
+
+```
+
+
+
+## 5. miRNA-Pathway enrichment tables
+
+PanomiR best performs on tissue/experiment-customized datasets. In order to do
+this, you need to create a customized enrichment table. You can simply do so by
+using the pathway and miRNA list that we have provided as a part of the package.
+simply, plug in the name of the genes present (expressed) in your experiment in
+the following code
+
+
+
+```{r customized_mir, eval=FALSE}
+
+
+# using an updated version of pcxn 
+data("msigdb_c2")
+data("targetScan_03")
+
+
+customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
+                                              pathwaySets = msigdb_c2,
+                                              geneSelection = yourGenes,
+                                              mirSelection = yourMicroRNAs,
+                                              fromID = "ENSEMBL",
+                                              toID = "ENTREZID",
+                                              minPathSize = 9,
+                                              numCores = 1,
+                                              outDir = ".",
+                                              saveOutName = NULL)
+
+```
+
+In the above section, the field ```fromID``` denotes the gene representation 
+format of your input list.
+
+## Session info
 ```{r sessionInfo}
 sessionInfo()
 

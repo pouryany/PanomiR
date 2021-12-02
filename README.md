@@ -4,216 +4,274 @@
 [![lint](https://github.com/pouryany/PanomiR/workflows/lint/badge.svg)](https://github.com/pouryany/PanomiR/actions)
 <!-- badges: end -->
 
-## PanomiR Walkthrough
+## Introduction
 
-### Under-development version. Unauthorized use of code not permitted.
+PanomiR is a package for pathway and microRNA Analysis of gene
+expression data. This document provides details about how to install and
+utilize various functionality in PanomiR.
 
-### For inquiries contact <pouryany@gmail.com>
+For questions, comments, and other queries, contact <pouryany@gmail.com>
 
-PanomiR is a package to detect miRNAs that target groups of pathways
-from gene expression data. Here, we describe the work flow of PanomiR
-along with different steps of the package. The working directory should
-be set to the `R` folder.
+## Installation
 
-The following are initial set for the program. The main input at this
-stage are as follows:
-
-1.  A table of pathway membership. In each row there is a name of a
-    pathway and a gene that belongs to it.
-2.  A gene expression dataset.
-3.  A table of covariates.
-4.  A list of covariates that you would like to adjust for.
-5.  Output and datadirectories.
-
-Here we use an example from TCGA Liver Hepatocellular Carcinoma (LIHC)
-to demonstrate the utility of PanomiR.
+PanomiR can be accessed via Bioconductor. To install, start R (version
+\> “4.1) and run the following code.
 
 ``` r
-source('01-DifferentialPathwayAnalysis.R')
-source('02-MappingPathwaysClusters.R')
-source('03-miRNAPathwayEnrichment.R')
-source('04-miRNAPrioritization.R')
-source('05-miRNAPathwayCorrelation.R')
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
 
-
-pathways     <- readRDS('../data/preprocessed/MSigDBPathGeneTab.RDS')
-genes.counts <- readRDS('../data/LIHC_gene.RDS')
-covariates   <- read.csv('../data/TCGA-LIHC-COV.csv', row.names = 1)
-
-
-
-condition = 'shortLetterCode'
-out.dir   = 'output/'
-data.dir  = 'data/'
-
-output0 <- DifferentialPathwayAnalysis(genes.counts,
-                                       pathways,
-                                       covariates,
-                                       condition,
-                                       adjust.covars='plate')
+BiocManager::install("PanomiR")
 ```
 
-Next step is to Map differentially expressed pathways to a precalculated
-network of pathway correlations to find modules of DE-pathways. The
-function `MappingPathwayClusters` can take different graph clustering
-algorithms. Here we use a for loop to determine readouts for different
-clustering methods.
+You can also install the latest development version of PanomiR using
+GitHub.
 
 ``` r
+devtools::install_github("pouryany/PanomiR")
+```
+
+## 1. Pathway summarization
+
+PanomiR can generate pathway activity profiles given a gene expression
+dataset and a list of pathways. This section uses an example dataset
+from the Cancer Genome Atlas (TCGA) Liver Hepatocellular Carcinoma
+(LIHC) dataset to generate Pathway summary statistics.
+
+``` r
+library(PanomiR)
+
+# Downloading example LIHC expression dataset
+LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/TCGA_LIHC.RDS"))
+TCGA_LIHC <- readRDS(LIHC_url)
+
+# Downloading example LIHC covariates dataset
+LIHC_cov_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/covariates_TCGA_LIHC.RDS"))
+cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
+
+# Pathway reference from the PanomiR package
+data("path_gene_table")
+
+# Generating pathway summary statistics 
+
+summaries <- pathwaySummary(TCGA_LIHC,path_gene_table,method = "x2")
+
+head(summaries)[,1:2]
+```
+
+    ##                                                       TCGA-2V-A95S-01A-11R-A37K-07
+    ## Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS                                  107100510
+    ## Pathway.KEGG_CITRATE_CYCLE_TCA_CYCLE                                     137540732
+    ## Pathway.KEGG_PENTOSE_PHOSPHATE_PATHWAY                                   105321837
+    ## Pathway.KEGG_PENTOSE_AND_GLUCURONATE_INTERCONVERSIONS                    115609938
+    ## Pathway.KEGG_FRUCTOSE_AND_MANNOSE_METABOLISM                              78860500
+    ## Pathway.KEGG_GALACTOSE_METABOLISM                                         88480592
+    ##                                                       TCGA-2Y-A9GS-01A-12R-A38B-07
+    ## Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS                                  131945603
+    ## Pathway.KEGG_CITRATE_CYCLE_TCA_CYCLE                                     149435696
+    ## Pathway.KEGG_PENTOSE_PHOSPHATE_PATHWAY                                   135163359
+    ## Pathway.KEGG_PENTOSE_AND_GLUCURONATE_INTERCONVERSIONS                    162386997
+    ## Pathway.KEGG_FRUCTOSE_AND_MANNOSE_METABOLISM                              92557981
+    ## Pathway.KEGG_GALACTOSE_METABOLISM                                        103639806
+
+## 2. Differential Pathway activation
+
+Once you generate the pathway activity profiles, as discussed in the
+last section, there are several analysis that you can perform. We have
+bundled some of the most important ones into standalone functions. Here,
+we describe differential pathway activation profiling, which is
+examining differenes in pathway activity profiles in user-determined
+conditions.
+
+``` r
+output0 <- differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
+                                       pathways =  path_gene_table,
+                                       covariates = cov_TCGA_LIHC, 
+                                       condition = 'shortLetterCode',
+                                       adjustCovars ='plate')
+
 de.paths <- output0$DEP
 
-# Precalculated
-pcxn      <- readRDS('../data/GeneSets/improved_PCxN_MSigDB.RDS')
-func_list <- c("cluster_edge_betweenness",
-               "cluster_infomap",
-               "cluster_fast_greedy",
-               "cluster_louvain")
-
-pathway.clusters <- list()
-for(func in func_list){
-    
-    temp.clusters <- MappingPathwaysClusters(pcxn = pcxn, 
-                                            de.paths = de.paths[1:300,],
-                                            out.dir= out.dir,
-                                            subplot = F, 
-                                            top.paths = 200,
-                                            prefix= paste0('top200_',func),
-                                            cor.thresh = 0.1,
-                                            clust.fn = get(func),
-                                            save.csv.name = paste0("Pathways_",
-                                                                    func,
-                                                                    ".csv"))
-    temp.clusters$method     <- func
-    pathway.clusters[[func]] <- temp.clusters
-    
-}
-
-
-
-Reduce(rbind,pathway.clusters)
+head(de.paths)
 ```
 
-Next for each miRNA background, the individual pathway targeting scores
-are calculated. This is a key step for calculating targeting in groups
-of pathways. We will provide pre-calculated miRNA-Pathway associations
-so the users can skip this step.
+    ##                                                           logFC   AveExpr
+    ## Pathway.REACTOME_NUCLEAR_SIGNALING_BY_ERBB4          -0.4006321 -0.708800
+    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION -0.4031298 -2.381353
+    ## Pathway.KEGG_JAK_STAT_SIGNALING_PATHWAY              -0.3663317 -1.076826
+    ## Pathway.REACTOME_CLASS_A1_RHODOPSIN_LIKE_RECEPTORS   -0.4057902 -2.098614
+    ## Pathway.REACTOME_GPCR_LIGAND_BINDING                 -0.3692202 -1.998562
+    ## Pathway.REACTOME_HDL_MEDIATED_LIPID_TRANSPORT        -0.9826705  1.460851
+    ##                                                              t      P.Value
+    ## Pathway.REACTOME_NUCLEAR_SIGNALING_BY_ERBB4          -13.26122 1.633566e-33
+    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION -13.24757 1.853574e-33
+    ## Pathway.KEGG_JAK_STAT_SIGNALING_PATHWAY              -12.58752 7.847204e-31
+    ## Pathway.REACTOME_CLASS_A1_RHODOPSIN_LIKE_RECEPTORS   -12.30811 9.768330e-30
+    ## Pathway.REACTOME_GPCR_LIGAND_BINDING                 -12.24499 1.720745e-29
+    ## Pathway.REACTOME_HDL_MEDIATED_LIPID_TRANSPORT        -11.89976 3.721198e-28
+    ##                                                         adj.P.Val        B
+    ## Pathway.REACTOME_NUCLEAR_SIGNALING_BY_ERBB4          1.130680e-30 65.36049
+    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION 1.130680e-30 65.23564
+    ## Pathway.KEGG_JAK_STAT_SIGNALING_PATHWAY              3.191196e-28 59.26021
+    ## Pathway.REACTOME_CLASS_A1_RHODOPSIN_LIKE_RECEPTORS   2.979341e-27 56.76963
+    ## Pathway.REACTOME_GPCR_LIGAND_BINDING                 4.198618e-27 56.21046
+    ## Pathway.REACTOME_HDL_MEDIATED_LIPID_TRANSPORT        7.566436e-26 53.17513
+    ##                                                                                 contrast
+    ## Pathway.REACTOME_NUCLEAR_SIGNALING_BY_ERBB4          shortLetterCodeTP-shortLetterCodeNT
+    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION shortLetterCodeTP-shortLetterCodeNT
+    ## Pathway.KEGG_JAK_STAT_SIGNALING_PATHWAY              shortLetterCodeTP-shortLetterCodeNT
+    ## Pathway.REACTOME_CLASS_A1_RHODOPSIN_LIKE_RECEPTORS   shortLetterCodeTP-shortLetterCodeNT
+    ## Pathway.REACTOME_GPCR_LIGAND_BINDING                 shortLetterCodeTP-shortLetterCodeNT
+    ## Pathway.REACTOME_HDL_MEDIATED_LIPID_TRANSPORT        shortLetterCodeTP-shortLetterCodeNT
+
+## 3. Finding clusters of pathways
+
+PanomiR provides a function to find groups coordinated differentially
+activated pathways based on the PCxN methodology.
 
 ``` r
-# This file is Tarbase interactions. It is not provided. 
-# Users who need it need to contact Tarbase development team
-mir.sets         <- readRDS('../data/preprocessed/NORMALIZED_MIRSETS.rds')
+# using an updated version of pcxn 
+pcxn_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/pcxn_panomir.RDS"))
+pcxn_net  <- readRDS(pcxn_url)
 
-# The list of processed targetScan targets. Freely available. 
-
-mir.sets.list    <- list.files("../data/preprocessed/",
-                              pattern = "TargetScan",
-                              full.names = T)
-
-
-
-pathways.sets   <- readRDS('../data/GeneSets/MSigDB.RDS')
-
-# background genes and miRNAs for tissue costumization
-genes.selection <- rownames(genes.counts)
-mirna.counts    <- readRDS('../data/TCGA-LIHC-miRNAs_residuals.RDS')
-mir.selection   <- names(mir.sets)
+set.seed(2)
+pathwayClustsLIHC <- mappingPathwaysClusters(pcxn = pcxn_net, 
+                            dePathways = de.paths[1:300,],
+                            topPathways = 200,
+                            outDir=".",
+                            plot = FALSE,
+                            subplot = FALSE,
+                            prefix='',
+                            clusteringFunction = "cluster_louvain",
+                            correlationCutOff = 0.1)
 
 
-# Calculating tarbase enrichment
- enriches0 <- miRNAPathwayEnrichment(mir.sets,
-                                     pathways.sets,
-                                     genes.selection = genes.selection,
-                                     mir.selection = mir.selection,
-                                     save.RDS.name = 'LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS',
-                                     out.dir= data.dir)
- 
-# Calculating TargetScan enrichment.
-for (mirs in mir.sets.list){
-    tag       <- tail(unlist(stringr::str_split(mirs,pattern = "_")),1)
-    mir.sets  <- readRDS(mirs)
-    name.tag  <- paste0("LIHCGenesLIHCMirsENRICHMENT_",tag)
-
-    mir.selection2 <- names(mir.sets)
-
-    print(paste0("performing: ", tag))
-    enriches0 <- miRNAPathwayEnrichment(mir.sets,
-                                        pathways.sets,
-                                        genes.selection = genes.selection,
-                                        mir.selection = mir.selection2,
-                                        save.RDS.name = name.tag,
-                                        out.dir= data.dir)
-}
+head(pathwayClustsLIHC$Clustering)
 ```
 
-Next for each miRNA background and for each clustering algorithm, the
-miRNA targeting scores are calculated. Choice of appropriate algorithms
-are left to users.
+    ##                                        Pathway cluster
+    ## 1           Pathway.KEGG_TRYPTOPHAN_METABOLISM       6
+    ## 2         Pathway.KEGG_BETA_ALANINE_METABOLISM       3
+    ## 3        Pathway.KEGG_LINOLEIC_ACID_METABOLISM       3
+    ## 4              Pathway.KEGG_RETINOL_METABOLISM       3
+    ## 5 Pathway.KEGG_DRUG_METABOLISM_CYTOCHROME_P450       3
+    ## 6                 Pathway.KEGG_DNA_REPLICATION       2
+
+## 4. Prioritizing miRNAs per cluster of pathways.
+
+PanomiR identifies miRNAs that target clusters of pathways, as defined
+in the last section. In order to this, you would need a reference table
+of miRNA-Pathway association score (enrichment). We recommend using a
+customized miRNA-Pathway association table, tailored to your
+experimental data. Here, we provide a pre-processed table for LIHC table
+and in the next section, we will explain how to generate the customized
+tables.
+
+Note that in the example below, we use a sampling rate of 50, the
+recommended rate is between 500-1000. Also, we set the saveSampling
+argument to FALSE. This argument should be set to TRUE if you wish to
+save your sampling and check for different outputs from the clustering
+algorithms or pathway thresholds.
 
 ``` r
-func_list <- c("cluster_edge_betweenness",
-               "cluster_infomap",
-               "cluster_fast_greedy",
-               "cluster_louvain")
+# using an updated version of pcxn 
+enrch_url    <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/LIHC_ENRICHMENT_TargetScan03.RDS"))
+tableEnrich  <- readRDS(enrch_url)
 
-# Calculating miRNA targeting scores for  miRNA-pathway interaction from Tarbase
-for(func in func_list){
-    # While we have prepared several scoring methods. We only use AggInv.
-    # Other scoring options will be discussed in future developments.
-    method <- c('AggInv')
-    
-    top.clusters <- pathway.clusters[[func]]
-    enriches0    <- readRDS(paste0(data.dir,"LIHCGenesLIHCMirsENRICHMENT_Tarbase.RDS"))
-    
-        print(paste0("performing: ", func))
-        
-        output2 <- miRNAPrioritization2(enriches0,
-                                        top.clusters,
-                                        method,
-                                        out.dir=paste0(out.dir,func,
-                                                       '_Prioritization_',
-                                                       "Tarbase",
-                                                       '/'),
-                                        data.dir=data.dir,
-                                        samp.rate=1000,
-                                        prefix=paste0('x2_LIHCGene_',"Tarbase"),
-                                        save.jack.knife=F,
-                                        save.csv=T,
-                                        num.cores = 8,
-                                        top.clust=3)
-
-}
-
-# Calculating miRNA targeting scores for different miRNA-pathway interaction 
-# background from TargetScan
-for(func in func_list){
-    
-    method       <- c('AggInv')
-    top.clusters <- pathway.clusters[[func]]
-    
-    for (mirs in mir.sets.list) {
-        tag       <- tail(unlist(stringr::str_split(mirs,pattern = "_")),1)
-        mir.sets  <- readRDS(mirs)
-        name.tag  <- paste0("LIHCGenesLIHCMirsENRICHMENT_",tag)
-        
-        tag       <- gsub(".rds","",tag)
-        
-        enriches0 <- readRDS(paste0(data.dir,name.tag))
-        
-        print(paste0("performing: ", tag))
-        output2 <- miRNAPrioritization2(enriches0,
-                                        top.clusters,
-                                        method,
-                                        out.dir=paste0(out.dir,func,
-                                                       '_Prioritization_',
-                                                       tag,
-                                                       '/'),
-                                        data.dir=data.dir,
-                                        samp.rate=1000,
-                                        prefix=paste0('x2_LIHCGene_',tag),
-                                        save.jack.knife=F,
-                                        save.csv=T,
-                                        num.cores = 8,
-                                        top.clust=3)
-    }
-}
+set.seed(1)
+output2 <- prioritizeMicroRNA(enriches0 = tableEnrich,
+                              pathwayClusters = pathwayClustsLIHC$Clustering,
+                              topClust = 1,
+                              sampRate = 50, 
+                              method = c("aggInv"),
+                              outDir = "Output/",
+                              dataDir = "outData/",
+                              saveSampling = FALSE,
+                              runJackKnife = FALSE,
+                              numCores = 1,
+                              prefix = "outmiR",
+                              saveCSV = FALSE)
 ```
+
+    ## [1] "Working on Cluster1."
+    ## [1] "Performing aggInv function."
+    ## [1] "aggInv Method Done"
+
+``` r
+head(output2$Cluster1)
+```
+
+    ##                  x cluster_hits aggInv_cover  aggInv_pval   aggInv_fdr
+    ## 1  hsa-miR-371a-5p            0  -0.98581204 2.166514e-46 9.402670e-44
+    ## 2 hsa-miR-505-3p.2            0  -1.16947734 6.777526e-31 1.470723e-28
+    ## 3   hsa-miR-556-5p            0  -0.89339753 6.940239e-28 1.004021e-25
+    ## 4  hsa-miR-1298-5p            0  -1.94996850 8.025049e-27 8.707179e-25
+    ## 5     hsa-miR-1278            1  -0.40782882 2.378328e-26 2.064388e-24
+    ## 6   hsa-miR-325-3p            3  -0.08758886 2.755195e-25 1.992925e-23
+
+## 5. miRNA-Pathway enrichment tables
+
+PanomiR best performs on tissue/experiment-customized datasets. In order
+to do this, you need to create a customized enrichment table. You can
+simply do so by using the pathway and miRNA list that we have provided
+as a part of the package. simply, plug in the name of the genes present
+(expressed) in your experiment in the following code
+
+``` r
+# using an updated version of pcxn 
+data("msigdb_c2")
+data("targetScan_03")
+
+
+customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
+                                              pathwaySets = msigdb_c2,
+                                              geneSelection = yourGenes,
+                                              mirSelection = yourMicroRNAs,
+                                              fromID = "ENSEMBL",
+                                              toID = "ENTREZID",
+                                              minPathSize = 9,
+                                              numCores = 1,
+                                              outDir = ".",
+                                              saveOutName = NULL)
+```
+
+In the above section, the field `fromID` denotes the gene representation
+format of your input list.
+
+## Session info
+
+``` r
+sessionInfo()
+```
+
+    ## R version 4.1.2 (2021-11-01)
+    ## Platform: x86_64-apple-darwin17.0 (64-bit)
+    ## Running under: macOS Mojave 10.14.6
+    ## 
+    ## Matrix products: default
+    ## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
+    ## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+    ## 
+    ## locale:
+    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+    ## 
+    ## attached base packages:
+    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
+    ## 
+    ## other attached packages:
+    ## [1] PanomiR_0.99.0
+    ## 
+    ## loaded via a namespace (and not attached):
+    ##  [1] igraph_1.2.8     knitr_1.36       magrittr_2.0.1   tidyselect_1.1.1
+    ##  [5] R6_2.5.1         rlang_0.4.12     fastmap_1.1.0    fansi_0.5.0     
+    ##  [9] stringr_1.4.0    dplyr_1.0.7      tools_4.1.2      parallel_4.1.2  
+    ## [13] xfun_0.28        utf8_1.2.2       withr_2.4.3      htmltools_0.5.2 
+    ## [17] ellipsis_0.3.2   yaml_2.2.1       digest_0.6.28    tibble_3.1.6    
+    ## [21] lifecycle_1.0.1  crayon_1.4.2     purrr_0.3.4      vctrs_0.3.8     
+    ## [25] glue_1.5.0       evaluate_0.14    rmarkdown_2.11   limma_3.50.0    
+    ## [29] stringi_1.7.5    compiler_4.1.2   pillar_1.6.4     forcats_0.5.1   
+    ## [33] generics_0.1.1   pkgconfig_2.0.3
