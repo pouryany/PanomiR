@@ -16,11 +16,16 @@ RoxygenNote: 7.1.2
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    pcxn,
+    pcxnData
 Config/testthat/edition: 3
 biocViews:
     GeneExpression,
+    GeneSetEnrichment,
     GeneTarget,
+    miRNA,
+    NetworkEnrichment,
     Pathways
 Imports:
     clusterProfiler,

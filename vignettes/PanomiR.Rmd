@@ -1,5 +1,5 @@
 ---
-title: "PanomiR"
+title: "PanomiR Package Walkthrough"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{PanomiR}
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## PanomiR Package Walkthrough
+## Introduction
 
 PanomiR is a package for pathway and microRNA Analysis of gene expression data.
 This document provides details about how to install and utilize various 
@@ -32,11 +32,18 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("PanomiR")
 ```
 
-You can also install the latest development version of PanomiR using GitHub
+You can also install the latest development version of PanomiR using GitHub.
 
-```{r bbb, eval = FALSE}
-#library(PanomiR)
+```{r installation_git, eval = FALSE}
+devtools::install_github("pouryany/PanomiR")
+```
 
+
+## 
+
+
+```{r load_package}
+library(PanomiR)
 ```
 ```{r sessionInfo}
 sessionInfo()
