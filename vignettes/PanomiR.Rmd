@@ -39,12 +39,60 @@ devtools::install_github("pouryany/PanomiR")
 ```
 
 
-## 
+## 1. Pathway summarization
 
+PanomiR can generate pathway activity profiles given a gene expression dataset
+and a list of pathways. This section uses an example dataset from the Cancer
+Genome Atlas (TCGA) Liver Hepatocellular Carcinoma (LIHC) dataset to generate
+Pathway summary statistics. 
 
 ```{r load_package}
 library(PanomiR)
+
+# Downloading example LIHC expression dataset
+LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/TCGA_LIHC.RDS"))
+TCGA_LIHC <- readRDS(LIHC_url)
+
+# Downloading example LIHC covariates dataset
+LIHC_cov_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+                        "/raw/main/data/covariates_TCGA_LIHC.RDS"))
+cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
+
+# Pathway reference from the PanomiR package
+data("path_gene_table")
+
+
+# Generating pathway summary statistics 
+
+summaries <- pathwaySummary(TCGA_LIHC,path_gene_table,method = "x2")
+
+head(summaries)[,1:2]
 ```
+
+
+## 2. Differential Pathway activation
+
+Once you generate the pathway activity profiles, as discussed in the last
+section, there are several analysis that you can perform. We have bundled some 
+of the most important ones into standalone functions. Here, we describe
+differential pathway activation profiling, which is examining differenes in
+pathway activity profiles in user-determined conditions.
+
+
+```{r differential}
+
+output0 <- differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
+                                       pathways =  path_gene_table,
+                                       covariates = COV_TCGA_LIHC, 
+                                       condition = 'shortLetterCode',
+                                       adjustCovars ='plate')
+
+de.paths <- output0$DEP
+
+
+```
+
 ```{r sessionInfo}
 sessionInfo()
 
