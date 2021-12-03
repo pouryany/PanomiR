@@ -4,14 +4,14 @@
 \alias{getResidual}
 \title{function to get residuals with respect to a set of covariates}
 \usage{
-getResidual(covariates, adjustCovars, pathwaySummaryStats)
+getResidual(covariates, adjustCovars, pathSumStats)
 }
 \arguments{
 \item{covariates}{a covariate dataframe.}
 
 \item{adjustCovars}{covariates to adjust for}
 
-\item{pathwaySummaryStats}{an expression matrix}
+\item{pathSumStats}{an expression matrix}
 }
 \value{
 a matrix of adjusted expression

@@ -697,15 +697,23 @@ linColumnFinder <- function(mat) {
     return(list(indepCols = cols, relations = allMessages))
 }
 
+####
+#
+# Helper functions for differentialPathwayAnalysis
+#
+####
+
+
+
 #' function to get residuals with respect to a set of covariates
 #'
 #' @param covariates a covariate dataframe.
 #' @param adjustCovars covariates to adjust for
-#' @param pathwaySummaryStats an expression matrix
+#' @param pathSumStats an expression matrix
 #' @return a matrix of adjusted expression
 getResidual <- function(covariates,
                         adjustCovars,
-                        pathwaySummaryStats) {
+                        pathSumStats) {
     # Getting pathway residuals
     resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars), drop = FALSE],
         intercept = FALSE)
@@ -713,8 +721,8 @@ getResidual <- function(covariates,
     resDesingMat$design <- resDesingMat$design[,
         linColumnFinder(resDesingMat$design)$indepCols]
 
-    fitResiduals <- limma::lmFit(pathwaySummaryStats, resDesingMat$design)
-    fitResiduals <- limma::residuals.MArrayLM(fitResiduals, pathwaySummaryStats)
+    fitResiduals <- limma::lmFit(pathSumStats, resDesingMat$design)
+    fitResiduals <- limma::residuals.MArrayLM(fitResiduals, pathSumStats)
 
     return(fitResiduals)
 }
@@ -743,6 +751,86 @@ getDiffExpTable <- function(expMat,
 
     return(tT)
 }
+
+
+.constrastHelper <- function(covariates, condition, contrastConds) {
+    conditionsTypes <- as.character(unique(covariates[, condition]))
+    if (is.na(contrastConds)) {
+        if (length(conditionsTypes) > 2) {
+            stop("Please compare only 2 conditions at once.")
+        }
+        cond1 <- paste0(condition, conditionsTypes[1])
+        cond2 <- paste0(condition, conditionsTypes[2])
+        contrastsName <- paste0(cond1, "-", cond2)
+    } else {
+        contrastsName <- contrastConds
+    }
+    return(contrastsName)
+}
+
+.pathwayCleaner <- function(pathways, id, geneCounts, minPathSize) {
+    # select pathways with genes in the count data and a minimum pathway size
+    pathways <- as.data.frame(pathways)
+    genesPathways <- pathways[pathways[, id] %in% rownames(geneCounts), ]
+
+    genesPathways %<>% dplyr::group_by(., Pathway) %>%
+        dplyr::summarise(., n = dplyr::n()) %>%
+        dplyr::filter(., n >= minPathSize)
+
+    pathways <- pathways %>%
+        dplyr::filter(., Pathway %in% genesPathways$Pathway)
+    return(pathways)
+}
+
+.qNormalizer <- function(quantileNorm, pathSumStats, covariates) {
+
+    if (quantileNorm == TRUE) {
+        pathwayNames <- rownames(pathSumStats)
+        pathSumStats <-
+            preprocessCore::normalize.quantiles(pathSumStats)
+
+        rownames(pathSumStats) <- pathwayNames
+        colnames(pathSumStats) <- rownames(covariates)
+    }
+    return(pathSumStats)
+}
+
+
+.dirChecks <- function(outDir) {
+    if (substring(outDir, nchar(outDir)) != "/") {
+        outDir <- paste0(outDir, "/")
+    }
+    if (!dir.exists(outDir)) {
+        stop("Output directory does not exist.")
+    }
+    return(outDir)
+}
+
+.pathSumCleaner <- function(pathSumStats) {
+    # filter pathways with na values in the pathway summary statistics
+    pathSumStats <- pathSumStats[rowSums(is.na(pathSumStats)) == 0, ]
+    pathSumStats <- apply(pathSumStats, 2, function(x) {
+        (x - mean(x)) / stats::sd(x)
+    })
+    return(pathSumStats)
+}
+
+.tScoreMaker <- function(deGenes, id) {
+    tScores <- NULL
+    if (!is.null(deGenes)) {
+        tScores <- deGenes %>%
+            dplyr::mutate(., !!id := rownames(deGenes)) %>%
+            dplyr::select(., c(ENSEMBL, t))
+    }
+    return(tScores)
+}
+####
+#
+# Helper functions for miRNAPathwayEnrichment
+#
+####
+
+
 
 #' function to align a list of sets and a reference universe
 #'
@@ -801,6 +889,13 @@ enrichAllPairs <- function(mirSets,
     return(iterator)
 }
 
+####
+#
+# Helper functions for mappingPathwayClusters
+#
+####
+
+
 #' Creates a network out of pcxn table
 #'
 #' @param pcxn pathways network edge list of pathways
@@ -828,12 +923,6 @@ pcxnToNet <- function(pcxn,
     igraph::set_vertex_attr(net, "col", value = "red")
     return(list("net" = net, "allPathways" = allPathways))
 }
-
-####
-#
-# Helper functions for mappingPathwayClusters
-#
-####
 
 .levelFixerMapper <- function(clusts) {
     zz <- as.factor(clusts$membership)

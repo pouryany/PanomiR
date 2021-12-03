@@ -34,77 +34,25 @@
 #' @return List containing differentially expressed pathways as DEP and pathway
 #'   summary statistics as pathwaySummaryStats.
 #' @export
-differentialPathwayAnalysis <- function(geneCounts,
-                                            pathways,
-                                            covariates,
-                                            condition,
-                                            adjustCovars = NULL,
-                                            covariateCorrection = FALSE,
-                                            quantileNorm = FALSE,
-                                            outDir = ".",
-                                            saveOutName = NULL,
-                                            id = "ENSEMBL",
-                                            deGenes = NULL,
-                                            minPathSize = 10,
-                                            method = "x2",
-                                            trim = 0.025,
-                                            geneCountsLog = TRUE,
-                                            contrastConds = NA) {
-    if (substring(outDir, nchar(outDir)) != "/") {
-        outDir <- paste0(outDir, "/")
-    }
-    if (!dir.exists(outDir)) {
-        stop("Output directory does not exist.")
-    }
+differentialPathwayAnalysis <- function(geneCounts, pathways, covariates,
+            condition, adjustCovars = NULL, covariateCorrection = FALSE,
+            quantileNorm = FALSE, outDir = ".", saveOutName = NULL,
+            id = "ENSEMBL", deGenes = NULL, minPathSize = 10, method = "x2",
+            trim = 0.025, geneCountsLog = TRUE, contrastConds = NA) {
 
-    # select pathways with genes in the gene count data and a minimum
-    # pathway set size
-    pathways <- as.data.frame(pathways)
-    genesPathways <- pathways[pathways[, id] %in% rownames(geneCounts), ]
+    outDir   <- .dirChecks(outDir)
+    pathways <- .pathwayCleaner(pathways, id, geneCounts, minPathSize)
+    tScores  <- .tScoreMaker(deGenes, id)
 
-    genesPathways %<>% dplyr::group_by(., Pathway) %>%
-        dplyr::summarise(., n = dplyr::n()) %>%
-        dplyr::filter(., n >= minPathSize)
-
-    pathways <- pathways %>%
-        dplyr::filter(., Pathway %in% genesPathways$Pathway)
-
-    # use de genes as a filter
-    if (!is.null(deGenes)) {
-        tScores <- deGenes %>%
-            dplyr::mutate(., !!id := rownames(deGenes)) %>%
-            dplyr::select(., c(ENSEMBL, t))
-    }
-    # log gene counts if gene counts are not log-transformed yet; essential for
-    # path summary statistics
     if (geneCountsLog == TRUE) {
         geneCounts <- log(geneCounts)
     }
-    # generate pathway summary statistics
-    pathwaySummaryStats <- pathwaySummary(geneCounts, pathways, id = id,
-            method = method,  deGenes = deGenes, zNormalize = FALSE,
-            trim = trim, tScores = tScores)
-    # filter pathways with na values in the pathway summary statistics
-    pathwaySummaryStats <-
-        pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats)) == 0, ]
 
-    pathwaySummaryStats <- apply(pathwaySummaryStats, 2, function(x) {
-        (x - mean(x)) / stats::sd(x)
-    })
+    pathSumStats <- pathwaySummary(geneCounts, pathways, id, zNormalize = FALSE,
+        method = method,  deGenes = deGenes, trim = trim, tScores = tScores)
+    pathSumStats <- .pathSumCleaner(pathSumStats)
+    pathSumStats <- .qNormalizer(quantileNorm, pathSumStats, covariates)
 
-    # perform quantile normalization if needed
-    # Add importing
-    if (quantileNorm == TRUE) {
-        pathwayNames <- rownames(pathwaySummaryStats)
-
-        pathwaySummaryStats <-
-            preprocessCore::normalize.quantiles(pathwaySummaryStats)
-
-        rownames(pathwaySummaryStats) <- pathwayNames
-        colnames(pathwaySummaryStats) <- rownames(covariates)
-    }
-
-    # perform covariates correction, create design matrix for limma DE analysis;
     fitResiduals <- NULL
     if (covariateCorrection == TRUE) {
         stop("Under development. Please use covariateCorrection = FALSE option")
@@ -115,34 +63,17 @@ differentialPathwayAnalysis <- function(geneCounts,
             rownames(conditionsDat) <- rownames(covariates)
             designMat <- getDesignMatrix(conditionsDat, intercept = FALSE)
         } else {
-            designMat <-
-                getDesignMatrix(covariates[, c(condition, adjustCovars),
-                                        drop = FALSE], intercept = FALSE)
-
+            designMat <- getDesignMatrix(covariates[, c(condition,
+                            adjustCovars), drop = FALSE], intercept = FALSE)
             designMat$design <-
                 designMat$design[, linColumnFinder(designMat$design)$indepCols]
-
-            fitResiduals <- getResidual(covariates, adjustCovars,
-                                    pathwaySummaryStats)
+            fitResiduals <- getResidual(covariates, adjustCovars, pathSumStats)
         }
     }
-
-    conditionsTypes <- as.character(unique(covariates[, condition]))
-    if (is.na(contrastConds)) {
-        if (length(conditionsTypes) > 2) {
-            stop("Please compare only 2 conditions at once.")
-        }
-        cond1 <- paste0(condition, conditionsTypes[1])
-        cond2 <- paste0(condition, conditionsTypes[2])
-        contrastsName <- paste0(cond1, "-", cond2)
-    } else {
-        contrastsName <- contrastConds
-    }
-    # limma DE analysis
-    tT <- getDiffExpTable(pathwaySummaryStats, designMat, contrastsName)
-
-    output <- list("DEP" = tT, "pathwaySummaryStats" = pathwaySummaryStats,
-        "contrast" = contrastsName, "PathwayResiduals" = fitResiduals)
+    contrastsName <- .constrastHelper(covariates, condition, contrastConds)
+    tT            <- getDiffExpTable(pathSumStats, designMat, contrastsName)
+    output        <- list("DEP" = tT, "pathwaySummaryStats" = pathSumStats,
+                "contrast" = contrastsName, "PathwayResiduals" = fitResiduals)
 
     if (!is.null(saveOutName)) {
         saveRDS(output, paste0(outDir, saveOutName))
