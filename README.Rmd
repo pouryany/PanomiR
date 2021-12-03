@@ -151,7 +151,7 @@ tableEnrich  <- readRDS(enrch_url)
 
 set.seed(1)
 output2 <- prioritizeMicroRNA(enriches0 = tableEnrich,
-                              pathwayClusters = pathwayClustsLIHC$Clustering,
+                              pathClust = pathwayClustsLIHC$Clustering,
                               topClust = 1,
                               sampRate = 50, 
                               method = c("aggInv"),

@@ -6,7 +6,7 @@
 \usage{
 prioritizeMicroRNA(
   enriches0,
-  pathwayClusters,
+  pathClust,
   method = "AggInv",
   methodThresh = NULL,
   enrichmentFDR = 0.25,
@@ -27,7 +27,7 @@ prioritizeMicroRNA(
 \item{enriches0}{miRNA-pathway enrichment dataset obtained from
 miRNAPathwayEnrichment.}
 
-\item{pathwayClusters}{Pathway clusters, obtained from
+\item{pathClust}{Pathway clusters, obtained from
 MappingPathwaysClusters.}
 
 \item{method}{Vector of methods pCut, AggInv, AggLog, sumz, sumlog.}
@@ -76,7 +76,7 @@ Outputs a table of miRNA ordered with respective p-values derived from
 data(pathwayClustersLIHC)
 data(miniEnrich)
 prioritizeMicroRNA(enriches0 = miniEnrich,
-   pathwayClusters = pathwayClustersLIHC$Clustering,
+   pathClust = pathwayClustersLIHC$Clustering,
    topClust = 1,
    sampRate = 50,
    method = c("aggInv"),

@@ -970,6 +970,91 @@ pcxnToNet <- function(pcxn,
     return(enriches)
 }
 
+
+.makeSelector <- function(enriches, pathways) {
+    # Count miRNA-pathway enrichment
+    tempEnrich <- enriches[enriches$y %in% pathways, ]
+    selector <- tempEnrich %>%
+        dplyr::group_by(x) %>%
+        dplyr::summarise(., "cluster_hits" = sum(hit))
+    return(selector)
+}
+
+
+.saveCsvWriter <- function(saveCSV, prefix, sampRate, clustNo, selector,
+                        outDir) {
+    if (saveCSV == TRUE) {
+        saveName <- paste0(prefix, sampRate, "_samples_clustNo_", clustNo,
+                            ".csv")
+        print(paste0(saveName, " saved!"))
+        utils::write.csv(selector, paste0(outDir, saveName))
+    }
+}
+
+
+.mkSampleDatDir <- function(dataDir, prefix, saveSampling, m, sampRate) {
+    samplingDataDir <- paste0(dataDir, prefix, "Sampling_Data/")
+
+    if ((saveSampling == TRUE) && (!dir.exists(samplingDataDir))) {
+        dir.create(samplingDataDir, recursive = TRUE)
+    }
+    tempName <- paste0(prefix, m, "_", sampRate, "_samples.RDS")
+    samplingDataFile <- paste0(samplingDataDir, "/", tempName)
+
+    return(samplingDataFile)
+}
+
+.mSelectorMaker <- function(m, enrichNull, mSelector, sampRate, fn, nPaths,
+                        sampDatFile, saveSampling, numCores, autoSeed, coverFn,
+                        runJackKnife, pathways) {
+
+    if (m %in% c("aggInv", "aggLog")) {
+        samplingData <- samplingDataBase(enrichNull, mSelector,
+                        sampRate, fn, nPaths, sampDatFile, jackKnife = FALSE,
+                        saveSampling, numCores = numCores, autoSeed = autoSeed)
+        mSelector <- methodProbBase(
+            samplingData[[paste0("SampSize_", 100)]], mSelector,
+            m = m, nPaths = nPaths, coverFn = coverFn)
+    } else {
+        names(mSelector)[2:3] <- paste0(m, "_", names(mSelector)[2:3])
+    }
+
+    print(paste0(m, " Method Done"))
+    # perform jack-knife
+
+    if ((runJackKnife == TRUE) && (m != "sumz") && (m != "sumlog")) {
+
+        samplingData <- samplingDataBase(enrichNull, mSelector, sampRate, fn,
+                    nPaths, sampDatFile, jackKnife = FALSE, saveSampling,
+                    numCores = numCores, autoSeed = autoSeed)
+
+        mSelector <- jackKnifeBase(selector = mSelector, pathways = pathways,
+                    enrichNull = enrichNull, fn = fn,
+                    jackKnifeData =  samplingData[[paste0("SampSize_", 100)]],
+                    m = m, numCores = numCores)
+
+        print(paste0(m, " JackKnifing Method Done!"))
+
+        mSelector <- mSelector[, c(1, 3, 2, 4)]
+    } else {
+        mSelector <- mSelector[, c(1, 3, 2)]
+    }
+    return(mSelector)
+}
+
+
+.expandSelector <- function(selector, mSelector, m) {
+
+    selector <- merge(selector, mSelector, all = TRUE)
+    met <- paste0(m, "_pval")
+    selector <- selector %>% dplyr::arrange(., !!rlang::sym(met))
+    met2 <- paste0(m, "_fdr")
+    selector <- selector %>% dplyr::mutate(
+        .,
+        !!met2 := stats::p.adjust(p = !!rlang::sym(met), method = "fdr")
+    )
+    return(selector)
+}
 ####
 #
 # Helper functions for clusterPlotter

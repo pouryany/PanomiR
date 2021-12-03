@@ -33,6 +33,26 @@
 #'   condition covariate.
 #' @return List containing differentially expressed pathways as DEP and pathway
 #'   summary statistics as pathwaySummaryStats.
+#' @examples
+#'
+#' data("path_gene_table")
+#'
+#' #Downloading prepared datasets from TCGA-LIHC
+#'
+#' LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+#' "/raw/main/data/TCGA_LIHC.RDS"))
+#' TCGA_LIHC <- readRDS(LIHC_url)
+#'
+#' LIHC_cov_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
+#' "/raw/main/data/covariates_TCGA_LIHC.RDS"))
+#' cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
+#'
+#' differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
+#' pathways =  path_gene_table,
+#' covariates = cov_TCGA_LIHC,
+#' condition = 'shortLetterCode',
+#' adjustCovars ='plate')
+#'
 #' @export
 differentialPathwayAnalysis <- function(geneCounts, pathways, covariates,
             condition, adjustCovars = NULL, covariateCorrection = FALSE,
