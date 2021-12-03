@@ -22,30 +22,20 @@
 #' @return a list where the first item is a table with each row containing
 #'   a pathway and its respective cluster. The second item is an igraph object.
 #' @export
-mappingPathwaysClusters <- function(pcxn,
-                                    dePathways,
-                                    clusteringFunction = NULL,
-                                    edgeFDR = 0.05,
-                                    correlationCutOff = 0.316,
-                                    pathwayFDR = 0.05,
-                                    topPathways = 200,
-                                    plotOut = TRUE,
-                                    subplot = TRUE,
-                                    topClusters = 2,
-                                    prefix = "",
-                                    outDir = ".",
-                                    saveNameCSV = NULL,
-                                    weighted = FALSE) {
+mappingPathwaysClusters <- function(pcxn, dePathways, clusteringFunction = NULL,
+                            edgeFDR = 0.05, correlationCutOff = 0.316,
+                            pathwayFDR = 0.05, topPathways = 200,
+                            plotOut = TRUE, subplot = TRUE, topClusters = 2,
+                            prefix = "", outDir = ".", saveNameCSV = NULL,
+                            weighted = FALSE) {
     outDir <- paste0(outDir, "/")
     if (!dir.exists(outDir)) stop("Output directory does not exist.")
     figDir <- paste0(outDir, "Figures/")
     if (!dir.exists(figDir) && plotOut) dir.create(figDir, recursive = TRUE)
 
-    # filter pcxn edges with edge fdr threshold and correlation threshold
     tempNet     <- pcxnToNet(pcxn, edgeFDR, correlationCutOff, weighted)
     net         <- tempNet$net
     allPathways <- tempNet$allPathways
-
     dePathways <- dePathways[dePathways$adj.P.Val < pathwayFDR, ]
     if (nrow(dePathways) < 10) stop("Relax pathway adjusted p-values.")
 
@@ -58,7 +48,6 @@ mappingPathwaysClusters <- function(pcxn,
     igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% dePathways,
                                 "square", "circle")
     subNet <- igraph::induced_subgraph(net, rownames(dePathways))
-
     # choose clustering function for nodes
     if (is.null(clusteringFunction)) {
         clusts <- igraph::cluster_edge_betweenness(subNet)
@@ -71,7 +60,6 @@ mappingPathwaysClusters <- function(pcxn,
     pathsOut <- igraph::V(subNet)$name
     pathsOut <- as.data.frame(cbind("Pathway" = pathsOut,
                                     "cluster" = clusts$membership))
-
     if (plotOut == TRUE) {
         clusterPlot(subNet = subNet, subplot = subplot,
                 topClusters = topClusters, outDir = figDir, prefix = prefix)

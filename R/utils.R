@@ -105,14 +105,9 @@ pathwayGeneTab <- function(pathAdress = NA,
 #' pathwaySummary(exprsMat, pathTab, method = "x2")
 #' @export
 
-pathwaySummary <- function(exprsMat,
-                            pathwayRef,
-                            id = "ENSEMBL",
-                            zNormalize = FALSE,
-                            method = FALSE,
-                            deGenes = NULL,
-                            trim = 0,
-                            tScores = NULL) {
+pathwaySummary <- function(exprsMat, pathwayRef, id = "ENSEMBL",
+                    zNormalize = FALSE, method = FALSE, deGenes = NULL,
+                    trim = 0, tScores = NULL) {
     # Current version only works with ENSEMBL.
     exprsMat <- tibble::rownames_to_column(as.data.frame(exprsMat), var = id)
     if (!is.null(deGenes)) {
@@ -124,7 +119,6 @@ pathwaySummary <- function(exprsMat,
             dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
             dplyr::select(., -t)
     }
-
     if (method == "none") {
         exprsMat <- exprsMat %>%
             dplyr::mutate_if(., is.numeric, function(x) {
@@ -145,7 +139,6 @@ pathwaySummary <- function(exprsMat,
     } else {
         stop("invalid choice of summarization function")
     }
-
     pathExpTab <- dplyr::inner_join(pathwayRef, exprsMat, by = id)
     pathExpTab <- pathExpTab %>%
         dplyr::group_by(., Pathway) %>%
@@ -159,7 +152,6 @@ pathwaySummary <- function(exprsMat,
             (x - mean(x)) / stats::sd(x)
         })
     }
-
     return(pathExp)
 }
 
@@ -390,17 +382,9 @@ sumlogCoverFn <- aggInvCoverFn
 #' @param autoSeed random permutations are generated based on predetermined
 #'   seeds. TRUE will give identical results in different runs.
 #' @return Outputs of sampling data.
-samplingDataBase <- function(enrichNull,
-                                selector,
-                                sampRate,
-                                fn,
-                                nPaths,
-                                samplingDataFile,
-                                jackKnife = FALSE,
-                                saveSampling,
-                                numCores = 1,
-                                autoSeed = TRUE) {
-
+samplingDataBase <- function(enrichNull, selector, sampRate, fn, nPaths,
+                        samplingDataFile, jackKnife = FALSE, saveSampling,
+                        numCores = 1, autoSeed = TRUE) {
     if (!all(utils::hasName(selector, c("x")))) {
         stop("The selector table needs a column x (miRNA name)")
     }
@@ -429,7 +413,6 @@ samplingDataBase <- function(enrichNull,
             # build null distribution of K
             temp <- do.call(rbind, temp)
             temp <- t(temp)
-
             rownames(temp) <- selector$x
             colnames(temp) <- vapply(seq_len(sampRate), function(y) {
                 paste0("sample_", y)
@@ -896,4 +879,50 @@ pcxnToNet <- function(pcxn,
     enriches <- enriches %>%
         dplyr::mutate(., hit = ifelse(path_fdr < enrichmentFDR, 1, 0))
     return(enriches)
+}
+
+####
+#
+# Helper functions for clusterPlotter
+#
+####
+
+.clusterPlotHelper <- function(plotSave, figDir, subNet, nodeColors,
+                                legendCats) {
+    if (plotSave) {
+        grDevices::pdf(paste0(figDir, "PCxNCorGraph.pdf"),
+                    width = 18, height = 11)
+    }
+    plot(subNet, vertex.size = 5, vertex.label = NA, vertex.color = nodeColors)
+    graphics::legend(x = "bottomleft", legend = legendCats$attr, pch = c(0, 1),
+                    bty = "n", cex = 1.6)
+    graphics::legend(x = "topleft", legend = c("Positive Cor", "Negative Cor"),
+                    col = c("#E41A1C", "#377EB8"), lty = 1, lwd = 2,
+                    cex = 1.6, bty = "n")
+    if (plotSave)
+        grDevices::dev.off()
+}
+
+.clusterSubPlotHelper <- function(subplot, topClusters, clstMems, subNet,
+                                figDir, cols, legendCats) {
+    if (subplot == TRUE) {
+        for (k in seq_len(topClusters)) {
+            keep <- which((clstMems) == k)
+            subNet2 <- igraph::induced_subgraph(subNet, keep)
+            if (length(igraph::V(subNet2)) < 2) next
+
+            grDevices::pdf(paste0(figDir, "PCxNCorGraph_",
+                            "Cluster_", k, ".pdf"))
+            plot(subNet2, edge.width = 1.3, vertex.size = 5, vertex.label = NA,
+                vertex.color = cols[clstMems[keep]], legend = TRUE,
+                layout = igraph::layout.fruchterman.reingold)
+            graphics::legend(x = "bottomleft", legend = legendCats$attr,
+                            pch = c(0, 1), bty = "n", cex = 1.4)
+            graphics::legend(x = "topleft",
+                            legend = c("Positive Cor", "Negative Cor"),
+                            col = c("#E41A1C", "#377EB8"),
+                            lty = 1, lwd = 2, cex = 1.4, bty = "n")
+            grDevices::dev.off()
+        }
+    }
 }
