@@ -71,7 +71,7 @@ differentialPathwayAnalysis <- function(geneCounts,
 
     # use de genes as a filter
     if (!is.null(deGenes)) {
-        tScores <- deGenes %>% 
+        tScores <- deGenes %>%
             dplyr::mutate(., !!id := rownames(deGenes)) %>%
             dplyr::select(., c(ENSEMBL, t))
     }
