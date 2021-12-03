@@ -563,7 +563,6 @@ jackKnifeBase <- function(selector,
     return(selector)
 }
 
-
 #' Obtain Design Matrix
 #'
 #' Modified from covariates pipeline of Menachem Former. Imported from
@@ -579,51 +578,64 @@ jackKnifeBase <- function(selector,
 #' @export
 getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
                             reLevels = list()) {
-    rowNamesTemp <- rownames(covariatesDataFrame)
-    colNamesTemp <- colnames(covariatesDataFrame)
+    covDF <- covariatesDataFrame
+    rowNamesTemp <- rownames(covDF)
+    colNamesTemp <- colnames(covDF)
+    factorCovariateNames <- names(covDF)[vapply(covDF, is.factor, logical(1))]
 
-    factorCovariateNames <-
-        names(covariatesDataFrame)[vapply(covariatesDataFrame,
-                                        is.factor,
-                                        logical(1))]
-
-    factorCovariateNames <-
-        setdiff(
-            factorCovariateNames,
-            factorCovariateNames[
-                !(factorCovariateNames %in% colnames(covariatesDataFrame))
-            ]
-        )
+    factorCovariateNames <- setdiff(factorCovariateNames,
+        factorCovariateNames[!(factorCovariateNames %in% colnames(covDF))])
 
     numericCovariateNames <- setdiff(colNamesTemp, factorCovariateNames)
 
-    # Ensure the factors are in fact of type factor, and the quantitative
-    # variables are numeric:
-    covariatesDataFrame <-
-        as.data.frame(lapply(colnames(covariatesDataFrame), function(column) {
+    # Ensure the factors are factor, and the quantitatives are numeric:
+    covDF <- as.data.frame(lapply(colnames(covDF),
+        function(column) {
             if (column %in% factorCovariateNames) {
-                fac <- as.factor(covariatesDataFrame[, column])
+                fac <- as.factor(covDF[, column])
                 if (column %in% names(reLevels)) {
                     fac <- stats::relevel(fac, ref = reLevels[[column]])
                 }
                 return(fac)
             } else {
-                return(as.numeric(covariatesDataFrame[, column]))
+                return(as.numeric(covDF[, column]))
             }
         }))
+    rownames(covDF) <- rowNamesTemp
+    colnames(covDF) <- colNamesTemp
 
-    rownames(covariatesDataFrame) <- rowNamesTemp
-    colnames(covariatesDataFrame) <- colNamesTemp
+    tempHelper <- .getDesignMatHelper(factorCovariateNames,covDF, intercept)
+    contra   <- tempHelper$contra
+    covDF    <- tempHelper$covDF
+    # Inspired by http://stackoverflow.com/questions/5616210/
+    currentNAAction <- getOption("na.action")
+    # Model matrix will now include "NA":
+    options(na.action = "na.pass")
 
+    if (intercept) {
+        design <- stats::model.matrix(~., data = covDF, contrasts.arg = contra)
+    } else {
+        design <- stats::model.matrix(~ 0 + ., data = covDF,
+                            contrasts.arg = contra)
+    }
+
+    rownames(design) <- rownames(covDF)
+    options(na.action = currentNAAction)
+
+    return(list(design = design, covariates = colNamesTemp,
+        factorsLevels = lapply(contra, colnames),
+        numericCovars = numericCovariateNames, covariatesDataFrame = covDF))
+}
+
+.getDesignMatHelper <- function(factorCovariateNames,
+                                covDF,
+                                intercept) {
     contra <- NULL
     maxNumCat <- Inf
-    catData <- covariatesDataFrame[, factorCovariateNames, drop = FALSE]
+    catData <- covDF[, factorCovariateNames, drop = FALSE]
     if (ncol(catData) > 0) {
-        numCats <- vapply(
-            colnames(catData),
-            function(col) nlevels(factor(catData[, col])),
-            numeric(1)
-        )
+        numCats <- vapply(colnames(catData),
+            function(col) nlevels(factor(catData[, col])), numeric(1))
 
         excludeCategoricalCols <-
             names(numCats)[numCats <= 1 | numCats > maxNumCat]
@@ -632,75 +644,39 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
             length(excludeCategoricalCols) > 0) {
             warning(paste("Excluding categorical variables with less than 2",
                 ifelse(is.infinite(maxNumCat), "",
-                        paste(" or more than ", maxNumCat, sep = "")),
-                " categories: ", paste(paste("'", excludeCategoricalCols,
-                                    "'", sep = ""), collapse = ", "),
-                sep = ""))
+                    paste(" or more than ", maxNumCat, sep = "")),
+                " categories: ",
+                paste(paste("'", excludeCategoricalCols,
+                "'", sep = ""), collapse = ", "), sep = ""))
 
-            factorCovariateNames <- setdiff(
-                factorCovariateNames,
-                excludeCategoricalCols
-            )
-            covariatesDataFrame <-
-                covariatesDataFrame[,
-                !(colnames(covariatesDataFrame) %in% excludeCategoricalCols),
+            factorCovariateNames <- setdiff(factorCovariateNames,
+                excludeCategoricalCols)
+            covDF <- covDF[, !(colnames(covDF) %in% excludeCategoricalCols),
                 drop = FALSE]
         }
-
         # Inspired by http://stackoverflow.com/questions/4560459/
-        #
-        # And, already ensured above that
-        # covariatesDataFrame[, factorCovariateNames] satisfies:
+        # And, already ensured above that covDF[, factorCovariateNames] :
         # 1) fac is of type factor.
         # 2) fac is releveled as designated in reLevels.
         if (intercept) {
             contra <- lapply(
                 factorCovariateNames,
                 function(column) {
-                    fac <- covariatesDataFrame[, column]
+                    fac <- covDF[, column]
                     fac <- stats::contrasts(fac)
                 }
             )
         } else {
-            contra <- lapply(
-                factorCovariateNames,
+            contra <- lapply(factorCovariateNames,
                 function(column) {
-                    fac <- covariatesDataFrame[, column]
+                    fac <- covDF[, column]
                     fac <- stats::contrasts(fac, contrasts = FALSE)
-                }
-            )
+                })
         }
         names(contra) <- factorCovariateNames
     }
-
-    # Inspired by http://stackoverflow.com/questions/5616210/
-    currentNAAction <- getOption("na.action")
-    # Model matrix will now include "NA":
-    options(na.action = "na.pass")
-
-    if (intercept) {
-        design <- stats::model.matrix(~., data = covariatesDataFrame,
-                            contrasts.arg = contra
-        )
-    } else {
-        design <- stats::model.matrix(~ 0 + ., data = covariatesDataFrame,
-                            contrasts.arg = contra
-        )
-    }
-
-    rownames(design) <- rownames(covariatesDataFrame)
-
-    options(na.action = currentNAAction)
-
-    return(list(
-        design = design,
-        covariates = colNamesTemp,
-        factorsLevels = lapply(contra, colnames),
-        numericCovars = numericCovariateNames,
-        covariatesDataFrame = covariatesDataFrame
-    ))
+    return <- list("contra" = contra, "covDF" = covDF)
 }
-
 
 #' Function imported from https://github.com/th1vairam/CovariateAnalysis
 #' Modified from http://stackoverflow.com/questions/13088770/
