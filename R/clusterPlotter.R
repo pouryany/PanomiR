@@ -27,10 +27,9 @@ clusterPlot <- function(subNet,
 
     figDir <- paste0(outDir, prefix)
 
-    legendCats <- data.frame(
-        attr = c("Up-regulated", "Down-regulated"),
-        shape = unique(igraph::V(subNet)$shape)
-    )
+    legendCats <- data.frame(attr = c("Up-regulated", "Down-regulated"),
+                shape = unique(igraph::V(subNet)$shape))
+    
     cols <- RColorBrewer::brewer.pal(8, "Set2")
     clustMems  <- igraph::V(subNet)$cluster
     nodeColors <- cols[clustMems]
@@ -41,24 +40,15 @@ clusterPlot <- function(subNet,
     nodeColors[clustMems %in% smallClust] <- NA
 
     if (plotSave) {
-        grDevices::pdf(
-            paste0(figDir, "PCxNCorGraph.pdf"),
-            width = 18, height = 11
-        )
+        grDevices::pdf(paste0(figDir, "PCxNCorGraph.pdf"),
+                width = 18, height = 11)
     }
 
-    plot(
-        subNet,
-        vertex.size = 5, vertex.label = NA,
-        vertex.color = nodeColors
-    )
-    graphics::legend(
-        x = "bottomleft",
-        legend = legendCats$attr,
-        pch = c(0, 1),
-        bty = "n",
-        cex = 1.6
-    )
+    plot(subNet, vertex.size = 5, vertex.label = NA, vertex.color = nodeColors)
+
+    graphics::legend(x = "bottomleft", legend = legendCats$attr, pch = c(0, 1),
+        bty = "n", cex = 1.6)
+
     graphics::legend(x = "topleft", legend = c("Positive Cor", "Negative Cor"),
         col = c("#E41A1C", "#377EB8"), lty = 1, lwd = 2, cex = 1.6, bty = "n")
     if (plotSave)
@@ -71,9 +61,8 @@ clusterPlot <- function(subNet,
 
             if (length(igraph::V(subNet2)) < 2) next
 
-            grDevices::pdf(
-                paste0(figDir, "PCxNCorGraph_", "Cluster_", k, ".pdf")
-            )
+            grDevices::pdf(paste0(figDir, "PCxNCorGraph_",
+                                  "Cluster_", k, ".pdf"))
 
             plot(subNet2, edge.width = 1.3, vertex.size = 5, vertex.label = NA,
                 vertex.color = cols[clustMems[keep]], legend = TRUE,

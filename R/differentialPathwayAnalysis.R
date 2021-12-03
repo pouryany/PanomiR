@@ -41,7 +41,7 @@ differentialPathwayAnalysis <- function(geneCounts,
                                         adjustCovars = NULL,
                                         covariateCorrection = FALSE,
                                         quantileNorm = FALSE,
-                                        outDir = "",
+                                        outDir = ".",
                                         saveOutName = NULL,
                                         id = "ENSEMBL",
                                         deGenes = NULL,
@@ -83,12 +83,10 @@ differentialPathwayAnalysis <- function(geneCounts,
     }
 
     # generate pathway summary statistics
-    pathwaySummaryStats <- pathwaySummary(geneCounts, pathways, id = id,
-                                        method = method,
-                                        deGenes = deGenes,
-                                        zNormalize = FALSE,
-                                        trim = trim,
-                                        tScores = tScores)
+    pathwaySummaryStats <- 
+        pathwaySummary(geneCounts, pathways, id = id, method = method,
+            deGenes = deGenes, zNormalize = FALSE, trim = trim,
+            tScores = tScores)
 
     # filter pathways with na values in the pathway summary statistics and
     # z-normalize the pathway summary statistics
@@ -121,38 +119,20 @@ differentialPathwayAnalysis <- function(geneCounts,
         stop("Under development. Please use covariateCorrection = FALSE option")
     } else {
         if (is.null(adjustCovars)) {
-            conditions <- as.data.frame(covariates[, condition])
-            colnames(conditions) <- condition
-            rownames(conditions) <- rownames(covariates)
-            designMat <- getDesignMatrix(conditions, intercept = FALSE)
+            conditionsDat <- as.data.frame(covariates[, condition])
+            colnames(conditionsDat) <- condition
+            rownames(conditionsDat) <- rownames(covariates)
+            designMat <- getDesignMatrix(conditionsDat, intercept = FALSE)
         } else {
-            designMat <- getDesignMatrix(covariates[,
-                                                    c(condition,
-                                                        adjustCovars),
-                                                    drop = FALSE],
-                                        intercept = FALSE)
+            designMat <- 
+                getDesignMatrix(covariates[, c(condition, adjustCovars),
+                                        drop = FALSE], intercept = FALSE)
 
             designMat$design <-
                 designMat$design[, linColumnFinder(designMat$design)$indepCols]
 
-            # Getting pathway residuals
-            resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars),
-                                                        drop = FALSE
-            ],
-            intercept = FALSE
-            )
-            resDesingMat$design <- resDesingMat$design[
-                ,
-                linColumnFinder(resDesingMat$design)$indepCols
-            ]
-            fitResiduals <- limma::lmFit(
-                pathwaySummaryStats,
-                resDesingMat$design
-            )
-            fitResiduals <- limma::residuals.MArrayLM(
-                fitResiduals,
-                pathwaySummaryStats
-            )
+            fitResiduals <- getResidual(covariates, adjustCovars,
+                                    pathwaySummaryStats)
         }
     }
 
@@ -167,29 +147,11 @@ differentialPathwayAnalysis <- function(geneCounts,
     } else {
         contrastsName <- contrastConds
     }
-
     # limma DE analysis
-    fits <- limma::lmFit(pathwaySummaryStats, designMat$design)
+    tT <- getDiffExpTable(pathwaySummaryStats, designMat, contrastsName)
 
-    colnames(fits$coefficients) <- gsub("-", "_", colnames(fits$coefficients))
-
-    contrast <- limma::makeContrasts(
-        contrasts = c(contrastsName),
-        levels = colnames(fits$coefficients)
-    )
-    fitContrast <- limma::contrasts.fit(fits, contrasts = contrast)
-    fitContrast <- limma::eBayes(fitContrast)
-    tT <- limma::topTable(fitContrast, adjust = "fdr", sort.by = "p",
-                        number = Inf)
-    # }
-    tT$contrast <- contrastsName
-
-    output <- list(
-        "DEP" = tT,
-        "pathwaySummaryStats" = pathwaySummaryStats,
-        "contrast" = contrastsName,
-        "PathwayResiduals" = fitResiduals
-    )
+    output <- list("DEP" = tT, "pathwaySummaryStats" = pathwaySummaryStats,
+        "contrast" = contrastsName, "PathwayResiduals" = fitResiduals)
 
     if (!is.null(saveOutName)) {
         saveRDS(output, paste0(outDir, saveOutName))
