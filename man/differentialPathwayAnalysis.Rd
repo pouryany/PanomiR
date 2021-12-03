@@ -12,7 +12,7 @@ differentialPathwayAnalysis(
   adjustCovars = NULL,
   covariateCorrection = FALSE,
   quantileNorm = FALSE,
-  outDir = "",
+  outDir = ".",
   saveOutName = NULL,
   id = "ENSEMBL",
   deGenes = NULL,

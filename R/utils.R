@@ -753,18 +753,17 @@ linColumnFinder <- function(mat) {
 }
 
 #' function to get residuals with respect to a set of covariates
-#' 
+#'
 #' @param covariates a covariate dataframe.
 #' @param adjustCovars covariates to adjust for
 #' @param pathwaySummaryStats an expression matrix
 #' @return a matrix of adjusted expression
 getResidual <- function(covariates,
                         adjustCovars,
-                        pathwaySummaryStats)
-    {
+                        pathwaySummaryStats) {
     # Getting pathway residuals
-    resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars),drop = FALSE],
-    intercept = FALSE)
+    resDesingMat <- getDesignMatrix(covariates[, c(adjustCovars), drop = FALSE],
+        intercept = FALSE)
 
     resDesingMat$design <- resDesingMat$design[,
         linColumnFinder(resDesingMat$design)$indepCols]
@@ -776,30 +775,26 @@ getResidual <- function(covariates,
 }
 
 #' function to get a DE table
-#' 
+#'
 #' @param expMat an expression matrix
 #' @param designMat a design Matrix
-#' @param contrastName the contrast to perform
+#' @param contrastsName the contrast to perform
 #' @return a table of differential expression
 getDiffExpTable <- function(expMat,
                             designMat,
-                            contrastsName)
-    {
+                            contrastsName) {
     fits <- limma::lmFit(expMat, designMat$design)
-    
+
     colnames(fits$coefficients) <- gsub("-", "_", colnames(fits$coefficients))
-    
+
     contrast <- limma::makeContrasts(contrasts = c(contrastsName),
-                                     levels = colnames(fits$coefficients))
-    
+                                    levels = colnames(fits$coefficients))
+
     fitContrast <- limma::contrasts.fit(fits, contrasts = contrast)
     fitContrast <- limma::eBayes(fitContrast)
     tT <- limma::topTable(fitContrast, adjust = "fdr", sort.by = "p",
-                          number = Inf)
-    # }
+                    number = Inf)
     tT$contrast <- contrastsName
 
     return(tT)
 }
-
-

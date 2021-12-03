@@ -83,7 +83,7 @@ differentialPathwayAnalysis <- function(geneCounts,
     }
 
     # generate pathway summary statistics
-    pathwaySummaryStats <- 
+    pathwaySummaryStats <-
         pathwaySummary(geneCounts, pathways, id = id, method = method,
             deGenes = deGenes, zNormalize = FALSE, trim = trim,
             tScores = tScores)
@@ -124,7 +124,7 @@ differentialPathwayAnalysis <- function(geneCounts,
             rownames(conditionsDat) <- rownames(covariates)
             designMat <- getDesignMatrix(conditionsDat, intercept = FALSE)
         } else {
-            designMat <- 
+            designMat <-
                 getDesignMatrix(covariates[, c(condition, adjustCovars),
                                         drop = FALSE], intercept = FALSE)
 

@@ -18,18 +18,14 @@ clusterPlot <- function(subNet,
                         prefix = "",
                         outDir = ".",
                         plotSave = TRUE) {
-    if (substring(outDir, nchar(outDir)) != "/") {
-        outDir <- paste0(outDir, "/")
-    }
-    if (!dir.exists(outDir)) {
+    if (!dir.exists(outDir))
         stop("Output directory does not exist.")
-    }
 
-    figDir <- paste0(outDir, prefix)
+    figDir <- paste0(outDir, "/", prefix)
 
     legendCats <- data.frame(attr = c("Up-regulated", "Down-regulated"),
                 shape = unique(igraph::V(subNet)$shape))
-    
+
     cols <- RColorBrewer::brewer.pal(8, "Set2")
     clustMems  <- igraph::V(subNet)$cluster
     nodeColors <- cols[clustMems]
@@ -62,7 +58,7 @@ clusterPlot <- function(subNet,
             if (length(igraph::V(subNet2)) < 2) next
 
             grDevices::pdf(paste0(figDir, "PCxNCorGraph_",
-                                  "Cluster_", k, ".pdf"))
+                                "Cluster_", k, ".pdf"))
 
             plot(subNet2, edge.width = 1.3, vertex.size = 5, vertex.label = NA,
                 vertex.color = cols[clustMems[keep]], legend = TRUE,
