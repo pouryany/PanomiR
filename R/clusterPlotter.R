@@ -18,8 +18,9 @@ clusterPlot <- function(subNet,
                         prefix = "",
                         outDir = ".",
                         plotSave = TRUE) {
-    if (!dir.exists(outDir))
+    if (!dir.exists(outDir)) {
         stop("Output directory does not exist.")
+        }
 
     figDir <- paste0(outDir, "/", prefix)
 

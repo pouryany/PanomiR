@@ -798,3 +798,60 @@ getDiffExpTable <- function(expMat,
 
     return(tT)
 }
+
+#' function to align a list of sets and a reference universe
+#'
+#' @param pathwaySets a list of sets
+#' @param universe all set  elements must be a subset of universe
+#' @return a list of sets, aligned to universe
+alignToUniverse <- function(pathwaySets,
+                            universe) {
+    pathwaySets <- lapply(pathwaySets, function(x) {
+        x[x %in% universe]
+    })
+    return(pathwaySets)
+}
+
+
+#' Pairwise enrichment analysis between two given lists of sets
+#'
+#' @param mirSets a list of targets of miRNAs
+#' @param pathwaySets a list of pathways
+#' @param pathsRef universe of genes.
+#' @param numCores number of cores to calculate the results.
+#' @return enrichment analysis results
+enrichAllPairs <- function(mirSets,
+                            pathwaySets,
+                            pathsRef,
+                            numCores) {
+    iterator <- (merge(names(mirSets), names(pathwaySets)))
+    iterator <- iterator %>% dplyr::mutate_all(., as.character)
+    all <- length(pathsRef)
+
+    # find enrichment p-value of each miRNA target set and each pathway set
+    enrichs <- parallel::mclapply(seq_len(nrow(iterator)),
+                    function(y) {
+                        x <- iterator[y, ]
+                        q <- length(intersect(unlist(pathwaySets[x[[2]]]),
+                                            unlist(mirSets[x[[1]]])))
+                        m <- length(unlist(mirSets[x[[1]]]))
+                        n <- all - m
+                        k <- length(unlist(pathwaySets[x[[2]]]))
+                        pval <- stats::phyper(
+                            q - 1, m, n, k, lower.tail = FALSE, log.p = FALSE)
+
+                        return(c("pval" = pval, "Intersect" = q,
+                            "mirset_Size" = m,
+                            "not_mirset" = n,
+                            "pathway_Size" = k,
+                            "ratio_in" = q / (k - q),
+                            "ratio_out" = (m - q) / n,
+                            "ratio_ratios" = (q / (k - q)) / ((m - q) / n)))
+                        }, mc.cores = numCores)
+
+    temp <- do.call(rbind, enrichs)
+    temp <- as.data.frame(temp)
+    iterator <- cbind(iterator, temp)
+
+    return(iterator)
+}

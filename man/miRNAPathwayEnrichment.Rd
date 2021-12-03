@@ -13,7 +13,7 @@ miRNAPathwayEnrichment(
   toID = "ENTREZID",
   minPathSize = 9,
   numCores = 1,
-  outDir = "",
+  outDir = ".",
   saveOutName = NULL
 )
 }

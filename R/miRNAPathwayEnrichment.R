@@ -31,88 +31,39 @@ miRNAPathwayEnrichment <- function(mirSets,
                                     toID = "ENTREZID",
                                     minPathSize = 9,
                                     numCores = 1,
-                                    outDir = "",
+                                    outDir = ".",
                                     saveOutName = NULL) {
-    if (substring(outDir, nchar(outDir)) != "/") {
-        outDir <- paste0(outDir, "/")
-    }
     if (!dir.exists(outDir)) {
         stop("Output directory does not exist.")
     }
+
     # select pathways with minimum set size
     pathsSel <- vapply(pathwaySets, length, numeric(1))
     pathwaySets <- pathwaySets[pathsSel > minPathSize]
     pathsRef <- Reduce(union, pathwaySets)
 
     # select miRNAs with targets in pathways
-    mirSets <- lapply(mirSets, function(x) {
-        x[x %in% pathsRef]
-    })
-
+    mirSets <- alignToUniverse(mirSets, pathsRef)
     # select pathways with selected genes of interest
     if (!is.null(geneSelection)) {
-        geneDF <- clusterProfiler::bitr(
-            geneSelection,
-            fromType = fromID,
-            toType = toID,
-            OrgDb = org.Hs.eg.db::org.Hs.eg.db
-        )
-        pathwaySets <- lapply(pathwaySets, function(x) {
-            x[x %in% geneDF[, c(toID)]]
-        })
+        geneDF <- clusterProfiler::bitr(geneSelection, fromType = fromID,
+            toType = toID, OrgDb = org.Hs.eg.db::org.Hs.eg.db)
 
-        mirSets <- lapply(mirSets, function(x) {
-            x[x %in% geneDF[, c(toID)]]
-        })
-        pathsRef <- Reduce(union, pathwaySets)
+        pathwaySets <- alignToUniverse(pathwaySets, geneDF[, c(toID)])
+        mirSets     <- alignToUniverse(mirSets, geneDF[, c(toID)])
+        pathsRef    <- Reduce(union, pathwaySets)
     }
-
     # select miRNAs of interest
     if (!is.null(mirSelection)) {
         mirSets <- mirSets[names(mirSets) %in% mirSelection]
     }
+    selVec   <- vapply(mirSets, length, numeric(1))
+    mirSets  <- mirSets[selVec > minPathSize]
 
-    selVec <- vapply(mirSets, length, numeric(1))
-    mirSets <- mirSets[selVec > minPathSize]
-    iterator <- (merge(names(mirSets), names(pathwaySets)))
-    iterator <- iterator %>% dplyr::mutate_all(., as.character)
-    all <- length(pathsRef)
-
-    # find enrichment p-value of each miRNA target set and each pathway set
-    enrichs <- parallel::mclapply(
-        seq_len(nrow(iterator)),
-        function(y) {
-            x <- iterator[y, ]
-            q <- length(intersect(
-                unlist(pathwaySets[x[[2]]]),
-                unlist(mirSets[x[[1]]])
-            ))
-            m <- length(unlist(mirSets[x[[1]]]))
-            n <- all - m
-            k <- length(unlist(pathwaySets[x[[2]]]))
-            pval <- stats::phyper(
-                q - 1, m, n, k, lower.tail = FALSE, log.p = FALSE
-            )
-            return(c(
-                "pval" = pval,
-                "Intersect" = q,
-                "mirset_Size" = m,
-                "not_mirset" = n,
-                "pathway_Size" = k,
-                "ratio_in" = q / (k - q),
-                "ratio_out" = (m - q) / n,
-                "ratio_ratios" = (q / (k - q)) / ((m - q) / n)
-            ))
-        },
-        mc.cores = numCores
-    )
-
-    temp <- do.call(rbind, enrichs)
-    temp <- as.data.frame(temp)
-    iterator <- cbind(iterator, temp)
+    iterator <- enrichAllPairs(mirSets, pathwaySets, pathsRef, numCores)
 
     if (!is.null(saveOutName)) {
-        saveRDS(iterator, paste0(outDir, saveOutName))
+        saveRDS(iterator, paste0(outDir, "/", saveOutName))
     }
     return(iterator)
 }
