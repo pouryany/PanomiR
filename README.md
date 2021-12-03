@@ -240,7 +240,39 @@ customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
 ```
 
 In the above section, the field `fromID` denotes the gene representation
-format of your input list.
+format of your input list. Here is a quick example that runs fast.
+
+``` r
+# using an updated version of pcxn 
+data("msigdb_c2")
+data("targetScan_03")
+
+tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
+
+head(tempEnrich)
+```
+
+    ##                                 x                                       y
+    ## 1                hsa-miR-101-3p.1 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS
+    ## 2                    hsa-miR-1193 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS
+    ## 3                    hsa-miR-1197 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS
+    ## 4                hsa-miR-124-3p.1 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS
+    ## 5 hsa-miR-124-3p.2/hsa-miR-506-3p Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS
+    ## 6                 hsa-miR-1252-5p Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS
+    ##        pval Intersect mirset_Size not_mirset pathway_Size   ratio_in  ratio_out
+    ## 1 0.6041595         1          10        695           62 0.01639344 0.01294964
+    ## 2 0.3528596         2          14        691           62 0.03333333 0.01736614
+    ## 3 1.0000000         0          15        690           62 0.00000000 0.02173913
+    ## 4 0.4540258         3          28        677           62 0.05084746 0.03692762
+    ## 5 0.8722208         1          22        683           62 0.01639344 0.03074671
+    ## 6 1.0000000         0          16        689           62 0.00000000 0.02322206
+    ##   ratio_ratios
+    ## 1    1.2659381
+    ## 2    1.9194444
+    ## 3    0.0000000
+    ## 4    1.3769492
+    ## 5    0.5331772
+    ## 6    0.0000000
 
 ## Session info
 

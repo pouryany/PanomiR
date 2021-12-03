@@ -201,7 +201,19 @@ customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
 ```
 
 In the above section, the field ```fromID``` denotes the gene representation 
-format of your input list.
+format of your input list. Here is a quick example that runs fast.
+```{r customized_mir2}
+
+
+# using an updated version of pcxn 
+data("msigdb_c2")
+data("targetScan_03")
+
+tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
+
+head(tempEnrich)
+```
+
 
 ## Session info
 ```{r sessionInfo}
