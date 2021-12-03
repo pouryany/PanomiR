@@ -35,21 +35,21 @@
 #'   summary statistics as pathwaySummaryStats.
 #' @export
 differentialPathwayAnalysis <- function(geneCounts,
-                                        pathways,
-                                        covariates,
-                                        condition,
-                                        adjustCovars = NULL,
-                                        covariateCorrection = FALSE,
-                                        quantileNorm = FALSE,
-                                        outDir = ".",
-                                        saveOutName = NULL,
-                                        id = "ENSEMBL",
-                                        deGenes = NULL,
-                                        minPathSize = 10,
-                                        method = "x2",
-                                        trim = 0.025,
-                                        geneCountsLog = TRUE,
-                                        contrastConds = NA) {
+                                            pathways,
+                                            covariates,
+                                            condition,
+                                            adjustCovars = NULL,
+                                            covariateCorrection = FALSE,
+                                            quantileNorm = FALSE,
+                                            outDir = ".",
+                                            saveOutName = NULL,
+                                            id = "ENSEMBL",
+                                            deGenes = NULL,
+                                            minPathSize = 10,
+                                            method = "x2",
+                                            trim = 0.025,
+                                            geneCountsLog = TRUE,
+                                            contrastConds = NA) {
     if (substring(outDir, nchar(outDir)) != "/") {
         outDir <- paste0(outDir, "/")
     }
@@ -71,25 +71,20 @@ differentialPathwayAnalysis <- function(geneCounts,
 
     # use de genes as a filter
     if (!is.null(deGenes)) {
-        tScores <- deGenes %>%
+        tScores <- deGenes %>% 
             dplyr::mutate(., !!id := rownames(deGenes)) %>%
             dplyr::select(., c(ENSEMBL, t))
     }
-
     # log gene counts if gene counts are not log-transformed yet; essential for
     # path summary statistics
     if (geneCountsLog == TRUE) {
         geneCounts <- log(geneCounts)
     }
-
     # generate pathway summary statistics
-    pathwaySummaryStats <-
-        pathwaySummary(geneCounts, pathways, id = id, method = method,
-            deGenes = deGenes, zNormalize = FALSE, trim = trim,
-            tScores = tScores)
-
-    # filter pathways with na values in the pathway summary statistics and
-    # z-normalize the pathway summary statistics
+    pathwaySummaryStats <- pathwaySummary(geneCounts, pathways, id = id,
+            method = method,  deGenes = deGenes, zNormalize = FALSE,
+            trim = trim, tScores = tScores)
+    # filter pathways with na values in the pathway summary statistics
     pathwaySummaryStats <-
         pathwaySummaryStats[rowSums(is.na(pathwaySummaryStats)) == 0, ]
 
@@ -109,11 +104,7 @@ differentialPathwayAnalysis <- function(geneCounts,
         colnames(pathwaySummaryStats) <- rownames(covariates)
     }
 
-    # set factors in covariates if needed
-
     # perform covariates correction, create design matrix for limma DE analysis;
-    # if no adjustCovars are available, then design matrix only consider the
-    # condition in question.
     fitResiduals <- NULL
     if (covariateCorrection == TRUE) {
         stop("Under development. Please use covariateCorrection = FALSE option")

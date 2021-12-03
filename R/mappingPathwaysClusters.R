@@ -36,42 +36,19 @@ mappingPathwaysClusters <- function(pcxn,
                                     outDir = ".",
                                     saveNameCSV = NULL,
                                     weighted = FALSE) {
-    if (substring(outDir, nchar(outDir)) != "/") {
-        outDir <- paste0(outDir, "/")
-    }
-    if (!dir.exists(outDir)) {
-        stop("Output directory does not exist.")
-    }
-
+    outDir <- paste0(outDir, "/")
+    if (!dir.exists(outDir)) stop("Output directory does not exist.")
     figDir <- paste0(outDir, "Figures/")
-
-    if (!dir.exists(figDir) && plotOut) {
-        dir.create(figDir, recursive = TRUE)
-    }
+    if (!dir.exists(figDir) && plotOut) dir.create(figDir, recursive = TRUE)
 
     # filter pcxn edges with edge fdr threshold and correlation threshold
-    pcxn$pAdjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
-    res <- pcxn[pcxn$pAdjust < edgeFDR, ]
-    res <- res[abs(res$PathCor) > correlationCutOff, ]
-    allPathways <- union(unique(res$Pathway.B), unique(res$Pathway.A))
-    net <- res[, c("Pathway.A", "Pathway.B", "PathCor")]
-    if (weighted) {
-        net$weight <- abs(net$PathCor)
-    }
-    net <- as.matrix(net)
-    net <- igraph::graph_from_data_frame(net, directed = FALSE)
+    tempNet     <- pcxnToNet(pcxn, edgeFDR, correlationCutOff, weighted)
+    net         <- tempNet$net
+    allPathways <- tempNet$allPathways
 
-    igraph::set_vertex_attr(net, "col", value = "red")
-
-    # filter de pathways with less than path fdr threshold
     dePathways <- dePathways[dePathways$adj.P.Val < pathwayFDR, ]
-    if (nrow(dePathways) < 10) {
-        stop(
-            "Please use a more lenient threshold for pathway adjusted p-values."
-        )
-    }
+    if (nrow(dePathways) < 10) stop("Relax pathway adjusted p-values.")
 
-    # choose top n pathways
     if (!is.null(topPathways)) {
         dePathways <- dePathways[seq_len(topPathways), ]
     }
@@ -80,7 +57,6 @@ mappingPathwaysClusters <- function(pcxn,
 
     igraph::V(net)$shape <- ifelse(igraph::V(net)$name %in% dePathways,
                                 "square", "circle")
-
     subNet <- igraph::induced_subgraph(net, rownames(dePathways))
 
     # choose clustering function for nodes
@@ -89,41 +65,20 @@ mappingPathwaysClusters <- function(pcxn,
     } else {
         clusts <- utils::getFromNamespace(clusteringFunction, "igraph")(subNet)
     }
-
-    # setting up plot
-    zz <- as.factor(clusts$membership)
-    zz <- forcats::fct_infreq(zz, ordered = NA)
-    levels(zz) <- seq_along(unique(zz))
-    clusts$membership <- as.numeric(zz)
-
-    igraph::E(subNet)$color <-
-        ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, "#E41A1C", "#377EB8")
-
-    shapeIndex <- rownames(dePathways1) %in% igraph::V(subNet)$name
-    shapeIndex <- dePathways1[shapeIndex, c(1, 2)]
-    shapeIndex <- shapeIndex[igraph::V(subNet)$name, ]
-
-    shapeDirs <- as.numeric(shapeIndex$logFC > 0)
-    names(shapeDirs) <- rownames(shapeIndex)
-    shapeIndex <- shapeIndex$logFC > 0
-
-    igraph::V(subNet)$shape   <- ifelse(shapeIndex, "square", "circle")
+    clusts <- .levelFixerMapper(clusts)
+    subNet <- .shapeColNet(subNet, dePathways1)
     igraph::V(subNet)$cluster <- clusts$membership
     pathsOut <- igraph::V(subNet)$name
-    pathsOut <- as.data.frame(cbind(
-        "Pathway" = pathsOut,
-        "cluster" = clusts$membership
-    ))
+    pathsOut <- as.data.frame(cbind("Pathway" = pathsOut,
+                                    "cluster" = clusts$membership))
 
     if (plotOut == TRUE) {
         clusterPlot(subNet = subNet, subplot = subplot,
                 topClusters = topClusters, outDir = figDir, prefix = prefix)
     }
-
     if (!is.null(saveNameCSV)) {
         utils::write.csv(pathsOut, paste0(outDir, saveNameCSV))
     }
-
     return(list("Clustering" = pathsOut, "DE_PCXN" = subNet,
                 "Cluter_method" = eval(clusteringFunction)))
 }

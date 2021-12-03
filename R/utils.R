@@ -113,20 +113,13 @@ pathwaySummary <- function(exprsMat,
                             deGenes = NULL,
                             trim = 0,
                             tScores = NULL) {
-
-    # There is a confusion about the data format here.
-    # Make sure it is consistent.
     # Current version only works with ENSEMBL.
     exprsMat <- tibble::rownames_to_column(as.data.frame(exprsMat), var = id)
-
     if (!is.null(deGenes)) {
         if (is.null(tScores)) {
             stop("Provide tscores/pvalues")
         }
-
-        pathwayRef <- dplyr::inner_join(pathwayRef, tScores, by = c("ENSEMBL")
-        )
-
+        pathwayRef <- dplyr::inner_join(pathwayRef, tScores, by = c("ENSEMBL"))
         pathwayRef %<>% dplyr::group_by(., Pathway) %>%
             dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
             dplyr::select(., -t)
@@ -154,7 +147,6 @@ pathwaySummary <- function(exprsMat,
     }
 
     pathExpTab <- dplyr::inner_join(pathwayRef, exprsMat, by = id)
-
     pathExpTab <- pathExpTab %>%
         dplyr::group_by(., Pathway) %>%
         dplyr::summarise_if(is.numeric, mean, na.rm = TRUE, trim = trim)
@@ -399,25 +391,24 @@ sumlogCoverFn <- aggInvCoverFn
 #'   seeds. TRUE will give identical results in different runs.
 #' @return Outputs of sampling data.
 samplingDataBase <- function(enrichNull,
-                            selector,
-                            sampRate,
-                            fn,
-                            nPaths,
-                            samplingDataFile,
-                            jackKnife = FALSE,
-                            saveSampling,
-                            numCores = 1,
-                            autoSeed = TRUE) {
+                                selector,
+                                sampRate,
+                                fn,
+                                nPaths,
+                                samplingDataFile,
+                                jackKnife = FALSE,
+                                saveSampling,
+                                numCores = 1,
+                                autoSeed = TRUE) {
+
     if (!all(utils::hasName(selector, c("x")))) {
         stop("The selector table needs a column x (miRNA name)")
     }
     if (!all(utils::hasName(enrichNull, c("x", "y", "pval")))) {
         stop("Bad formatting in the enrichment table")
     }
-
     if (!file.exists(samplingDataFile)) {
         allPaths <- unique(enrichNull$y)
-
         if (jackKnife == TRUE) {
             nPathsTemp <- nPaths - 1
         }
@@ -431,12 +422,8 @@ samplingDataBase <- function(enrichNull,
                         nullPaths <- sample(allPaths, nPathsTemp,
                                         replace = FALSE)})
                 }
-
-                selNull <- fn(
-                    enriches = enrichNull,
-                    pathways = nullPaths,
-                    isSelector = FALSE
-                )
+                selNull <- fn(enriches = enrichNull, pathways = nullPaths,
+                    isSelector = FALSE)
                 return(selNull$k)
             }, mc.cores = numCores)
             # build null distribution of K
@@ -462,7 +449,6 @@ samplingDataBase <- function(enrichNull,
     }
     return(outList)
 }
-
 
 #' Outputs a table with col x, miRNA, probability of observing k
 #'   against a random distribution of the cover of methodology
@@ -604,7 +590,7 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
     rownames(covDF) <- rowNamesTemp
     colnames(covDF) <- colNamesTemp
 
-    tempHelper <- .getDesignMatHelper(factorCovariateNames,covDF, intercept)
+    tempHelper <- .getDesignMatHelper(factorCovariateNames, covDF, intercept)
     contra   <- tempHelper$contra
     covDF    <- tempHelper$covDF
     # Inspired by http://stackoverflow.com/questions/5616210/
@@ -830,4 +816,84 @@ enrichAllPairs <- function(mirSets,
     iterator <- cbind(iterator, temp)
 
     return(iterator)
+}
+
+#' Creates a network out of pcxn table
+#'
+#' @param pcxn pathways network edge list of pathways
+#' @param edgeFDR FDR threshold for pathway-pathway adjusted p-values;
+#'   filter edges with adjusted p-values less than given threshold
+#' @param correlationCutOff cut-off threshold for pathway-pathway correlation;
+#'   filter pathways with correlation less than given threshold
+#' @param weighted True if you wish to include correlation weights in clustering
+#' @return enrichment analysis results
+pcxnToNet <- function(pcxn,
+                        edgeFDR,
+                        correlationCutOff,
+                        weighted) {
+    pcxn$pAdjust <- stats::p.adjust(pcxn$p.value, method = "fdr")
+    res <- pcxn[pcxn$pAdjust < edgeFDR, ]
+    res <- res[abs(res$PathCor) > correlationCutOff, ]
+    allPathways <- union(unique(res$Pathway.B), unique(res$Pathway.A))
+    net <- res[, c("Pathway.A", "Pathway.B", "PathCor")]
+    if (weighted) {
+        net$weight <- abs(net$PathCor)
+    }
+    net <- as.matrix(net)
+    net <- igraph::graph_from_data_frame(net, directed = FALSE)
+
+    igraph::set_vertex_attr(net, "col", value = "red")
+    return(list("net" = net, "allPathways" = allPathways))
+}
+
+####
+#
+# Helper functions for mappingPathwayClusters
+#
+####
+
+.levelFixerMapper <- function(clusts) {
+    zz <- as.factor(clusts$membership)
+    zz <- forcats::fct_infreq(zz, ordered = NA)
+    levels(zz) <- seq_along(unique(zz))
+    clusts$membership <- as.numeric(zz)
+    return(clusts)
+}
+
+.shapeColNet <- function(subNet, dePathways1) {
+    igraph::E(subNet)$color <-
+        ifelse(as.numeric(igraph::E(subNet)$PathCor) > 0, "#E41A1C", "#377EB8")
+
+    shapeIndex <- rownames(dePathways1) %in% igraph::V(subNet)$name
+    shapeIndex <- dePathways1[shapeIndex, c("logFC", "AveExpr")]
+    shapeIndex <- shapeIndex[igraph::V(subNet)$name, ]
+    shapeIndex <- shapeIndex$logFC > 0
+    igraph::V(subNet)$shape   <- ifelse(shapeIndex, "square", "circle")
+    return(subNet)
+}
+
+
+####
+#
+# Helper functions for prioritizeMicroRNAs
+#
+####
+
+.checkAddressDirs <- function(outDir, saveCSV, dataDir, saveSampling) {
+    if (!dir.exists(outDir) && saveCSV) {
+        warning("Output directory does not exist.")
+        dir.create(outDir, recursive = TRUE)
+    }
+    if (!dir.exists(dataDir) && saveSampling) {
+        stop("Data directory does not exist.")
+    }
+}
+
+.cleanEnrichInput <- function(enriches0, enrichmentFDR) {
+    enriches <- enriches0 %>% dplyr::filter(., Intersect != 0)
+    enriches %<>% dplyr::group_by(., y) %>%
+        dplyr::mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
+    enriches <- enriches %>%
+        dplyr::mutate(., hit = ifelse(path_fdr < enrichmentFDR, 1, 0))
+    return(enriches)
 }

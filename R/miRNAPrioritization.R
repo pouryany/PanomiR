@@ -59,32 +59,15 @@ prioritizeMicroRNA <- function(enriches0,
                                 prefix = "",
                                 autoSeed = TRUE) {
 
-    if (!dir.exists(outDir) && saveCSV) {
-        warning("Output directory does not exist.")
-        dir.create(outDir, recursive = TRUE)
-    }
-
-    if (!dir.exists(dataDir) && saveSampling) {
-        stop("Data directory does not exist.")
-    }
+    .checkAddressDirs(outDir, saveCSV, dataDir, saveSampling)
 
     output <- list()
-
     # count miRNA-pathway enrichment with p-value less than threshold
-    enriches <- enriches0 %>% dplyr::filter(., Intersect != 0)
-    enriches %<>% dplyr::group_by(., y) %>%
-        dplyr::mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
+    enriches <- .cleanEnrichInput(enriches0, enrichmentFDR)
 
-    enriches <- enriches %>%
-        dplyr::mutate(., hit = ifelse(path_fdr < enrichmentFDR, 1, 0))
-
-    # Need to fix this function to be able to work on specific clusters
-    # instead of all top clusters.
     for (clustNo in seq_len(topClust)) {
         clustName <- paste0("Cluster", clustNo)
-
         print(paste0("Working on ", clustName, "."))
-
         # select pathways in cluster
         pathways <- as.character(
             pathwayClusters[pathwayClusters$cluster == clustNo, ]$Pathway
@@ -101,20 +84,14 @@ prioritizeMicroRNA <- function(enriches0,
         # perform p-value aggregation based on methodology provided
         for (i in seq_along(method)) {
             m <- method[i]
-
             print(paste0("Performing ", m, " function."))
-
             fn <- get(paste0(m, "Fn"))
             coverFn <- get(paste0(m, "CoverFn"))
 
             if (!is.null(methodThresh)) {
                 mThresh <- methodThresh[i]
-                temp <- fn(
-                    enriches = enriches0,
-                    pathways,
-                    isSelector = TRUE,
-                    thresh = mThresh
-                )
+                temp <- fn(enriches = enriches0, pathways, isSelector = TRUE,
+                    thresh = mThresh)
             } else {
                 temp <- fn(enriches = enriches0, pathways, isSelector = TRUE)
             }
@@ -123,35 +100,22 @@ prioritizeMicroRNA <- function(enriches0,
             mEnriches0 <- temp$enriches0
 
             if (nrow(mSelector) < 3) {
-                print(paste0(
-                    "Skipping ",
-                    m,
-                    " function due to low number of miRNA after filter"
-                ))
+                print(paste0("Skipping ", m, " function:few miRNAs"))
                 next
             }
 
             enrichNull <- mEnriches0 %>% dplyr::filter(., x %in% mSelector$x)
-
             samplingDataDir <- paste0(dataDir, prefix, "Sampling_Data/")
 
             if ((saveSampling == TRUE) && (!dir.exists(samplingDataDir))) {
                 dir.create(samplingDataDir, recursive = TRUE)
             }
 
-            samplingDataFilename <- paste0(
-                prefix,
-                m,
-                "_",
-                sampRate,
-                "_samples.RDS"
-            )
+            samplingDataFilename <- paste0(prefix, m, "_", sampRate,
+                                        "_samples.RDS")
 
-            samplingDataFile <- paste0(
-                samplingDataDir,
-                "/",
-                samplingDataFilename
-            )
+            samplingDataFile <- paste0(samplingDataDir, "/",
+                                        samplingDataFilename)
 
             if (m %in% c("aggInv", "aggLog")) {
                 # perform sampling
