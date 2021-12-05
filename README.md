@@ -15,7 +15,7 @@ For questions, comments, and other queries, contact <pouryany@gmail.com>
 ## Installation
 
 PanomiR can be accessed via Bioconductor. To install, start R (version
-\> “4.1) and run the following code.
+\> “4.2”) and run the following code.
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -280,13 +280,13 @@ head(tempEnrich)
 sessionInfo()
 ```
 
-    ## R version 4.1.2 (2021-11-01)
+    ## R Under development (unstable) (2021-12-03 r81290)
     ## Platform: x86_64-apple-darwin17.0 (64-bit)
     ## Running under: macOS Mojave 10.14.6
     ## 
     ## Matrix products: default
-    ## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
-    ## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+    ## BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
+    ## LAPACK: /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRlapack.dylib
     ## 
     ## locale:
     ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -298,12 +298,12 @@ sessionInfo()
     ## [1] PanomiR_0.99.0
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.2.8     knitr_1.36       magrittr_2.0.1   tidyselect_1.1.1
+    ##  [1] igraph_1.2.9     knitr_1.36       magrittr_2.0.1   tidyselect_1.1.1
     ##  [5] R6_2.5.1         rlang_0.4.12     fastmap_1.1.0    fansi_0.5.0     
-    ##  [9] stringr_1.4.0    dplyr_1.0.7      tools_4.1.2      parallel_4.1.2  
+    ##  [9] stringr_1.4.0    dplyr_1.0.7      tools_4.2.0      parallel_4.2.0  
     ## [13] xfun_0.28        utf8_1.2.2       withr_2.4.3      htmltools_0.5.2 
-    ## [17] ellipsis_0.3.2   yaml_2.2.1       digest_0.6.28    tibble_3.1.6    
+    ## [17] ellipsis_0.3.2   yaml_2.2.1       digest_0.6.29    tibble_3.1.6    
     ## [21] lifecycle_1.0.1  crayon_1.4.2     purrr_0.3.4      vctrs_0.3.8     
-    ## [25] glue_1.5.0       evaluate_0.14    rmarkdown_2.11   limma_3.50.0    
-    ## [29] stringi_1.7.5    compiler_4.1.2   pillar_1.6.4     forcats_0.5.1   
+    ## [25] glue_1.5.1       evaluate_0.14    rmarkdown_2.11   limma_3.51.1    
+    ## [29] stringi_1.7.6    compiler_4.2.0   pillar_1.6.4     forcats_0.5.1   
     ## [33] generics_0.1.1   pkgconfig_2.0.3
