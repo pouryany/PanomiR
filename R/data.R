@@ -34,31 +34,28 @@
 #' data(targetScan_03)
 "targetScan_03"
 
-
-#' An output of the mappingPathwayClusters method. containing mapped
-#' differentially activated pathways from TCGA LIHC dataset to PCxN network
-#' using Louvain clustering algorithm
+#' Readouts and datasets for minimal reproducible examples of the PanomiR.
 #'
-#' @format A list of lists containing a list of cluster assignment to
-#'     pathways. An igraph object of the mapped PCxN.
-#' @source \url{http://pcxn.org:8080/}
-#' @usage data(pathwayClustersLIHC)
-#' @examples
-#' data(pathwayClustersLIHC)
-"pathwayClustersLIHC"
-
-#' A table of miRNA-pathway enrichment.
-#' This is a reduced representation of TargetScan
+#' The item miniEnrich is a reduced representation of the TargetScan
 #' For full table use miRNAPathwayEnrichment function in the package
 #' along with msigdb_c2 and targetScan_03 datasets.
 #'
-#' @format A dataframe of 13170 rows and 10 variables:
+#' These datasets include reduced representation of TCGA LIHC data
+#' for reproducing the pipeline. doi: 10.1016/j.cell.2017.05.046
+#'
+#' A reduced representation of PCxN is provided. For full dataset and method
+#' please refer to pcxn.org or https://doi.org/10.1371/journal.pcbi.1006042
+#'
+#' @format A list of 5:
 #' \describe{
-#'   \item{x}{A targetscan annotated miRNA}
-#'   \item{y}{An MSigDB annotated pathway}
-#'   \item{pval}{Fisher's Exact test p-value}
+#'   \item{mini_LIHC_Exp}{a reduced expression dataset from TCGA LIHC data}
+#'   \item{mini_LIHC_Cov}{a reduced covariates dataset from TCGA LIHC data}
+#'   \item{miniEnrich}{a reduced table of miRNA-pathway enrichment, TargetScan.}
+#'   \item{miniDEP}{Differentially activated pathways from reduced TCGA LIHC}
+#'   \item{miniPCXN}{reduced representation of PCXN network}
+#'   \item{miniPathClusts}{miniDEP mapped to miniPCXN}
 #' }
-#' @usage data(miniEnrich)
+#' @usage data(miniTestsPanomiR)
 #' @examples
-#' data(miniEnrich)
-"miniEnrich"
+#' data(miniTestsPanomiR)
+"miniTestsPanomiR"

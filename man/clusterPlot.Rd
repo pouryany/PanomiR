@@ -34,6 +34,6 @@ a set of plots for DE-PCXN and subclusters
 Plots clusters of pathways with associated directionality.
 }
 \examples{
-data(pathwayClustersLIHC)
-clusterPlot(pathwayClustersLIHC$DE_PCXN, plotSave = FALSE)
+data(miniTestsPanomiR)
+clusterPlot(miniTestsPanomiR$miniPathClusts$DE_PCXN, plotSave = FALSE)
 }

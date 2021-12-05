@@ -73,10 +73,10 @@ Outputs a table of miRNA ordered with respective p-values derived from
   method for prioritization
 }
 \examples{
-data(pathwayClustersLIHC)
-data(miniEnrich)
-prioritizeMicroRNA(enriches0 = miniEnrich,
-   pathClust = pathwayClustersLIHC$Clustering,
+data("miniTestsPanomiR")
+
+prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
+   pathClust = miniTestsPanomiR$miniPathClusts$Clustering,
    topClust = 1,
    sampRate = 50,
    method = c("aggInv"),

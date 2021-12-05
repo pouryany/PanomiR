@@ -23,3 +23,4 @@ a  scoring of miRNAs in a cluster of pathways
 The function calculate targeting score of miRNA w.r.t to a cluster
 of pathways via sumlog aggregation method.
 }
+\keyword{internal}

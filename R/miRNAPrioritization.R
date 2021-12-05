@@ -30,10 +30,10 @@
 #' @return Table of miRNA and p-values, each row contains a miRNA and its
 #'   associated p-values from the methods.
 #' @examples
-#' data(pathwayClustersLIHC)
-#' data(miniEnrich)
-#' prioritizeMicroRNA(enriches0 = miniEnrich,
-#'    pathClust = pathwayClustersLIHC$Clustering,
+#' data("miniTestsPanomiR")
+#'
+#' prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
+#'    pathClust = miniTestsPanomiR$miniPathClusts$Clustering,
 #'    topClust = 1,
 #'    sampRate = 50,
 #'    method = c("aggInv"),

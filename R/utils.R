@@ -175,6 +175,7 @@ pathwaySummary <- function(exprsMat, pathwayRef, id = "ENSEMBL",
 #' @param isSelector Internal argument.
 #' @param thresh Threshold from p-value cut-off.
 #' @return P-value based scoring of miRNAs in a cluster of pathways.
+#' @keywords internal
 pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
     if (isSelector == TRUE) {
         enriches <- enriches %>%
@@ -203,6 +204,7 @@ pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
 #' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
     if (isSelector == TRUE) {
         enriches <- enriches %>% dplyr::mutate(., ES2 = stats::qnorm(1 - pval))
@@ -232,6 +234,7 @@ aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
 #' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
     enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
     if (isSelector == TRUE) {
@@ -260,6 +263,7 @@ aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
 #' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
     enriches1 <- enriches %>%
         dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
@@ -296,6 +300,7 @@ sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
 #' @param isSelector internal argument
 #' @param thresh internal argument
 #' @return a  scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
     enriches1 <- enriches %>% dplyr::mutate(., pval = ifelse(pval >= 0.999,
                                     0.999, pval))
@@ -328,6 +333,7 @@ sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
 #' @param selector a prioritzation table
 #' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 pCutCoverFn <- function(selector, coverName) {
     selector <- selector %>%
         dplyr::mutate(., !!coverName := k / n)
@@ -339,6 +345,7 @@ pCutCoverFn <- function(selector, coverName) {
 #' @param selector a prioritzation table
 #' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 aggInvCoverFn <- function(selector, coverName) {
     selector <- selector %>%
         dplyr::mutate(., !!coverName := k)
@@ -349,18 +356,21 @@ aggInvCoverFn <- function(selector, coverName) {
 #' @param selector a prioritzation table
 #' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 aggLogCoverFn <- aggInvCoverFn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
 #' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 sumzCoverFn <- aggInvCoverFn
 
 #' Internal function for modification of prioritization.
 #' @param selector a prioritzation table
 #' @param coverName a new column name
 #' @return an updated scoring of miRNAs in a cluster of pathways
+#' @keywords internal
 sumlogCoverFn <- aggInvCoverFn
 
 

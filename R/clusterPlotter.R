@@ -9,8 +9,8 @@
 #' @param plotSave saves the plot if set true. Otherwise display
 #' @return a set of plots for DE-PCXN and subclusters
 #' @examples
-#' data(pathwayClustersLIHC)
-#' clusterPlot(pathwayClustersLIHC$DE_PCXN, plotSave = FALSE)
+#' data(miniTestsPanomiR)
+#' clusterPlot(miniTestsPanomiR$miniPathClusts$DE_PCXN, plotSave = FALSE)
 #' @export
 clusterPlot <- function(subNet, subplot = FALSE, topClusters = 2, prefix = "",
                         outDir = ".", plotSave = TRUE) {

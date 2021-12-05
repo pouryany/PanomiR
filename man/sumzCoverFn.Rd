@@ -17,3 +17,4 @@ an updated scoring of miRNAs in a cluster of pathways
 \description{
 Internal function for modification of prioritization.
 }
+\keyword{internal}

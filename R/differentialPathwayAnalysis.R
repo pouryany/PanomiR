@@ -36,22 +36,12 @@
 #' @examples
 #'
 #' data("path_gene_table")
+#' data("miniTestsPanomiR")
 #'
-#' #Downloading prepared datasets from TCGA-LIHC
-#'
-#' LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-#' "/raw/main/data/TCGA_LIHC.RDS"))
-#' TCGA_LIHC <- readRDS(LIHC_url)
-#'
-#' LIHC_cov_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-#' "/raw/main/data/covariates_TCGA_LIHC.RDS"))
-#' cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
-#'
-#' differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
+#' differentialPathwayAnalysis(geneCounts = miniTestsPanomiR$mini_LIHC_Exp,
 #' pathways =  path_gene_table,
-#' covariates = cov_TCGA_LIHC,
-#' condition = 'shortLetterCode',
-#' adjustCovars ='plate')
+#' covariates = miniTestsPanomiR$mini_LIHC_Cov,
+#' condition = 'shortLetterCode')
 #'
 #' @export
 differentialPathwayAnalysis <- function(geneCounts, pathways, covariates,

@@ -51,22 +51,13 @@ Pathway summary statistics.
 ```{r load_package}
 library(PanomiR)
 
-# Downloading example LIHC expression dataset
-LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/TCGA_LIHC.RDS"))
-TCGA_LIHC <- readRDS(LIHC_url)
-
-# Downloading example LIHC covariates dataset
-LIHC_cov_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/covariates_TCGA_LIHC.RDS"))
-cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
-
 # Pathway reference from the PanomiR package
 data("path_gene_table")
-
+data("miniTestsPanomiR")
 # Generating pathway summary statistics 
 
-summaries <- pathwaySummary(TCGA_LIHC,path_gene_table,method = "x2")
+summaries <- pathwaySummary(miniTestsPanomiR$mini_LIHC_Exp
+                            ,path_gene_table,method = "x2")
 
 head(summaries)[,1:2]
 ```
@@ -83,11 +74,11 @@ pathway activity profiles in user-determined conditions.
 
 ```{r differential}
 
-output0 <- differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
-                                       pathways =  path_gene_table,
-                                       covariates = cov_TCGA_LIHC, 
-                                       condition = 'shortLetterCode',
-                                       adjustCovars ='plate')
+output0 <- differentialPathwayAnalysis(
+                        geneCounts = miniTestsPanomiR$mini_LIHC_Exp,
+                        pathways =  path_gene_table,
+                        covariates = miniTestsPanomiR$mini_LIHC_Cov,
+                        condition = 'shortLetterCode')
 
 de.paths <- output0$DEP
 
@@ -103,12 +94,10 @@ activated pathways based on the PCxN methodology.
 
 
 # using an updated version of pcxn 
-pcxn_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/pcxn_panomir.RDS"))
-pcxn_net  <- readRDS(pcxn_url)
 
 set.seed(2)
-pathwayClustsLIHC <- mappingPathwaysClusters(pcxn = pcxn_net, 
+pathwayClustsLIHC <- mappingPathwaysClusters(
+                            pcxn = miniTestsPanomiR$miniPCXN, 
                             dePathways = de.paths[1:300,],
                             topPathways = 200,
                             outDir=".",
@@ -142,24 +131,20 @@ different outputs from the clustering algorithms or pathway thresholds.
 ```{r miRNA}
 
 
-# using an updated version of pcxn 
-enrch_url    <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/LIHC_ENRICHMENT_TargetScan03.RDS"))
-tableEnrich  <- readRDS(enrch_url)
 
 set.seed(1)
-output2 <- prioritizeMicroRNA(enriches0 = tableEnrich,
-                              pathClust = pathwayClustsLIHC$Clustering,
-                              topClust = 1,
-                              sampRate = 50, 
-                              method = c("aggInv"),
-                              outDir = "Output/",
-                              dataDir = "outData/",
-                              saveSampling = FALSE,
-                              runJackKnife = FALSE,
-                              numCores = 1,
-                              prefix = "outmiR",
-                              saveCSV = FALSE)
+output2 <- prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
+                    pathClust = miniTestsPanomiR$miniPathClusts$Clustering,
+                    topClust = 1,
+                    sampRate = 50, 
+                    method = c("aggInv"),
+                    outDir = "Output/",
+                    dataDir = "outData/",
+                    saveSampling = FALSE,
+                    runJackKnife = FALSE,
+                    numCores = 1,
+                    prefix = "outmiR",
+                    saveCSV = FALSE)
 
 head(output2$Cluster1)
 

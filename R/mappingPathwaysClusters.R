@@ -22,20 +22,10 @@
 #' @return a list where the first item is a table with each row containing
 #'   a pathway and its respective cluster. The second item is an igraph object.
 #' @examples
-#' # Downloading prepared datasets from TCGA-LIHC
+#' data("miniTestsPanomiR")
 #'
-#' LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-#' "/raw/main/data/DEP_LIHC_TCGA.RDS"))
-#'
-#' de.paths <- readRDS(LIHC_url)
-#'
-#' # using an updated version of pcxn
-#' pcxn_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-#'                         "/raw/main/data/pcxn_panomir.RDS"))
-#' pcxn_net  <- readRDS(pcxn_url)
-#' set.seed(2)
-#' mappingPathwaysClusters(pcxn = pcxn_net,
-#'                          dePathways = de.paths[1:300,],
+#' mappingPathwaysClusters(pcxn = miniTestsPanomiR$miniPCXN,
+#'                          dePathways = miniTestsPanomiR$miniDEP,
 #'                          topPathways = 200,
 #'                          outDir=".",
 #'                          plot = FALSE,

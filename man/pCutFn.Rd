@@ -21,3 +21,4 @@ P-value based scoring of miRNAs in a cluster of pathways.
 \description{
 The function to count the number of enriched pathways for each miRNA.
 }
+\keyword{internal}
