@@ -14,8 +14,8 @@ For questions, comments, and other queries, contact <pouryany@gmail.com>
 
 ## Installation
 
-PanomiR can be accessed via Bioconductor. To install, start R (version
-\> “4.2”) and run the following code.
+PanomiR can be accessed via Bioconductor. To install, start R
+and run the following code.
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))
