@@ -18,13 +18,7 @@ Suggests:
     knitr,
     rmarkdown
 Config/testthat/edition: 3
-biocViews:
-    GeneExpression,
-    GeneSetEnrichment,
-    GeneTarget,
-    miRNA,
-    NetworkEnrichment,
-    Pathways
+biocViews: GeneExpression, GeneSetEnrichment, GeneTarget, miRNA, Pathways
 Imports:
     clusterProfiler,
     dplyr,
