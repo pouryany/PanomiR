@@ -24,7 +24,7 @@ functionality in PanomiR
 
 ## Installation
 
-PanomiR can be accessed via Bioconductor. To install, start R (version > "4.1)
+PanomiR can be accessed via Bioconductor. To install, start R (version >= 4.1)
 and run the following code.
 
 ```{r installation_bioc, eval = FALSE}
@@ -185,14 +185,14 @@ customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
 
 In the above section, the field ```fromID``` denotes the gene representation 
 format of your input list. Here is a quick example that runs fast.
-```{r customized_mir2, eval=FALSE}
+```{r customized_mir2}
 
 
 # using an updated version of pcxn 
 data("msigdb_c2")
 data("targetScan_03")
 
-tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
+tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 
 head(tempEnrich)
 ```

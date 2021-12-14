@@ -1,6 +1,6 @@
 Package: PanomiR
 Title: Detect miRNAs That Target Groups of Pathways From Gene Expression Data
-Version: 0.99.0
+Version: 0.99.1
 Authors@R:
     person("Pourya", "Naderi", email = "pouryany@gmail.com",
            role = c("aut", "cre"))
