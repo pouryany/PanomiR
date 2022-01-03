@@ -1,5 +1,5 @@
 utils::globalVariables(c(
-    "%<>%", ".", ":=", "ENSEMBL", "ES", "ES2", "Intersect", "Pathway", "hit",
+    ".", ":=", "ENSEMBL", "ES", "ES2", "Intersect", "Pathway", "hit",
     "hit2", "k", "n", "path_fdr", "pval", "x", "y"
 ))
 
@@ -115,33 +115,33 @@ pathwaySummary <- function(exprsMat, pathwayRef, id = "ENSEMBL",
             stop("Provide tscores/pvalues")
         }
         pathwayRef <- dplyr::inner_join(pathwayRef, tScores, by = c("ENSEMBL"))
-        pathwayRef %<>% dplyr::group_by(., Pathway) %>%
-            dplyr::filter(., abs(t) >= stats::median(abs(t))) %>%
-            dplyr::select(., -t)
+        pathwayRef <- pathwayRef |> dplyr::group_by(Pathway) |>
+            dplyr::filter(abs(t) >= stats::median(abs(t))) |>
+            dplyr::select(-t)
     }
     if (method == "none") {
-        exprsMat <- exprsMat %>%
-            dplyr::mutate_if(., is.numeric, function(x) {
+        exprsMat <- exprsMat |>
+            dplyr::mutate_if(is.numeric, function(x) {
                 x
                 })
     } else if (method == "x") {
-        exprsMat <- exprsMat %>%
-            dplyr::mutate_if(., is.numeric, rank) %>%
-            dplyr::mutate_if(., is.numeric, function(x) {
+        exprsMat <- exprsMat |>
+            dplyr::mutate_if(is.numeric, rank) |>
+            dplyr::mutate_if(is.numeric, function(x) {
                 x
                 })
     } else if (method == "x2") {
-        exprsMat <- exprsMat %>%
-            dplyr::mutate_if(., is.numeric, rank) %>%
-            dplyr::mutate_if(., is.numeric, function(x) {
+        exprsMat <- exprsMat |>
+            dplyr::mutate_if(is.numeric, rank) |>
+            dplyr::mutate_if(is.numeric, function(x) {
                 x * x
             })
     } else {
         stop("invalid choice of summarization function")
     }
     pathExpTab <- dplyr::inner_join(pathwayRef, exprsMat, by = id)
-    pathExpTab <- pathExpTab %>%
-        dplyr::group_by(., Pathway) %>%
+    pathExpTab <- pathExpTab |>
+        dplyr::group_by(Pathway) |>
         dplyr::summarise_if(is.numeric, mean, na.rm = TRUE, trim = trim)
 
     pathExp <- as.data.frame(pathExpTab[, -1])
@@ -178,18 +178,18 @@ pathwaySummary <- function(exprsMat, pathwayRef, id = "ENSEMBL",
 #' @keywords internal
 pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
     if (isSelector == TRUE) {
-        enriches <- enriches %>%
-            dplyr::mutate(., hit2 = ifelse(pval < thresh, 1, 0))
+        enriches <- enriches |>
+            dplyr::mutate(hit2 = ifelse(pval < thresh, 1, 0))
     }
 
     tempEnrich <- enriches[enriches$y %in% pathways, ]
-    selector <- tempEnrich %>%
-        dplyr::group_by(x) %>%
-        dplyr::summarise(n = dplyr::n(), k = sum(hit2)) %>%
-        dplyr::arrange(., x)
+    selector <- tempEnrich |>
+        dplyr::group_by(x) |>
+        dplyr::summarise(n = dplyr::n(), k = sum(hit2)) |>
+        dplyr::arrange(x)
 
     if (isSelector == TRUE) {
-        selector <- selector %>% dplyr::filter(., k > thresh * length(pathways))
+        selector <- selector |> dplyr::filter(k > thresh * length(pathways))
         return(list("selector" = selector, "enriches0" = enriches))
     } else {
         return(selector)
@@ -207,17 +207,18 @@ pCutFn <- function(enriches, pathways, isSelector, thresh = 0.05) {
 #' @keywords internal
 aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
     if (isSelector == TRUE) {
-        enriches <- enriches %>% dplyr::mutate(., ES2 = stats::qnorm(1 - pval))
+        enriches <- enriches |> dplyr::mutate(ES2 = stats::qnorm(1 - pval))
         minES <- min(enriches$ES2[!is.infinite(enriches$ES2)])
-        enriches <- enriches %>%
-            dplyr::mutate(., ES2 = ifelse(is.infinite(.$ES2), minES, .$ES2))
+        enriches <- enriches |>
+            dplyr::mutate(ES2 = ifelse(is.infinite(enriches$ES2), minES,
+                enriches$ES2))
     }
 
     tempEnrich <- enriches[enriches$y %in% pathways, ]
-    selector <- tempEnrich %>%
-        dplyr::group_by(x) %>%
-        dplyr::summarise(n = dplyr::n(), k = mean(ES2)) %>%
-        dplyr::arrange(., x)
+    selector <- tempEnrich |>
+        dplyr::group_by(x) |>
+        dplyr::summarise(n = dplyr::n(), k = mean(ES2)) |>
+        dplyr::arrange(x)
 
     if (isSelector == TRUE) {
         return(list("selector" = selector, "enriches0" = enriches))
@@ -236,19 +237,19 @@ aggInvFn <- function(enriches, pathways, isSelector = TRUE, thresh = NULL) {
 #' @return a  scoring of miRNAs in a cluster of pathways
 #' @keywords internal
 aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
-    enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
+    enriches <- enriches |> dplyr::mutate(ES = -log(pval))
     if (isSelector == TRUE) {
-        enriches <- enriches %>% dplyr::mutate(., ES = -log(pval))
+        enriches <- enriches |> dplyr::mutate(ES = -log(pval))
     }
 
     tempEnrich <- enriches[enriches$y %in% pathways, ]
-    selector <- tempEnrich %>%
-        dplyr::group_by(x) %>%
+    selector <- tempEnrich |>
+        dplyr::group_by(x) |>
         dplyr::summarise(n = dplyr::n(), k = mean(ES))
 
     if (isSelector == TRUE) {
-        selector <- selector %>%
-            dplyr::filter(., k * n >= thresh * length(pathways))
+        selector <- selector |>
+            dplyr::filter(k * n >= thresh * length(pathways))
         return(list("selector" = selector, "enriches0" = enriches))
     } else {
         return(selector)
@@ -265,11 +266,11 @@ aggLogFn <- function(enriches, pathways, isSelector, thresh = 0) {
 #' @return a  scoring of miRNAs in a cluster of pathways
 #' @keywords internal
 sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
-    enriches1 <- enriches %>%
-        dplyr::mutate(., pval = ifelse(pval >= 0.999, 0.999, pval))
+    enriches1 <- enriches |>
+        dplyr::mutate(pval = ifelse(pval >= 0.999, 0.999, pval))
 
-    enriches1 <- enriches1 %>%
-        dplyr::mutate(., pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
+    enriches1 <- enriches1 |>
+        dplyr::mutate(pval = ifelse(pval <= 1.0e-16, 1.0e-16, pval))
 
     tempEnrich <- enriches1[enriches1$y %in% pathways, ]
     aggPTab <- vector()
@@ -302,9 +303,9 @@ sumzFn <- function(enriches, pathways, isSelector, thresh = NULL) {
 #' @return a  scoring of miRNAs in a cluster of pathways
 #' @keywords internal
 sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
-    enriches1 <- enriches %>% dplyr::mutate(., pval = ifelse(pval >= 0.999,
+    enriches1 <- enriches |> dplyr::mutate(pval = ifelse(pval >= 0.999,
                                     0.999, pval))
-    enriches1 <- enriches1 %>% dplyr::mutate(., pval = ifelse(pval <= 1.0e-16,
+    enriches1 <- enriches1 |> dplyr::mutate(pval = ifelse(pval <= 1.0e-16,
                                     1.0e-16, pval))
 
     tempEnrich <- enriches1[enriches1$y %in% pathways, ]
@@ -335,8 +336,8 @@ sumlogFn <- function(enriches, pathways, isSelector, thresh = NULL) {
 #' @return an updated scoring of miRNAs in a cluster of pathways
 #' @keywords internal
 pCutCoverFn <- function(selector, coverName) {
-    selector <- selector %>%
-        dplyr::mutate(., !!coverName := k / n)
+    selector <- selector |>
+        dplyr::mutate(!!coverName := k / n)
     return(selector)
 }
 
@@ -347,8 +348,8 @@ pCutCoverFn <- function(selector, coverName) {
 #' @return an updated scoring of miRNAs in a cluster of pathways
 #' @keywords internal
 aggInvCoverFn <- function(selector, coverName) {
-    selector <- selector %>%
-        dplyr::mutate(., !!coverName := k)
+    selector <- selector |>
+        dplyr::mutate(!!coverName := k)
     return(selector)
 }
 
@@ -476,10 +477,10 @@ methodProbBase <- function(samplingData,
     # obtain p-vals
     pVals <-
         stats::pnorm(selector$k, mean = means, sd = sds, lower.tail = FALSE)
-    selector <- selector %>%
-        dplyr::mutate(., !!pvalName := pVals) %>%
-        coverFn(., coverName) %>%
-        dplyr::select(., -c(k, n))
+    selector <- selector |>
+        dplyr::mutate(!!pvalName := pVals) |>
+        coverFn(coverName) |>
+        dplyr::select(-c(k, n))
     return(selector)
 }
 
@@ -536,8 +537,8 @@ jackKnifeBase <- function(selector,
 
     # obtain aggregate p-values
     means <- rowMeans(temp1)
-    selector <- selector %>%
-        dplyr::mutate(., !!jackKnifeName := means)
+    selector <- selector |>
+        dplyr::mutate(!!jackKnifeName := means)
 
     return(selector)
 }
@@ -783,12 +784,12 @@ getDiffExpTable <- function(expMat,
     pathways <- as.data.frame(pathways)
     genesPathways <- pathways[pathways[, id] %in% rownames(geneCounts), ]
 
-    genesPathways %<>% dplyr::group_by(., Pathway) %>%
-        dplyr::summarise(., n = dplyr::n()) %>%
-        dplyr::filter(., n >= minPathSize)
+    genesPathways <- genesPathways |> dplyr::group_by(Pathway) |>
+        dplyr::summarise(n = dplyr::n()) |>
+        dplyr::filter(n >= minPathSize)
 
-    pathways <- pathways %>%
-        dplyr::filter(., Pathway %in% genesPathways$Pathway)
+    pathways <- pathways |>
+        dplyr::filter(Pathway %in% genesPathways$Pathway)
     return(pathways)
 }
 
@@ -828,9 +829,9 @@ getDiffExpTable <- function(expMat,
 .tScoreMaker <- function(deGenes, id) {
     tScores <- NULL
     if (!is.null(deGenes)) {
-        tScores <- deGenes %>%
-            dplyr::mutate(., !!id := rownames(deGenes)) %>%
-            dplyr::select(., c(ENSEMBL, t))
+        tScores <- deGenes |>
+            dplyr::mutate(!!id := rownames(deGenes)) |>
+            dplyr::select(c(ENSEMBL, t))
     }
     return(tScores)
 }
@@ -868,7 +869,7 @@ enrichAllPairs <- function(mirSets,
                             pathsRef,
                             numCores) {
     iterator <- (merge(names(mirSets), names(pathwaySets)))
-    iterator <- iterator %>% dplyr::mutate_all(., as.character)
+    iterator <- iterator |> dplyr::mutate_all(as.character)
     all <- length(pathsRef)
 
     # find enrichment p-value of each miRNA target set and each pathway set
@@ -972,11 +973,11 @@ pcxnToNet <- function(pcxn,
 }
 
 .cleanEnrichInput <- function(enriches0, enrichmentFDR) {
-    enriches <- enriches0 %>% dplyr::filter(., Intersect != 0)
-    enriches %<>% dplyr::group_by(., y) %>%
-        dplyr::mutate(., path_fdr = stats::p.adjust(pval, method = "fdr"))
-    enriches <- enriches %>%
-        dplyr::mutate(., hit = ifelse(path_fdr < enrichmentFDR, 1, 0))
+    enriches <- enriches0 |> dplyr::filter(Intersect != 0)
+    enriches <- enriches |> dplyr::group_by(y) |>
+        dplyr::mutate(path_fdr = stats::p.adjust(pval, method = "fdr"))
+    enriches <- enriches |>
+        dplyr::mutate(hit = ifelse(path_fdr < enrichmentFDR, 1, 0))
     return(enriches)
 }
 
@@ -984,9 +985,9 @@ pcxnToNet <- function(pcxn,
 .makeSelector <- function(enriches, pathways) {
     # Count miRNA-pathway enrichment
     tempEnrich <- enriches[enriches$y %in% pathways, ]
-    selector <- tempEnrich %>%
-        dplyr::group_by(x) %>%
-        dplyr::summarise(., "cluster_hits" = sum(hit))
+    selector <- tempEnrich |>
+        dplyr::group_by(x) |>
+        dplyr::summarise("cluster_hits" = sum(hit))
     return(selector)
 }
 
@@ -1057,10 +1058,9 @@ pcxnToNet <- function(pcxn,
 
     selector <- merge(selector, mSelector, all = TRUE)
     met <- paste0(m, "_pval")
-    selector <- selector %>% dplyr::arrange(., !!rlang::sym(met))
+    selector <- selector |> dplyr::arrange(!!rlang::sym(met))
     met2 <- paste0(m, "_fdr")
-    selector <- selector %>% dplyr::mutate(
-        .,
+    selector <- selector |> dplyr::mutate(
         !!met2 := stats::p.adjust(p = !!rlang::sym(met), method = "fdr")
     )
     return(selector)

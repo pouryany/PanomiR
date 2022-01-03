@@ -79,7 +79,7 @@ prioritizeMicroRNA <- function(enriches0, pathClust, method = "AggInv",
                 print(paste0("Skipping ", m, " function:few miRNAs"))
                 next
             }
-            enrichNull <- mEnriches0 %>% dplyr::filter(., x %in% mSelector$x)
+            enrichNull <- mEnriches0 |> dplyr::filter(x %in% mSelector$x)
             sampDatFile <- .mkSampleDatDir(dataDir, prefix, saveSampling,
                                         m, sampRate)
             mSelector   <- .mSelectorMaker(m, enrichNull, mSelector, sampRate,

@@ -25,7 +25,6 @@ Imports:
     forcats,
     igraph,
     limma,
-    magrittr,
     metap,
     org.Hs.eg.db,
     parallel,
