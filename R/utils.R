@@ -22,14 +22,8 @@ utils::globalVariables(c(
 #' data(msigdb_c2)
 #' pathwayGeneTab(pathwayList = msigdb_c2[1:2])
 #' @export
-pathwayGeneTab <- function(pathAdress = NA,
-                            pathwayList = NA,
+pathwayGeneTab <- function(pathAdress = NA, pathwayList = NA,
                             outDir = NA) {
-    # Development notes: make compatible with direct data input
-    #       check and throw errors if the address is valid
-    #       make it work for all anotation types of genes Eg. Symbol or ENSEMBL.
-    #       Make a  pathwayGeneTab going out with the package.
-
     if (!is.na(pathAdress)) {
         pathList <- readRDS(pathAdress)
     }
@@ -408,7 +402,6 @@ samplingDataBase <- function(enrichNull, selector, sampRate, fn, nPaths,
             nPathsTemp <- nPaths - 1
         }
         sampSizeVec <- c(nPaths, nPaths - 1, 100, 50)
-
         outList <- list()
         for (nPathsTemp in sampSizeVec) {
             temp <- parallel::mclapply(seq_len(sampRate), function(y) {
@@ -429,17 +422,18 @@ samplingDataBase <- function(enrichNull, selector, sampRate, fn, nPaths,
                 paste0("sample_", y)
             }, FUN.VALUE = "character")
             sampTag <- paste0("SampSize_", nPathsTemp)
-
             outList[[sampTag]] <- temp
         }
         if (saveSampling == TRUE) {
             saveRDS(outList, file = samplingDataFile)
-            print(paste0(samplingDataFile, " saved."))
+            sayThis <- paste0(samplingDataFile, " saved.")
+            message(sayThis)
         }
     } else {
-        print(paste0("Skipping sampling, ", samplingDataFile, " exists."))
         outList <- readRDS(samplingDataFile)
-        print(paste0(samplingDataFile, " loaded."))
+        sayThis <- paste0("Skipping sampling, ", samplingDataFile, " exists. ",
+                        samplingDataFile, " loaded.")
+        message(sayThis)
     }
     return(outList)
 }
@@ -562,7 +556,6 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
     rowNamesTemp <- rownames(covDF)
     colNamesTemp <- colnames(covDF)
     factorCovariateNames <- names(covDF)[vapply(covDF, is.factor, logical(1))]
-
     factorCovariateNames <- setdiff(factorCovariateNames,
         factorCovariateNames[!(factorCovariateNames %in% colnames(covDF))])
 
@@ -607,8 +600,7 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
         numericCovars = numericCovariateNames, covariatesDataFrame = covDF))
 }
 
-.getDesignMatHelper <- function(factorCovariateNames,
-                                covDF,
+.getDesignMatHelper <- function(factorCovariateNames, covDF,
                                 intercept) {
     contra <- NULL
     maxNumCat <- Inf
@@ -616,7 +608,6 @@ getDesignMatrix <- function(covariatesDataFrame, intercept = TRUE,
     if (ncol(catData) > 0) {
         numCats <- vapply(colnames(catData),
             function(col) nlevels(factor(catData[, col])), numeric(1))
-
         excludeCategoricalCols <-
             names(numCats)[numCats <= 1 | numCats > maxNumCat]
 
@@ -696,8 +687,8 @@ linColumnFinder <- function(mat) {
             nz <- !(abs(stats::coef(o)) <= .Machine$double.eps^0.5)
             tmp <- colnames(mat)[cols[nz]]
             vals <- paste(stats::coef(o)[nz], tmp, sep = "*", collapse = " + ")
-            message <- paste0(start, vals)
-            allMessages <- c(allMessages, message)
+            amessage <- paste0(start, vals)
+            allMessages <- c(allMessages, amessage)
         } else {
             # If the matrix subset was of full rank
             # then the newest column in linearly independent
@@ -997,7 +988,8 @@ pcxnToNet <- function(pcxn,
     if (saveCSV == TRUE) {
         saveName <- paste0(prefix, sampRate, "_samples_clustNo_", clustNo,
                             ".csv")
-        print(paste0(saveName, " saved!"))
+        sayThis <- paste0(saveName, " saved!")
+        message(sayThis)
         utils::write.csv(selector, paste0(outDir, saveName))
     }
 }
@@ -1029,8 +1021,8 @@ pcxnToNet <- function(pcxn,
     } else {
         names(mSelector)[2:3] <- paste0(m, "_", names(mSelector)[2:3])
     }
-
-    print(paste0(m, " Method Done"))
+    sayThis <- paste0(m, " Method Done")
+    message(sayThis)
     # perform jack-knife
 
     if ((runJackKnife == TRUE) && (m != "sumz") && (m != "sumlog")) {
@@ -1044,7 +1036,8 @@ pcxnToNet <- function(pcxn,
                     jackKnifeData =  samplingData[[paste0("SampSize_", 100)]],
                     m = m, numCores = numCores)
 
-        print(paste0(m, " JackKnifing Method Done!"))
+        sayThis <- paste0(m, " JackKnifing Method Done!")
+        message(sayThis)
 
         mSelector <- mSelector[, c(1, 3, 2, 4)]
     } else {

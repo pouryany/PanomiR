@@ -60,10 +60,12 @@ execute PanomiR.
 ## 1. Pathway summarization
 
 PanomiR can generate pathway activity profiles given a gene expression dataset
-and a list of pathways.Pathway summaries are numbers that represent the overall activity of genes that 
+and a list of pathways.Pathway summaries are numbers that represent the overall
+activity of genes that 
 belong to each pathway. These numbers are calculated based on a methodology
 previously described in Altschuler et al. 2013 and
-Joachim and Altschuler et al. 2018 [-@altschuler2013pathprinting; -@joachim2018relative].
+Joachim and Altschuler et al. 2018 [-@altschuler2013pathprinting;
+-@joachim2018relative].
 Briefly, genes in each sample are ranked by their expression values and then
 pathway summaries are calculated as the average rank-squared of genes within a 
 pathway. The summaries are then center and scaled (zNormalized) across samples.
@@ -71,10 +73,11 @@ pathway. The summaries are then center and scaled (zNormalized) across samples.
 The default list of background pathways in PanomiR is formatted into a table
 (`data("path_gene_table")`). The table is based on canonical pathways collection
 of Molecular Signatures Database (MSigDB) V6.2 and it contains annotated 
-pathways from a variety of sources excluding KEGG dataset [-@liberzon2011molecular].
+pathways from a variety of sources  [-@liberzon2011molecular].
 
 ** Users interested in using other pathway/geneset backgrounds, such as newer 
-versions of MSigDB or KEGG, should refer to the [appendix](#geneset) of this manual.
+versions of MSigDB or KEGG, should refer to the [appendix](#geneset) of
+this manual.
 
 This section uses a reduced example dataset from The Cancer Genome Atlas (TCGA)
 Liver Hepatocellular Carcinoma (LIHC) dataset to generate
@@ -139,11 +142,13 @@ adjusted p-value. Cut-offs for both of these numbers can be manually set using
 PanomiR functions. See function manuals for more info. 
 
 PCxN and its associated genesets are already released and can be accessed through
-[pcxn Bioconductor package](http://bioconductor.org/packages/release/bioc/html/pcxn.html) and [pcxnData package](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
+[pcxn Bioconductor package](http://bioconductor.org/packages/release/bioc/html/pcxn.html)
+and [pcxnData package](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
 
 Here we have provided a small version of PCxN for tutorial purposes. A more 
 recent version of PCxN based on MSigDB V6.2 is available through the 
-data repository accompanying PanomiR manuscript, which can be found [here](https://github.com/pouryany/PanomiR_paper).
+data repository accompanying PanomiR manuscript, which can be found
+[here](https://github.com/pouryany/PanomiR_paper).
 
 
 ```{r pcxn}

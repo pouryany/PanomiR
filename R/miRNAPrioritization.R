@@ -50,22 +50,20 @@ prioritizeMicroRNA <- function(enriches0, pathClust, method = "AggInv",
     .checkAddressDirs(outDir, saveCSV, dataDir, saveSampling)
     output   <- list()
     enriches <- .cleanEnrichInput(enriches0, enrichmentFDR)
-
     for (clustNo in seq_len(topClust)) {
         clustName <- paste0("Cluster", clustNo)
-        print(paste0("Working on ", clustName, "."))
-
+        sayThis <- paste0("Working on ", clustName, ".")
+        message(sayThis)
         pathways <- as.character(pathClust[pathClust$cluster == clustNo,
                                     ]$Pathway)
         nPaths <- length(pathways)
         selector <- .makeSelector(enriches, pathways)
-
         for (i in seq_along(method)) {
             m <- method[i]
-            print(paste0("Performing ", m, " function."))
+            sayThis <- paste0("Performing ", m, " function.")
+            message(sayThis)
             fn <- get(paste0(m, "Fn"))
             coverFn <- get(paste0(m, "CoverFn"))
-
             if (!is.null(methodThresh)) {
                 mThresh <- methodThresh[i]
                 temp <- fn(enriches = enriches0, pathways, isSelector = TRUE,
@@ -76,7 +74,8 @@ prioritizeMicroRNA <- function(enriches0, pathClust, method = "AggInv",
             mSelector   <- temp$selector
             mEnriches0  <- temp$enriches0
             if (nrow(mSelector) < 3) {
-                print(paste0("Skipping ", m, " function:few miRNAs"))
+                sayThis <- paste0("Skipping ", m, " function:few miRNAs")
+                message(sayThis)
                 next
             }
             enrichNull <- mEnriches0 |> dplyr::filter(x %in% mSelector$x)

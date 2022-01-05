@@ -90,20 +90,20 @@ summaries <- pathwaySummary(miniTestsPanomiR$mini_LIHC_Exp,
 head(summaries)[,1:2]
 ```
 
-    ##                                                       TCGA-BC-A10S-01A-22R-A131-07
-    ## Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS                                 1.31081432
-    ## Pathway.KEGG_CITRATE_CYCLE_TCA_CYCLE                                    2.12764679
-    ## Pathway.KEGG_PENTOSE_PHOSPHATE_PATHWAY                                  0.93814543
-    ## Pathway.KEGG_PENTOSE_AND_GLUCURONATE_INTERCONVERSIONS                   1.34561508
-    ## Pathway.KEGG_FRUCTOSE_AND_MANNOSE_METABOLISM                           -0.02061692
-    ## Pathway.KEGG_GALACTOSE_METABOLISM                                      -0.02148356
-    ##                                                       TCGA-BC-4073-01B-02R-A131-07
-    ## Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS                                  1.1074424
-    ## Pathway.KEGG_CITRATE_CYCLE_TCA_CYCLE                                     1.7690134
-    ## Pathway.KEGG_PENTOSE_PHOSPHATE_PATHWAY                                   1.2218070
-    ## Pathway.KEGG_PENTOSE_AND_GLUCURONATE_INTERCONVERSIONS                    1.5658403
-    ## Pathway.KEGG_FRUCTOSE_AND_MANNOSE_METABOLISM                             0.2796341
-    ## Pathway.KEGG_GALACTOSE_METABOLISM                                        0.4472539
+    ##                         TCGA-BC-A10S-01A-22R-A131-07
+    ## BIOCARTA_41BB_PATHWAY                     -0.1506216
+    ## BIOCARTA_ACE2_PATHWAY                     -0.5676447
+    ## BIOCARTA_ACH_PATHWAY                      -0.3211747
+    ## BIOCARTA_ACTINY_PATHWAY                    1.4363526
+    ## BIOCARTA_AGPCR_PATHWAY                    -0.1948523
+    ## BIOCARTA_AGR_PATHWAY                       0.6802993
+    ##                         TCGA-BC-4073-01B-02R-A131-07
+    ## BIOCARTA_41BB_PATHWAY                     -0.1269436
+    ## BIOCARTA_ACE2_PATHWAY                     -0.8327436
+    ## BIOCARTA_ACH_PATHWAY                      -0.4390042
+    ## BIOCARTA_ACTINY_PATHWAY                    1.4975456
+    ## BIOCARTA_AGPCR_PATHWAY                    -0.2499193
+    ## BIOCARTA_AGR_PATHWAY                       0.5420588
 
 ## 2. Differential Pathway activation
 
@@ -134,55 +134,55 @@ de.paths <- output0$DEP
 head(de.paths)
 ```
 
-    ##                                                                                                                                   logFC
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           -0.8868271
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                         -0.6062216
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                 -0.5485422
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                         0.5203503
-    ## Pathway.PID_IL5_PATHWAY                                                                                                      -0.5943319
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS -0.9673573
-    ##                                                                                                                                 AveExpr
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                            0.2979081
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                         -2.2091556
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                  0.3064294
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                         1.3834223
-    ## Pathway.PID_IL5_PATHWAY                                                                                                       0.4171509
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS  1.2390324
-    ##                                                                                                                                       t
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           -10.200349
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                          -7.948648
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                  -6.797107
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                          6.356020
-    ## Pathway.PID_IL5_PATHWAY                                                                                                       -6.174177
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS  -5.705278
-    ##                                                                                                                                   P.Value
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           2.937157e-06
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                         2.274107e-05
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                 7.774231e-05
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        1.295512e-04
-    ## Pathway.PID_IL5_PATHWAY                                                                                                      1.610341e-04
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 2.878368e-04
-    ##                                                                                                                                adj.P.Val
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           0.003583332
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                         0.013872055
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                 0.031615208
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        0.039292310
-    ## Pathway.PID_IL5_PATHWAY                                                                                                      0.039292310
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 0.043435623
-    ##                                                                                                                                      B
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           4.8824453
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                         3.1444207
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                 2.0285870
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        1.5525264
-    ## Pathway.PID_IL5_PATHWAY                                                                                                      1.3478228
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 0.7963496
-    ##                                                                                                                                                         contrast
-    ## Pathway.REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           shortLetterCodeTP-shortLetterCodeNT
-    ## Pathway.KEGG_NEUROACTIVE_LIGAND_RECEPTOR_INTERACTION                                                                         shortLetterCodeTP-shortLetterCodeNT
-    ## Pathway.BIOCARTA_AKT_PATHWAY                                                                                                 shortLetterCodeTP-shortLetterCodeNT
-    ## Pathway.REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        shortLetterCodeTP-shortLetterCodeNT
-    ## Pathway.PID_IL5_PATHWAY                                                                                                      shortLetterCodeTP-shortLetterCodeNT
-    ## Pathway.REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS shortLetterCodeTP-shortLetterCodeNT
+    ##                                                                                                                           logFC
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           -0.9159376
+    ## BIOCARTA_AKT_PATHWAY                                                                                                 -0.5744103
+    ## PID_IL5_PATHWAY                                                                                                      -0.6219876
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                         0.4899259
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS -1.0070977
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                 0.6625938
+    ##                                                                                                                         AveExpr
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                            0.3044281
+    ## BIOCARTA_AKT_PATHWAY                                                                                                  0.3123897
+    ## PID_IL5_PATHWAY                                                                                                       0.4240432
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                         1.3942628
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS  1.2536069
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                -1.5149008
+    ##                                                                                                                               t
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           -10.404966
+    ## BIOCARTA_AKT_PATHWAY                                                                                                  -6.770069
+    ## PID_IL5_PATHWAY                                                                                                       -6.255756
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                          6.096421
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS  -5.905357
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                  5.717801
+    ##                                                                                                                           P.Value
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           1.942463e-06
+    ## BIOCARTA_AKT_PATHWAY                                                                                                 6.903010e-05
+    ## PID_IL5_PATHWAY                                                                                                      1.276971e-04
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        1.555564e-04
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 1.979562e-04
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                2.519967e-04
+    ##                                                                                                                        adj.P.Val
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           0.002012391
+    ## BIOCARTA_AKT_PATHWAY                                                                                                 0.035757593
+    ## PID_IL5_PATHWAY                                                                                                      0.040289104
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        0.040289104
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 0.041016532
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                0.041612753
+    ##                                                                                                                             B
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           5.240095
+    ## BIOCARTA_AKT_PATHWAY                                                                                                 2.126311
+    ## PID_IL5_PATHWAY                                                                                                      1.550780
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        1.364364
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 1.135618
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                0.905467
+    ##                                                                                                                                                 contrast
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           shortLetterCodeTP-shortLetterCodeNT
+    ## BIOCARTA_AKT_PATHWAY                                                                                                 shortLetterCodeTP-shortLetterCodeNT
+    ## PID_IL5_PATHWAY                                                                                                      shortLetterCodeTP-shortLetterCodeNT
+    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        shortLetterCodeTP-shortLetterCodeNT
+    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS shortLetterCodeTP-shortLetterCodeNT
+    ## BIOCARTA_PTC1_PATHWAY                                                                                                shortLetterCodeTP-shortLetterCodeNT
 
 ## 3. Finding clusters of pathways
 
@@ -226,13 +226,13 @@ pathwayClustsLIHC <- mappingPathwaysClusters(
 head(pathwayClustsLIHC$Clustering)
 ```
 
-    ##                                                      Pathway cluster
-    ## 1                         Pathway.KEGG_TRYPTOPHAN_METABOLISM       5
-    ## 2                       Pathway.KEGG_BETA_ALANINE_METABOLISM       6
-    ## 3 Pathway.KEGG_GLYCOSPHINGOLIPID_BIOSYNTHESIS_GANGLIO_SERIES       7
-    ## 4                 Pathway.KEGG_DRUG_METABOLISM_OTHER_ENZYMES       8
-    ## 5                               Pathway.KEGG_DNA_REPLICATION       1
-    ## 6                                    Pathway.KEGG_PROTEASOME       1
+    ##                      Pathway cluster
+    ## 1       BIOCARTA_NO1_PATHWAY       1
+    ## 2       BIOCARTA_AKT_PATHWAY       1
+    ## 3       BIOCARTA_ALK_PATHWAY       1
+    ## 4     BIOCARTA_RANKL_PATHWAY       1
+    ## 5       BIOCARTA_MCM_PATHWAY       3
+    ## 6 BIOCARTA_CELLCYCLE_PATHWAY       3
 
 ## 4. Prioritizing miRNAs per cluster of pathways.
 
@@ -274,20 +274,20 @@ output2 <- prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
 head(output2$Cluster1)
 ```
 
-    ##                             x cluster_hits aggInv_cover  aggInv_pval
-    ## 1                hsa-miR-1179            2    -1.041824 3.866337e-08
-    ## 2                hsa-miR-1197            1    -0.319530 7.653476e-06
-    ## 3             hsa-miR-1224-5p            1    -2.454211 2.310664e-02
-    ## 4    hsa-miR-1-3p/hsa-miR-206            0    -1.463553 2.819640e-02
-    ## 5             hsa-miR-1251-5p            1    -2.286925 1.274129e-01
-    ## 6 hsa-miR-103a-3p/hsa-miR-107            1    -1.187462 1.316088e-01
-    ##     aggInv_fdr
-    ## 1 7.732674e-07
-    ## 2 7.653476e-05
-    ## 3 1.409820e-01
-    ## 4 1.409820e-01
-    ## 5 4.386960e-01
-    ## 6 4.386960e-01
+    ##                                 x cluster_hits aggInv_cover  aggInv_pval
+    ## 1                hsa-miR-101-3p.2            6   -1.9566603 0.0001216703
+    ## 2                hsa-miR-101-3p.1            4   -0.3395771 0.0006214715
+    ## 3 hsa-miR-124-3p.2/hsa-miR-506-3p            7   -0.2357761 0.0008599272
+    ## 4                 hsa-miR-1247-5p            4   -1.6599230 0.0021625662
+    ## 5                 hsa-miR-1249-3p            1   -2.4578993 0.0042061415
+    ## 6                 hsa-miR-1252-5p            4   -0.7572036 0.0050836835
+    ##    aggInv_fdr
+    ## 1 0.002433406
+    ## 2 0.005732848
+    ## 3 0.005732848
+    ## 4 0.010812831
+    ## 5 0.016824566
+    ## 6 0.016945612
 
 ## 5. miRNA-Pathway enrichment tables
 
@@ -328,27 +328,20 @@ tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 head(tempEnrich)
 ```
 
-    ##                             x                                       y      pval
-    ## 1    hsa-miR-1-3p/hsa-miR-206 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS 0.1901934
-    ## 2            hsa-miR-101-3p.1 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS 0.5697729
-    ## 3 hsa-miR-103a-3p/hsa-miR-107 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS 1.0000000
-    ## 4             hsa-miR-1185-5p Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS 0.1629978
-    ## 5                hsa-miR-1193 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS 0.3583626
-    ## 6                hsa-miR-1197 Pathway.KEGG_GLYCOLYSIS_GLUCONEOGENESIS 1.0000000
-    ##   Intersect mirset_Size not_mirset pathway_Size   ratio_in   ratio_out
-    ## 1         2          11        834           62 0.03333333 0.010791367
-    ## 2         1          11        834           62 0.01639344 0.011990408
-    ## 3         0          10        835           62 0.00000000 0.011976048
-    ## 4         2          10        835           62 0.03333333 0.009580838
-    ## 5         2          17        828           62 0.03333333 0.018115942
-    ## 6         0          18        827           62 0.00000000 0.021765417
-    ##   ratio_ratios
-    ## 1     3.088889
-    ## 2     1.367213
-    ## 3     0.000000
-    ## 4     3.479167
-    ## 5     1.840000
-    ## 6     0.000000
+    ##                                 x                     y      pval Intersect
+    ## 1     hsa-miR-103a-3p/hsa-miR-107 BIOCARTA_RELA_PATHWAY 0.4476283         1
+    ## 2                hsa-miR-124-3p.1 BIOCARTA_RELA_PATHWAY 0.1342510         2
+    ## 3 hsa-miR-124-3p.2/hsa-miR-506-3p BIOCARTA_RELA_PATHWAY 0.4476283         1
+    ## 4                 hsa-miR-1252-5p BIOCARTA_RELA_PATHWAY 1.0000000         0
+    ## 5   hsa-miR-1271-5p/hsa-miR-96-5p BIOCARTA_RELA_PATHWAY 1.0000000         0
+    ## 6     hsa-miR-103a-3p/hsa-miR-107  BIOCARTA_NO1_PATHWAY 0.7143586         1
+    ##   mirset_Size not_mirset pathway_Size   ratio_in  ratio_out ratio_ratios
+    ## 1          14        378           16 0.06666667 0.03439153    1.9384615
+    ## 2          16        376           16 0.14285714 0.03723404    3.8367347
+    ## 3          14        378           16 0.06666667 0.03439153    1.9384615
+    ## 4          10        382           16 0.00000000 0.02617801    0.0000000
+    ## 5          17        375           16 0.00000000 0.04533333    0.0000000
+    ## 6          14        378           33 0.03125000 0.03439153    0.9086538
 
 ## Session info
 
