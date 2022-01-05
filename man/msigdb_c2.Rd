@@ -5,7 +5,7 @@
 \alias{msigdb_c2}
 \title{Canonical pathways from Molecular Signatures Database, MsigDb V6.2}
 \format{
-A list of 1329 pathways
+A list of 1143 pathways
 }
 \source{
 \url{http://www.gsea-msigdb.org/gsea/index.jsp}

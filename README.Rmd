@@ -2,6 +2,7 @@
 title: "README"
 author: "Pourya Naderi (Hide Lab)"
 date: "9/16/2021"
+bibliography: vignettes/references.bib  
 output:
   md_document:
     variant: gfm
@@ -41,37 +42,61 @@ You can also install the latest development version of PanomiR using GitHub.
 ```{r installation_git, eval = FALSE}
 devtools::install_github("pouryany/PanomiR")
 ```
+## Overview
 
+PanomiR is a pipeline to prioritize disease-associated miRNAs based on activity 
+of disease-associated pathways. The input datasets for PanomiR are (a) a gene 
+expression disease dataset along with covariates, (b) a background collection of 
+pathways/genesets, and (c) a collection of miRNAs containing gene targets.
+
+The general workflow of PanomiR is (a) generation of pathway summary statistics 
+from gene expression data, (b) detection of differentially activated pathways,
+(c) finding coherent groups, or clusters, of differentially activated pathways,
+and (d) detecting miRNAs targeting each group of pathways. 
+
+Individual steps of the workflow can be used in isolation to carry out different
+analyses. The following sections outline each step and material needed to
+execute PanomiR. 
 
 ## 1. Pathway summarization
 
 PanomiR can generate pathway activity profiles given a gene expression dataset
-and a list of pathways. This section uses an example dataset from the Cancer
-Genome Atlas (TCGA) Liver Hepatocellular Carcinoma (LIHC) dataset to generate
-Pathway summary statistics. 
+and a list of pathways.Pathway summaries are numbers that represent the overall activity of genes that 
+belong to each pathway. These numbers are calculated based on a methodology
+previously described in Altschuler et al. 2013 and
+Joachim and Altschuler et al. 2018 [-@altschuler2013pathprinting; -@joachim2018relative].
+Briefly, genes in each sample are ranked by their expression values and then
+pathway summaries are calculated as the average rank-squared of genes within a 
+pathway. The summaries are then center and scaled (zNormalized) across samples.
+
+The default list of background pathways in PanomiR is formatted into a table
+(`data("path_gene_table")`). The table is based on canonical pathways collection
+of Molecular Signatures Database (MSigDB) V6.2 and it contains annotated 
+pathways from a variety of sources excluding KEGG dataset [-@liberzon2011molecular].
+
+** Users interested in using other pathway/geneset backgrounds, such as newer 
+versions of MSigDB or KEGG, should refer to the [appendix](#geneset) of this manual.
+
+This section uses a reduced example dataset from The Cancer Genome Atlas (TCGA)
+Liver Hepatocellular Carcinoma (LIHC) dataset to generate
+Pathway summary statistics [-@ally2017comprehensive]. 
 
 ```{r load_package}
 library(PanomiR)
 
-# Downloading example LIHC expression dataset
-LIHC_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/TCGA_LIHC.RDS"))
-TCGA_LIHC <- readRDS(LIHC_url)
-
-# Downloading example LIHC covariates dataset
-LIHC_cov_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/covariates_TCGA_LIHC.RDS"))
-cov_TCGA_LIHC <- readRDS(LIHC_cov_url)
-
 # Pathway reference from the PanomiR package
 data("path_gene_table")
-
+data("miniTestsPanomiR")
 # Generating pathway summary statistics 
 
-summaries <- pathwaySummary(TCGA_LIHC,path_gene_table,method = "x2")
+summaries <- pathwaySummary(miniTestsPanomiR$mini_LIHC_Exp,
+                            path_gene_table, method = "x2",
+                            zNormalize = TRUE)
 
 head(summaries)[,1:2]
 ```
+
+
 
 
 ## 2. Differential Pathway activation
@@ -79,17 +104,24 @@ head(summaries)[,1:2]
 Once you generate the pathway activity profiles, as discussed in the last
 section, there are several analysis that you can perform. We have bundled some 
 of the most important ones into standalone functions. Here, we describe
-differential pathway activation profiling, which is examining differenes in
+differential pathway activation profiling, which is examining differences in
 pathway activity profiles in user-determined conditions.
+
+At this stage you need to provide a pathway-gene association table, an
+expression dataset, and a covariates table. You need to specity what covariates
+you would like to contrast. You also need to provide a contrast, as formatted in
+limma. If the contrast is not provided, the function assumes the first two 
+levels of the provided contrast covariate. **Note:** make sure the contrast 
+covariate is formatted as factor.
 
 
 ```{r differential}
 
-output0 <- differentialPathwayAnalysis(geneCounts = TCGA_LIHC,
-                                       pathways =  path_gene_table,
-                                       covariates = cov_TCGA_LIHC, 
-                                       condition = 'shortLetterCode',
-                                       adjustCovars ='plate')
+output0 <- differentialPathwayAnalysis(
+                        geneCounts = miniTestsPanomiR$mini_LIHC_Exp,
+                        pathways =  path_gene_table,
+                        covariates = miniTestsPanomiR$mini_LIHC_Cov,
+                        condition = 'shortLetterCode')
 
 de.paths <- output0$DEP
 
@@ -99,22 +131,34 @@ head(de.paths)
 ## 3. Finding clusters of pathways
 
 PanomiR provides a function to find groups coordinated differentially 
-activated pathways based on the PCxN methodology. 
+activated pathways based on a pathway co-expression network (PCxN) previously
+described in Pita-Juárez and Altschuler et al [-@pita2018pathway]. Briefly, PCxN
+is a network where nodes are pathways and links are co-expression between the
+nodes. It is formatted into a table were rows represent edges. The edges of PCxN
+are marked by two numbers, 1- a correlation co-efficient and 2- a significance
+adjusted p-value. Cut-offs for both of these numbers can be manually set using 
+PanomiR functions. See function manuals for more info. 
+
+PCxN and its associated genesets are already released and can be accessed through
+[pcxn Bioconductor package](http://bioconductor.org/packages/release/bioc/html/pcxn.html) and [pcxnData package](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
+
+Here we have provided a small version of PCxN for tutorial purposes. A more 
+recent version of PCxN based on MSigDB V6.2 is available through the 
+data repository accompanying PanomiR manuscript, which can be found [here](https://github.com/pouryany/PanomiR_paper).
+
 
 ```{r pcxn}
 
 
 # using an updated version of pcxn 
-pcxn_url  <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/pcxn_panomir.RDS"))
-pcxn_net  <- readRDS(pcxn_url)
 
 set.seed(2)
-pathwayClustsLIHC <- mappingPathwaysClusters(pcxn = pcxn_net, 
+pathwayClustsLIHC <- mappingPathwaysClusters(
+                            pcxn = miniTestsPanomiR$miniPCXN, 
                             dePathways = de.paths[1:300,],
                             topPathways = 200,
                             outDir=".",
-                            plotOut = FALSE,
+                            plot = FALSE,
                             subplot = FALSE,
                             prefix='',
                             clusteringFunction = "cluster_louvain",
@@ -144,24 +188,20 @@ different outputs from the clustering algorithms or pathway thresholds.
 ```{r miRNA}
 
 
-# using an updated version of pcxn 
-enrch_url    <- url(paste0("https://github.com/pouryany/PanomiR_paper",
-                        "/raw/main/data/LIHC_ENRICHMENT_TargetScan03.RDS"))
-tableEnrich  <- readRDS(enrch_url)
 
 set.seed(1)
-output2 <- prioritizeMicroRNA(enriches0 = tableEnrich,
-                              pathClust = pathwayClustsLIHC$Clustering,
-                              topClust = 1,
-                              sampRate = 50, 
-                              method = c("aggInv"),
-                              outDir = "Output/",
-                              dataDir = "outData/",
-                              saveSampling = FALSE,
-                              runJackKnife = FALSE,
-                              numCores = 1,
-                              prefix = "outmiR",
-                              saveCSV = FALSE)
+output2 <- prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
+                    pathClust = miniTestsPanomiR$miniPathClusts$Clustering,
+                    topClust = 1,
+                    sampRate = 50, 
+                    method = c("aggInv"),
+                    outDir = "Output/",
+                    dataDir = "outData/",
+                    saveSampling = FALSE,
+                    runJackKnife = FALSE,
+                    numCores = 1,
+                    prefix = "outmiR",
+                    saveCSV = FALSE)
 
 head(output2$Cluster1)
 
@@ -169,7 +209,7 @@ head(output2$Cluster1)
 
 
 
-## 5. miRNA-Pathway enrichment tables
+## 5. miRNA-Pathway enrichment tables {#geneset}
 
 PanomiR best performs on tissue/experiment-customized datasets. In order to do
 this, you need to create a customized enrichment table. You can simply do so by
@@ -209,11 +249,10 @@ format of your input list. Here is a quick example that runs fast.
 data("msigdb_c2")
 data("targetScan_03")
 
-tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
+tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 
 head(tempEnrich)
 ```
-
 
 ## Session info
 ```{r sessionInfo}
