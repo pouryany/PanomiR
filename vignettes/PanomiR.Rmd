@@ -126,7 +126,7 @@ output0 <- differentialPathwayAnalysis(
 
 de.paths <- output0$DEP
 
-head(de.paths)
+head(de.paths,3)
 ```
 
 ## 3. Finding clusters of pathways
@@ -179,19 +179,43 @@ head(pathwayClustsLIHC$Clustering)
 PanomiR identifies miRNAs that target clusters of pathways, as defined in the 
 last section. In order to this, you would need a reference table of
 miRNA-Pathway association score (enrichment). We recommend using a customized
-miRNA-Pathway association table, tailored to your experimental data. Here, 
-we provide a pre-processed table for LIHC table and in the next section, we will
-explain how to generate the customized tables.
+miRNA-Pathway association table, tailored to your experimental data.
+This section provides an overview of prioritization process. Readers interested
+in knowing more about the technical details of PanomiR are refered to
+accompaniying publication (Work under preparation).
 
-Note that in the example below, we use a sampling rate of 50, the recommended
-rate is between 500-1000. Also, we set the saveSampling argument to FALSE. This
-argument should be set to TRUE if you wish to save your sampling and check for
-different outputs from the clustering algorithms or pathway thresholds.
+### Enrichment reference
+Here, we provide a preprocessed small example table of miRNA-pathway enrichment
+in `miniTestsPanomiR$miniEnrich` object. This table contains enrichment analysis
+results using Fisher's Exact Test between MSigDB pathways and TargetScan miRNA
+targets. The individual components are  accessible via `data(msigdb_c2)` and
+`data(targetScan_03)` [@agarwal2015predicting; @liberzon2011molecular]. This
+example table is contains only a full subset of the full pairwise enrichment. 
+You can refer to [section 5](#geneset) of this manual on how to create full 
+tables and how to customize them to your specific gene expression data.
+
+### Generating targeting scores
+PanomiR generates a score for individual miRNAs targeting a group of pathways.
+These scores are generated based on the reference enrichment table.
+We are interested in knowing to what extent each miRNA targets pathway clusters
+identified in the last step (see previous section). 
+PanomiR constructs a null distribution of this targeting score for each miRNA.
+The significance of observed scores from a given group of pathways (clusters
+in this case) is contrasted against the null distribution to generate a
+targeting p-value. These p-values are used to rank miRNAs per cluster.
+
+### Sampling parameter
+The above described process requires repeated sampling to empirically obtain the
+null distribution. The argument `sampRate` denotes the number of repeats in the
+process. Note that in the example below, we use a sampling rate of 50, the
+recommended rate is between 500-1000. Also, we set the saveSampling argument to
+FALSE. This argument, if set TRUE, ensures that the null distribution is obtain
+only once. This argument should be set to TRUE if you wish to save your sampling
+and check for different outputs from the clustering algorithms or pathway
+thresholds.
 
 
 ```{r miRNA}
-
-
 
 set.seed(1)
 output2 <- prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
