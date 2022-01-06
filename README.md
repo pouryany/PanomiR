@@ -55,17 +55,17 @@ PanomiR can generate pathway activity profiles given a gene expression
 dataset and a list of pathways.Pathway summaries are numbers that
 represent the overall activity of genes that belong to each pathway.
 These numbers are calculated based on a methodology previously described
-in Altschuler et al. 2013 and Joachim and Altschuler et al. 2018 (2013;
-2018). Briefly, genes in each sample are ranked by their expression
-values and then pathway summaries are calculated as the average
-rank-squared of genes within a pathway. The summaries are then center
-and scaled (zNormalized) across samples.
+in part in (Altschuler et al. 2013; Joachim et al. 2018). Briefly, genes
+in each sample are ranked by their expression values and then pathway
+summaries are calculated as the average rank-squared of genes within a
+pathway. The summaries are then center and scaled (zNormalized) across
+samples.
 
 The default list of background pathways in PanomiR is formatted into a
 table (`data("path_gene_table")`). The table is based on canonical
 pathways collection of Molecular Signatures Database (MSigDB) V6.2 and
-it contains annotated pathways from a variety of sources excluding KEGG
-dataset (2011).
+it contains annotated pathways from a variety of sources (Liberzon et
+al. 2011).
 
 \*\* Users interested in using other pathway/geneset backgrounds, such
 as newer versions of MSigDB or KEGG, should refer to the
@@ -73,7 +73,7 @@ as newer versions of MSigDB or KEGG, should refer to the
 
 This section uses a reduced example dataset from The Cancer Genome Atlas
 (TCGA) Liver Hepatocellular Carcinoma (LIHC) dataset to generate Pathway
-summary statistics (2017).
+summary statistics (Ally et al. 2017).
 
 ``` r
 library(PanomiR)
@@ -188,13 +188,13 @@ head(de.paths)
 
 PanomiR provides a function to find groups coordinated differentially
 activated pathways based on a pathway co-expression network (PCxN)
-previously described in Pita-Juárez and Altschuler et al (2018).
-Briefly, PCxN is a network where nodes are pathways and links are
-co-expression between the nodes. It is formatted into a table were rows
-represent edges. The edges of PCxN are marked by two numbers, 1- a
-correlation co-efficient and 2- a significance adjusted p-value.
-Cut-offs for both of these numbers can be manually set using PanomiR
-functions. See function manuals for more info.
+previously described in (Pita-Juárez et al. 2018). Briefly, PCxN is a
+network where nodes are pathways and links are co-expression between the
+nodes. It is formatted into a table were rows represent edges. The edges
+of PCxN are marked by two numbers, 1- a correlation co-efficient and 2-
+a significance adjusted p-value. Cut-offs for both of these numbers can
+be manually set using PanomiR functions. See function manuals for more
+info.
 
 PCxN and its associated genesets are already released and can be
 accessed through [pcxn Bioconductor
@@ -376,6 +376,8 @@ sessionInfo()
     ## [25] purrr_0.3.4      vctrs_0.3.8      glue_1.6.0       evaluate_0.14   
     ## [29] rmarkdown_2.11   limma_3.51.2     stringi_1.7.6    compiler_4.2.0  
     ## [33] pillar_1.6.4     forcats_0.5.1    generics_0.1.1   pkgconfig_2.0.3
+
+## References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
