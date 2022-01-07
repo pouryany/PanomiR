@@ -858,15 +858,15 @@ getDiffExpTable <- function(expMat,
 #' data(msigdb_c2)
 #' data(targetScan_03)
 #' eTab <- miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
-#' 
+#'
 #' repTab <- reportEnrichment(eTab)
 #' @export
 reportEnrichment <- function(enrichmentTable) {
-    cleanTab <- enrichmentTable[,c("x", "y", "pval")]
-    cleanTab$FDR <- stats::p.adjust(cleanTab$pval)
+    cleanTab <- enrichmentTable[, c("x", "y", "pval")]
+    cleanTab$pAdjust <- stats::p.adjust(cleanTab$pval)
     cleanTab <- dplyr::mutate_if(cleanTab, is.numeric, signif, digits = 3)
-    cleanTab <- cleanTab[order(cleanTab$pval),]
-    names(cleanTab)[seq_len(2)] <- c("miRNA", "Pathway", "")
+    cleanTab <- cleanTab[order(cleanTab$pval), ]
+    names(cleanTab)[seq_len(2)] <- c("miRNA", "Pathway")
     return(cleanTab)
 }
 
