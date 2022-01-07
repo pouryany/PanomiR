@@ -298,12 +298,11 @@ own customized pathway-gene association table. This customized can then
 replaced `path_gene_table` input in functions described in sections 1,2, and 5
 of this manual.
 
-```{r customized_gsc}
+```{r customized_gsc, eval= FALSE}
 data("gscExample")
 
-newPathGeneTable <-tableFromGSC(gscExample)
+newPathGeneTable <-tableFromGSC(gscExample, fromType = NULL)
 
-head(newPathGeneTable)
 ```
 
 The the pathway correlation network in section 3 is build upon an MSigDB V6.2, 
