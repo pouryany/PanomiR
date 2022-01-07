@@ -848,7 +848,27 @@ getDiffExpTable <- function(expMat,
 #
 ####
 
-
+#' Publication-ready miRNA-Pathway Enrichment table
+#'
+#' This function summarizes the outputs
+#'
+#' @param enrichmentTable Outputs from [miRNAPathwayEnrichment()] function
+#' @return A summarized miRNA-Pathway enrichment table
+#' @examples
+#' data(msigdb_c2)
+#' data(targetScan_03)
+#' eTab <- miRNAPathwayEnrichment(targetScan_03[1:20],msigdb_c2[1:20])
+#' 
+#' repTab <- reportEnrichment(eTab)
+#' @export
+reportEnrichment <- function(enrichmentTable) {
+    cleanTab <- enrichmentTable[,c("x", "y", "pval")]
+    cleanTab$FDR <- stats::p.adjust(cleanTab$pval)
+    cleanTab <- dplyr::mutate_if(cleanTab, is.numeric, signif, digits = 3)
+    cleanTab <- cleanTab[order(cleanTab$pval),]
+    names(cleanTab)[seq_len(2)] <- c("miRNA", "Pathway", "")
+    return(cleanTab)
+}
 
 #' function to align a list of sets and a reference universe
 #'
