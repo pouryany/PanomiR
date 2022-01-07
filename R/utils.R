@@ -11,6 +11,8 @@ utils::globalVariables(c(
 #'   each element is a list of genes similar to GMT format.
 #' @param pathwayList If you wish to use a list of pathways instead of a file
 #'   use this argument instead. The list must contain no NA values.
+#' @param fromType gene annotation type used in your input data.
+#' @param toType gene annotation type to be produced in the output.
 #' @param outDir Address to save an RDS for a table of pathway-gene association
 #' @return pathExpTab Table of pathway-gene association.
 #' @examples
@@ -23,7 +25,7 @@ utils::globalVariables(c(
 #' pathwayGeneTab(pathwayList = msigdb_c2[1:2])
 #' @export
 pathwayGeneTab <- function(pathAdress = NA, pathwayList = NA,
-                            outDir = NA) {
+                    fromType = "ENTREZID", toType = "ENSEMBL", outDir = NA) {
     if (!is.na(pathAdress)) {
         pathList <- readRDS(pathAdress)
     }
@@ -39,12 +41,8 @@ pathwayGeneTab <- function(pathAdress = NA, pathwayList = NA,
     pathList2 <- lapply(
         pathList,
         function(x) {
-            clusterProfiler::bitr(
-                x,
-                "ENTREZID",
-                "ENSEMBL",
-                OrgDb = org.Hs.eg.db::org.Hs.eg.db
-            )
+            clusterProfiler::bitr(x, fromType = fromType, toType = toType,
+                OrgDb = org.Hs.eg.db::org.Hs.eg.db)
         }
     )
 
@@ -67,6 +65,24 @@ pathwayGeneTab <- function(pathAdress = NA, pathwayList = NA,
     return(pathExpTab)
 }
 
+#' Pathway-Gene Associations from GeneSet collections
+#'
+#' This function enables to utilize MSigDB packages and GSEABase objects
+#'   to incorporate customized genesets into PanomiR.
+#'
+#' @param gsCollection An GSEABase gene set collection object
+#' @param fromType gene annotation type used in your input data
+#' @param toType gene annotation type to be produced in the output
+#' @return A table of pathway-gene associations
+#' @examples
+#' data(gscExample)
+#' tableFromGSC(gscExample)
+#' @export
+tableFromGSC <- function(gsCollection, fromType = "ENTREZID",
+                                toType = "ENSEMBL") {
+    gsList <- GSEABase::geneIds(gsCollection)
+    pathwayGeneTab(pathwayList = gsList, fromType = fromType, toType = toType)
+}
 
 #' Pathway Summary Statistics
 #'

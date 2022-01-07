@@ -1,9 +1,13 @@
 Package: PanomiR
-Title: Detect miRNAs That Target Groups of Pathways From Gene Expression Data
+Title: Inferring miRNAs targeting of pathway groups
 Version: 0.99.1
-Authors@R:
+Authors@R: c(
     person("Pourya", "Naderi", email = "pouryany@gmail.com",
-           role = c("aut", "cre"))
+           role = c("aut", "cre")),
+    person("Winston", "Hide", email = "whide@bidmc.harvard.edu",
+           role = c("aut")),
+    person("Ilya", "Sytchev", email = "isytchev@hsph.harvard.edu",
+           role = c("aut")))
 Description: PanomiR is a package to detect miRNAs that target groups of
     pathways from gene expression data. This package provides functionality 
     for generating pathway activity profiles, determining differentially
@@ -23,6 +27,7 @@ Imports:
     clusterProfiler,
     dplyr,
     forcats,
+    GSEABase,
     igraph,
     limma,
     metap,

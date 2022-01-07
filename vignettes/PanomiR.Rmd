@@ -80,7 +80,10 @@ this manual.
 
 This section uses a reduced example dataset from The Cancer Genome Atlas (TCGA)
 Liver Hepatocellular Carcinoma (LIHC) dataset to generate
-Pathway summary statistics [@ally2017comprehensive]. 
+Pathway summary statistics [@ally2017comprehensive]. **Note:** Make sure that you
+select gene representation type that matches the rownames of your expression 
+data. The type can be modified using the `id` argument in the function below.
+The default value for this argument is `ENSEMBL`. 
 
 ```{r load_package}
 library(PanomiR)
@@ -92,7 +95,7 @@ data("miniTestsPanomiR")
 
 summaries <- pathwaySummary(miniTestsPanomiR$mini_LIHC_Exp,
                             path_gene_table, method = "x2",
-                            zNormalize = TRUE)
+                            zNormalize = TRUE, id = "ENSEMBL")
 
 head(summaries)[,1:2]
 ```
@@ -237,7 +240,7 @@ head(output2$Cluster1)
 
 
 
-## 5. miRNA-Pathway enrichment tables {#geneset}
+## 5. miRNA-Pathway enrichment tables 
 
 PanomiR best performs on tissue/experiment-customized datasets. In order to do
 this, you need to create a customized enrichment table. You can simply do so by
@@ -280,6 +283,49 @@ data("targetScan_03")
 tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 
 head(tempEnrich)
+```
+
+## 6. Customized genesets and recommendations {#geneset}
+
+PanomiR can integrate genesets and pathways from external sources including
+those annotated in MSigDB. In order to do so, you need to provide a 
+`GeneSetCollection` object as defined in the `GSEABase` package. 
+
+The example below illustrates how to use external sources to create your 
+own customized pathway-gene association table. This customized can then
+replaced `path_gene_table` input in functions described in sections 1,2, and 5
+of this manual.
+
+```{r customized_gsc}
+data("gscExample")
+
+newPathGeneTable <-tableFromGSC(gscExample)
+
+head(newPathGeneTable)
+```
+
+The the pathway correlation network in section 3 is build upon an MSigDB V6.2, 
+canonical pathways (cp) collection dataset that includes KEGG Pathways.
+KEGG prohibits distribution of its pathways by third parties. However, use can
+access desired versions of MSigDB in gmt format via
+[this link](https://www.gsea-msigdb.org/gsea/downloads_archive.jsp)
+[@subramanian2005gene].
+
+The library `msigdb` provides an programmatic interface to download different
+geneset collections. Including how to add KEGG pathways or download mouse 
+genesets. Use the this [MSigDB tutorial](https://bioconductor.org/packages/release/data/experiment/vignettes/msigdb/inst/doc/msigdb.html)
+to create your desired gene sets.
+
+You can also use the following code chunk to create pathway-gene association
+tables from gmt files.
+
+```{r customized_gsc2, eval=FALSE}
+
+library(GSEABase)
+
+yourGeneSetCollection <- getGmt("YOUR GMT FILE")
+newPathGeneTable      <- tableFromGSC(yourGeneSetCollection)
+
 ```
 
 ## Session info

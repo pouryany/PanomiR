@@ -4,7 +4,13 @@
 \alias{pathwayGeneTab}
 \title{Pathway-Gene Associations}
 \usage{
-pathwayGeneTab(pathAdress = NA, pathwayList = NA, outDir = NA)
+pathwayGeneTab(
+  pathAdress = NA,
+  pathwayList = NA,
+  fromType = "ENTREZID",
+  toType = "ENSEMBL",
+  outDir = NA
+)
 }
 \arguments{
 \item{pathAdress}{Address to an RDS file containing list of pathways where
@@ -12,6 +18,10 @@ each element is a list of genes similar to GMT format.}
 
 \item{pathwayList}{If you wish to use a list of pathways instead of a file
 use this argument instead. The list must contain no NA values.}
+
+\item{fromType}{gene annotation type used in your input data.}
+
+\item{toType}{gene annotation type to be produced in the output.}
 
 \item{outDir}{Address to save an RDS for a table of pathway-gene association}
 }

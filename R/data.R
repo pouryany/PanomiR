@@ -7,6 +7,15 @@
 #' data(msigdb_c2)
 "msigdb_c2"
 
+#' Example genesets from MSigDB
+#'
+#' @format A GeneSet Collection object containing two genesets.
+#' @source \url{http://www.gsea-msigdb.org/gsea/index.jsp}
+#' @usage data(gscExample)
+#' @examples
+#' data(gscExample)
+"gscExample"
+
 #' A table of gene-pathway association. based on the pathways of MSigDB.
 #'
 #' @format A matrix with 3 columns and 76926 rows:

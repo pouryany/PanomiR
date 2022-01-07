@@ -46,8 +46,8 @@ devtools::install_github("pouryany/PanomiR")
 
 PanomiR is a pipeline to prioritize disease-associated miRNAs based on activity 
 of disease-associated pathways. The input datasets for PanomiR are (a) a gene 
-expression disease dataset along with covariates, (b) a background collection of 
-pathways/genesets, and (c) a collection of miRNAs containing gene targets.
+expression disease dataset along with covariates, (b) a background collection
+of pathways/genesets, and (c) a collection of miRNAs containing gene targets.
 
 The general workflow of PanomiR is (a) generation of pathway summary statistics 
 from gene expression data, (b) detection of differentially activated pathways,
@@ -81,7 +81,10 @@ this manual.
 
 This section uses a reduced example dataset from The Cancer Genome Atlas (TCGA)
 Liver Hepatocellular Carcinoma (LIHC) dataset to generate
-Pathway summary statistics [@ally2017comprehensive]. 
+Pathway summary statistics [@ally2017comprehensive]. **Note:** Make sure that you
+select gene representation type that matches the rownames of your expression 
+data. The type can be modified using the `id` argument in the function below.
+The default value for this argument is `ENSEMBL`. 
 
 ```{r load_package}
 library(PanomiR)
@@ -93,7 +96,7 @@ data("miniTestsPanomiR")
 
 summaries <- pathwaySummary(miniTestsPanomiR$mini_LIHC_Exp,
                             path_gene_table, method = "x2",
-                            zNormalize = TRUE)
+                            zNormalize = TRUE, id = "ENSEMBL")
 
 head(summaries)[,1:2]
 ```
@@ -127,23 +130,24 @@ output0 <- differentialPathwayAnalysis(
 
 de.paths <- output0$DEP
 
-head(de.paths)
+head(de.paths,3)
 ```
 
 ## 3. Finding clusters of pathways
 
 PanomiR provides a function to find groups coordinated differentially 
 activated pathways based on a pathway co-expression network (PCxN) previously
-described in  [@pita2018pathway]. Briefly, PCxN
+described in [@pita2018pathway]. Briefly, PCxN
 is a network where nodes are pathways and links are co-expression between the
 nodes. It is formatted into a table were rows represent edges. The edges of PCxN
 are marked by two numbers, 1- a correlation co-efficient and 2- a significance
 adjusted p-value. Cut-offs for both of these numbers can be manually set using 
 PanomiR functions. See function manuals for more info. 
 
-PCxN and its associated genesets are already released and can be accessed through
-[pcxn Bioconductor package](http://bioconductor.org/packages/release/bioc/html/pcxn.html)
-and [pcxnData package](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
+PCxN and its associated genesets are already released and can be accessed
+through following Bioconductor packages:
+[pcxn](http://bioconductor.org/packages/release/bioc/html/pcxn.html) and
+[pcxnData](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
 
 Here we have provided a small version of PCxN for tutorial purposes. A more 
 recent version of PCxN based on MSigDB V6.2 is available through the 
@@ -179,19 +183,43 @@ head(pathwayClustsLIHC$Clustering)
 PanomiR identifies miRNAs that target clusters of pathways, as defined in the 
 last section. In order to this, you would need a reference table of
 miRNA-Pathway association score (enrichment). We recommend using a customized
-miRNA-Pathway association table, tailored to your experimental data. Here, 
-we provide a pre-processed table for LIHC table and in the next section, we will
-explain how to generate the customized tables.
+miRNA-Pathway association table, tailored to your experimental data.
+This section provides an overview of prioritization process. Readers interested
+in knowing more about the technical details of PanomiR are refered to
+accompaniying publication (Work under preparation).
 
-Note that in the example below, we use a sampling rate of 50, the recommended
-rate is between 500-1000. Also, we set the saveSampling argument to FALSE. This
-argument should be set to TRUE if you wish to save your sampling and check for
-different outputs from the clustering algorithms or pathway thresholds.
+### Enrichment reference
+Here, we provide a preprocessed small example table of miRNA-pathway enrichment
+in `miniTestsPanomiR$miniEnrich` object. This table contains enrichment analysis
+results using Fisher's Exact Test between MSigDB pathways and TargetScan miRNA
+targets. The individual components are  accessible via `data(msigdb_c2)` and
+`data(targetScan_03)` [@agarwal2015predicting; @liberzon2011molecular]. This
+example table is contains only a full subset of the full pairwise enrichment. 
+You can refer to [section 5](#geneset) of this manual on how to create full 
+tables and how to customize them to your specific gene expression data.
+
+### Generating targeting scores
+PanomiR generates a score for individual miRNAs targeting a group of pathways.
+These scores are generated based on the reference enrichment table.
+We are interested in knowing to what extent each miRNA targets pathway clusters
+identified in the last step (see previous section). 
+PanomiR constructs a null distribution of this targeting score for each miRNA.
+The significance of observed scores from a given group of pathways (clusters
+in this case) is contrasted against the null distribution to generate a
+targeting p-value. These p-values are used to rank miRNAs per cluster.
+
+### Sampling parameter
+The above described process requires repeated sampling to empirically obtain the
+null distribution. The argument `sampRate` denotes the number of repeats in the
+process. Note that in the example below, we use a sampling rate of 50, the
+recommended rate is between 500-1000. Also, we set the saveSampling argument to
+FALSE. This argument, if set TRUE, ensures that the null distribution is obtain
+only once. This argument should be set to TRUE if you wish to save your sampling
+and check for different outputs from the clustering algorithms or pathway
+thresholds.
 
 
 ```{r miRNA}
-
-
 
 set.seed(1)
 output2 <- prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
@@ -213,7 +241,7 @@ head(output2$Cluster1)
 
 
 
-## 5. miRNA-Pathway enrichment tables {#geneset}
+## 5. miRNA-Pathway enrichment tables 
 
 PanomiR best performs on tissue/experiment-customized datasets. In order to do
 this, you need to create a customized enrichment table. You can simply do so by
@@ -256,6 +284,49 @@ data("targetScan_03")
 tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 
 head(tempEnrich)
+```
+
+## 6. Customized genesets and recommendations {#geneset}
+
+PanomiR can integrate genesets and pathways from external sources including
+those annotated in MSigDB. In order to do so, you need to provide a 
+`GeneSetCollection` object as defined in the `GSEABase` package. 
+
+The example below illustrates how to use external sources to create your 
+own customized pathway-gene association table. This customized can then
+replaced `path_gene_table` input in functions described in sections 1,2, and 5
+of this manual.
+
+```{r customized_gsc}
+data("gscExample")
+
+newPathGeneTable <-tableFromGSC(gscExample)
+
+head(newPathGeneTable)
+```
+
+The the pathway correlation network in section 3 is build upon an MSigDB V6.2, 
+canonical pathways (cp) collection dataset that includes KEGG Pathways.
+KEGG prohibits distribution of its pathways by third parties. However, use can
+access desired versions of MSigDB in gmt format via
+[this link](https://www.gsea-msigdb.org/gsea/downloads_archive.jsp)
+[@subramanian2005gene].
+
+The library `msigdb` provides an programmatic interface to download different
+geneset collections. Including how to add KEGG pathways or download mouse 
+genesets. Use the this [MSigDB tutorial](https://bioconductor.org/packages/release/data/experiment/vignettes/msigdb/inst/doc/msigdb.html)
+to create your desired gene sets.
+
+You can also use the following code chunk to create pathway-gene association
+tables from gmt files.
+
+```{r customized_gsc2, eval=FALSE}
+
+library(GSEABase)
+
+yourGeneSetCollection <- getGmt("YOUR GMT FILE")
+newPathGeneTable      <- tableFromGSC(yourGeneSetCollection)
+
 ```
 
 ## Session info
