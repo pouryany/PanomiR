@@ -42,6 +42,7 @@ You can also install the latest development version of PanomiR using GitHub.
 ```{r installation_git, eval = FALSE}
 devtools::install_github("pouryany/PanomiR")
 ```
+
 ## Overview
 
 PanomiR is a pipeline to prioritize disease-associated miRNAs based on activity 
@@ -273,9 +274,11 @@ customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
 ```
 
 In the above section, the field ```fromID``` denotes the gene representation 
-format of your input list. Here is a quick example that runs fast.
+format of your input list. Here is a quick example that runs fast. Note that 
+the `miRNAPathwayEnrichment()` function creates a detailed report with
+parameters that are used internally. To get a smaller table that is suitable 
+for publication purposes, use `reportEnrichment()` function.
 ```{r customized_mir2}
-
 
 # using an updated version of pcxn 
 data("msigdb_c2")
@@ -283,7 +286,7 @@ data("targetScan_03")
 
 tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 
-head(tempEnrich)
+head(reportEnrichment(tempEnrich))
 ```
 
 ## 6. Customized genesets and recommendations {#geneset}

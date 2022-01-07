@@ -73,7 +73,10 @@ as newer versions of MSigDB or KEGG, should refer to the
 
 This section uses a reduced example dataset from The Cancer Genome Atlas
 (TCGA) Liver Hepatocellular Carcinoma (LIHC) dataset to generate Pathway
-summary statistics (Ally et al. 2017).
+summary statistics (Ally et al. 2017). **Note:** Make sure that you
+select gene representation type that matches the rownames of your
+expression data. The type can be modified using the `id` argument in the
+function below. The default value for this argument is `ENSEMBL`.
 
 ``` r
 library(PanomiR)
@@ -85,7 +88,7 @@ data("miniTestsPanomiR")
 
 summaries <- pathwaySummary(miniTestsPanomiR$mini_LIHC_Exp,
                             path_gene_table, method = "x2",
-                            zNormalize = TRUE)
+                            zNormalize = TRUE, id = "ENSEMBL")
 
 head(summaries)[,1:2]
 ```
@@ -131,58 +134,21 @@ output0 <- differentialPathwayAnalysis(
 
 de.paths <- output0$DEP
 
-head(de.paths)
+head(de.paths,3)
 ```
 
-    ##                                                                                                                           logFC
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           -0.9159376
-    ## BIOCARTA_AKT_PATHWAY                                                                                                 -0.5744103
-    ## PID_IL5_PATHWAY                                                                                                      -0.6219876
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                         0.4899259
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS -1.0070977
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                 0.6625938
-    ##                                                                                                                         AveExpr
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                            0.3044281
-    ## BIOCARTA_AKT_PATHWAY                                                                                                  0.3123897
-    ## PID_IL5_PATHWAY                                                                                                       0.4240432
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                         1.3942628
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS  1.2536069
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                -1.5149008
-    ##                                                                                                                               t
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           -10.404966
-    ## BIOCARTA_AKT_PATHWAY                                                                                                  -6.770069
-    ## PID_IL5_PATHWAY                                                                                                       -6.255756
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                          6.096421
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS  -5.905357
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                  5.717801
-    ##                                                                                                                           P.Value
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           1.942463e-06
-    ## BIOCARTA_AKT_PATHWAY                                                                                                 6.903010e-05
-    ## PID_IL5_PATHWAY                                                                                                      1.276971e-04
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        1.555564e-04
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 1.979562e-04
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                2.519967e-04
-    ##                                                                                                                        adj.P.Val
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           0.002012391
-    ## BIOCARTA_AKT_PATHWAY                                                                                                 0.035757593
-    ## PID_IL5_PATHWAY                                                                                                      0.040289104
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        0.040289104
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 0.041016532
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                0.041612753
-    ##                                                                                                                             B
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           5.240095
-    ## BIOCARTA_AKT_PATHWAY                                                                                                 2.126311
-    ## PID_IL5_PATHWAY                                                                                                      1.550780
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        1.364364
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS 1.135618
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                0.905467
-    ##                                                                                                                                                 contrast
-    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING                                                                           shortLetterCodeTP-shortLetterCodeNT
-    ## BIOCARTA_AKT_PATHWAY                                                                                                 shortLetterCodeTP-shortLetterCodeNT
-    ## PID_IL5_PATHWAY                                                                                                      shortLetterCodeTP-shortLetterCodeNT
-    ## REACTOME_ADVANCED_GLYCOSYLATION_ENDPRODUCT_RECEPTOR_SIGNALING                                                        shortLetterCodeTP-shortLetterCodeNT
-    ## REACTOME_REGULATION_OF_INSULIN_LIKE_GROWTH_FACTOR_IGF_ACTIVITY_BY_INSULIN_LIKE_GROWTH_FACTOR_BINDING_PROTEINS_IGFBPS shortLetterCodeTP-shortLetterCodeNT
-    ## BIOCARTA_PTC1_PATHWAY                                                                                                shortLetterCodeTP-shortLetterCodeNT
+    ##                                                 logFC   AveExpr          t
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING -0.9159376 0.3044281 -10.404966
+    ## BIOCARTA_AKT_PATHWAY                       -0.5744103 0.3123897  -6.770069
+    ## PID_IL5_PATHWAY                            -0.6219876 0.4240432  -6.255756
+    ##                                                 P.Value   adj.P.Val        B
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING 1.942463e-06 0.002012391 5.240095
+    ## BIOCARTA_AKT_PATHWAY                       6.903010e-05 0.035757593 2.126311
+    ## PID_IL5_PATHWAY                            1.276971e-04 0.040289104 1.550780
+    ##                                                                       contrast
+    ## REACTOME_GROWTH_HORMONE_RECEPTOR_SIGNALING shortLetterCodeTP-shortLetterCodeNT
+    ## BIOCARTA_AKT_PATHWAY                       shortLetterCodeTP-shortLetterCodeNT
+    ## PID_IL5_PATHWAY                            shortLetterCodeTP-shortLetterCodeNT
 
 ## 3. Finding clusters of pathways
 
@@ -197,10 +163,9 @@ be manually set using PanomiR functions. See function manuals for more
 info.
 
 PCxN and its associated genesets are already released and can be
-accessed through [pcxn Bioconductor
-package](http://bioconductor.org/packages/release/bioc/html/pcxn.html)
-and [pcxnData
-package](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
+accessed through following Bioconductor packages:
+[pcxn](http://bioconductor.org/packages/release/bioc/html/pcxn.html) and
+[pcxnData](http://bioconductor.org/packages/release/data/experiment/html/pcxnData.html).
 
 Here we have provided a small version of PCxN for tutorial purposes. A
 more recent version of PCxN based on MSigDB V6.2 is available through
@@ -240,15 +205,45 @@ PanomiR identifies miRNAs that target clusters of pathways, as defined
 in the last section. In order to this, you would need a reference table
 of miRNA-Pathway association score (enrichment). We recommend using a
 customized miRNA-Pathway association table, tailored to your
-experimental data. Here, we provide a pre-processed table for LIHC table
-and in the next section, we will explain how to generate the customized
-tables.
+experimental data. This section provides an overview of prioritization
+process. Readers interested in knowing more about the technical details
+of PanomiR are refered to accompaniying publication (Work under
+preparation).
 
-Note that in the example below, we use a sampling rate of 50, the
-recommended rate is between 500-1000. Also, we set the saveSampling
-argument to FALSE. This argument should be set to TRUE if you wish to
-save your sampling and check for different outputs from the clustering
-algorithms or pathway thresholds.
+### Enrichment reference
+
+Here, we provide a preprocessed small example table of miRNA-pathway
+enrichment in `miniTestsPanomiR$miniEnrich` object. This table contains
+enrichment analysis results using Fisher’s Exact Test between MSigDB
+pathways and TargetScan miRNA targets. The individual components are
+accessible via `data(msigdb_c2)` and `data(targetScan_03)` (Agarwal et
+al. 2015; Liberzon et al. 2011). This example table is contains only a
+full subset of the full pairwise enrichment. You can refer to [section
+5](#geneset) of this manual on how to create full tables and how to
+customize them to your specific gene expression data.
+
+### Generating targeting scores
+
+PanomiR generates a score for individual miRNAs targeting a group of
+pathways. These scores are generated based on the reference enrichment
+table. We are interested in knowing to what extent each miRNA targets
+pathway clusters identified in the last step (see previous section).
+PanomiR constructs a null distribution of this targeting score for each
+miRNA. The significance of observed scores from a given group of
+pathways (clusters in this case) is contrasted against the null
+distribution to generate a targeting p-value. These p-values are used to
+rank miRNAs per cluster.
+
+### Sampling parameter
+
+The above described process requires repeated sampling to empirically
+obtain the null distribution. The argument `sampRate` denotes the number
+of repeats in the process. Note that in the example below, we use a
+sampling rate of 50, the recommended rate is between 500-1000. Also, we
+set the saveSampling argument to FALSE. This argument, if set TRUE,
+ensures that the null distribution is obtain only once. This argument
+should be set to TRUE if you wish to save your sampling and check for
+different outputs from the clustering algorithms or pathway thresholds.
 
 ``` r
 set.seed(1)
@@ -266,9 +261,11 @@ output2 <- prioritizeMicroRNA(enriches0 = miniTestsPanomiR$miniEnrich,
                     saveCSV = FALSE)
 ```
 
-    ## [1] "Working on Cluster1."
-    ## [1] "Performing aggInv function."
-    ## [1] "aggInv Method Done"
+    ## Working on Cluster1.
+
+    ## Performing aggInv function.
+
+    ## aggInv Method Done
 
 ``` r
 head(output2$Cluster1)
@@ -316,7 +313,10 @@ customeTableEnrich <- miRNAPathwayEnrichment(mirSets = targetScan_03,
 ```
 
 In the above section, the field `fromID` denotes the gene representation
-format of your input list. Here is a quick example that runs fast.
+format of your input list. Here is a quick example that runs fast. Note
+that the `miRNAPathwayEnrichment()` function creates a detailed report
+with parameters that are used internally. To get a smaller table that is
+suitable for publication purposes, use `reportEnrichment()` function.
 
 ``` r
 # using an updated version of pcxn 
@@ -325,23 +325,78 @@ data("targetScan_03")
 
 tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 
-head(tempEnrich)
+head(reportEnrichment(tempEnrich))
 ```
 
-    ##                                 x                     y      pval Intersect
-    ## 1     hsa-miR-103a-3p/hsa-miR-107 BIOCARTA_RELA_PATHWAY 0.4476283         1
-    ## 2                hsa-miR-124-3p.1 BIOCARTA_RELA_PATHWAY 0.1342510         2
-    ## 3 hsa-miR-124-3p.2/hsa-miR-506-3p BIOCARTA_RELA_PATHWAY 0.4476283         1
-    ## 4                 hsa-miR-1252-5p BIOCARTA_RELA_PATHWAY 1.0000000         0
-    ## 5   hsa-miR-1271-5p/hsa-miR-96-5p BIOCARTA_RELA_PATHWAY 1.0000000         0
-    ## 6     hsa-miR-103a-3p/hsa-miR-107  BIOCARTA_NO1_PATHWAY 0.7143586         1
-    ##   mirset_Size not_mirset pathway_Size   ratio_in  ratio_out ratio_ratios
-    ## 1          14        378           16 0.06666667 0.03439153    1.9384615
-    ## 2          16        376           16 0.14285714 0.03723404    3.8367347
-    ## 3          14        378           16 0.06666667 0.03439153    1.9384615
-    ## 4          10        382           16 0.00000000 0.02617801    0.0000000
-    ## 5          17        375           16 0.00000000 0.04533333    0.0000000
-    ## 6          14        378           33 0.03125000 0.03439153    0.9086538
+    ##                               miRNA                Pathway    pval pAdjust
+    ## 14                  hsa-miR-1252-5p   BIOCARTA_CSK_PATHWAY 0.00179   0.259
+    ## 55    hsa-miR-1271-5p/hsa-miR-96-5p   BIOCARTA_AKT_PATHWAY 0.01100   1.000
+    ## 122                hsa-miR-124-3p.1 BIOCARTA_RANKL_PATHWAY 0.01550   1.000
+    ## 53  hsa-miR-124-3p.2/hsa-miR-506-3p   BIOCARTA_AKT_PATHWAY 0.03740   1.000
+    ## 99                  hsa-miR-1252-5p BIOCARTA_AGPCR_PATHWAY 0.03940   1.000
+    ## 112                hsa-miR-124-3p.1   BIOCARTA_BCR_PATHWAY 0.05360   1.000
+
+## 6. Customized genesets and recommendations
+
+PanomiR can integrate genesets and pathways from external sources
+including those annotated in MSigDB. In order to do so, you need to
+provide a `GeneSetCollection` object as defined in the `GSEABase`
+package.
+
+The example below illustrates how to use external sources to create your
+own customized pathway-gene association table. This customized can then
+replaced `path_gene_table` input in functions described in sections 1,2,
+and 5 of this manual.
+
+``` r
+data("gscExample")
+
+newPathGeneTable <-tableFromGSC(gscExample)
+```
+
+    ## 
+
+    ## 
+
+    ## 'select()' returned 1:1 mapping between keys and columns
+    ## 'select()' returned 1:1 mapping between keys and columns
+
+``` r
+head(newPathGeneTable)
+```
+
+    ## # A tibble: 6 × 3
+    ##   Pathway                               ENTREZID ENSEMBL        
+    ##   <chr>                                 <chr>    <chr>          
+    ## 1 NIKOLSKY_BREAST_CANCER_16Q24_AMPLICON 124245   ENSG00000158545
+    ## 2 NIKOLSKY_BREAST_CANCER_16Q24_AMPLICON 1800     ENSG00000015413
+    ## 3 NIKOLSKY_BREAST_CANCER_16Q24_AMPLICON 404550   ENSG00000154102
+    ## 4 NIKOLSKY_BREAST_CANCER_16Q24_AMPLICON 6687     ENSG00000197912
+    ## 5 NIKOLSKY_BREAST_CANCER_16Q24_AMPLICON 750      ENSG00000221819
+    ## 6 NIKOLSKY_BREAST_CANCER_16Q24_AMPLICON 2588     ENSG00000141012
+
+The the pathway correlation network in section 3 is build upon an MSigDB
+V6.2, canonical pathways (cp) collection dataset that includes KEGG
+Pathways. KEGG prohibits distribution of its pathways by third parties.
+However, use can access desired versions of MSigDB in gmt format via
+[this link](https://www.gsea-msigdb.org/gsea/downloads_archive.jsp)
+(Subramanian et al. 2005).
+
+The library `msigdb` provides an programmatic interface to download
+different geneset collections. Including how to add KEGG pathways or
+download mouse genesets. Use the this [MSigDB
+tutorial](https://bioconductor.org/packages/release/data/experiment/vignettes/msigdb/inst/doc/msigdb.html)
+to create your desired gene sets.
+
+You can also use the following code chunk to create pathway-gene
+association tables from gmt files.
+
+``` r
+library(GSEABase)
+
+yourGeneSetCollection <- getGmt("YOUR GMT FILE")
+newPathGeneTable      <- tableFromGSC(yourGeneSetCollection)
+```
 
 ## Session info
 
@@ -367,19 +422,58 @@ sessionInfo()
     ## [1] PanomiR_0.99.1
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] igraph_1.2.10    knitr_1.37       magrittr_2.0.1   tidyselect_1.1.1
-    ##  [5] R6_2.5.1         rlang_0.4.12     fastmap_1.1.0    fansi_0.5.0     
-    ##  [9] stringr_1.4.0    dplyr_1.0.7      tools_4.2.0      parallel_4.2.0  
-    ## [13] xfun_0.29        utf8_1.2.2       DBI_1.1.2        withr_2.4.3     
-    ## [17] htmltools_0.5.2  ellipsis_0.3.2   assertthat_0.2.1 yaml_2.2.1      
-    ## [21] digest_0.6.29    tibble_3.1.6     lifecycle_1.0.1  crayon_1.4.2    
-    ## [25] purrr_0.3.4      vctrs_0.3.8      glue_1.6.0       evaluate_0.14   
-    ## [29] rmarkdown_2.11   limma_3.51.2     stringi_1.7.6    compiler_4.2.0  
-    ## [33] pillar_1.6.4     forcats_0.5.1    generics_0.1.1   pkgconfig_2.0.3
+    ##   [1] fgsea_1.21.0           colorspace_2.0-2       ggtree_3.3.1          
+    ##   [4] ellipsis_0.3.2         qvalue_2.27.0          XVector_0.35.0        
+    ##   [7] aplot_0.1.1            rstudioapi_0.13        farver_2.1.0          
+    ##  [10] graphlayouts_0.8.0     ggrepel_0.9.1          bit64_4.0.5           
+    ##  [13] scatterpie_0.1.7       AnnotationDbi_1.57.1   fansi_0.5.0           
+    ##  [16] splines_4.2.0          cachem_1.0.6           GOSemSim_2.21.0       
+    ##  [19] knitr_1.37             polyclip_1.10-0        jsonlite_1.7.2        
+    ##  [22] annotate_1.73.0        GO.db_3.14.0           png_0.1-7             
+    ##  [25] graph_1.73.0           ggforce_0.3.3          compiler_4.2.0        
+    ##  [28] httr_1.4.2             assertthat_0.2.1       Matrix_1.4-0          
+    ##  [31] fastmap_1.1.0          lazyeval_0.2.2         cli_3.1.0             
+    ##  [34] limma_3.51.2           tweenr_1.0.2           htmltools_0.5.2       
+    ##  [37] tools_4.2.0            igraph_1.2.10          gtable_0.3.0          
+    ##  [40] glue_1.6.0             GenomeInfoDbData_1.2.7 reshape2_1.4.4        
+    ##  [43] DO.db_2.9              dplyr_1.0.7            fastmatch_1.1-3       
+    ##  [46] Rcpp_1.0.7             enrichplot_1.15.2      Biobase_2.55.0        
+    ##  [49] vctrs_0.3.8            Biostrings_2.63.0      ape_5.6               
+    ##  [52] nlme_3.1-153           ggraph_2.0.5           xfun_0.29             
+    ##  [55] stringr_1.4.0          lifecycle_1.0.1        clusterProfiler_4.3.1 
+    ##  [58] XML_3.99-0.8           DOSE_3.21.1            org.Hs.eg.db_3.14.0   
+    ##  [61] zlibbioc_1.41.0        MASS_7.3-54            scales_1.1.1          
+    ##  [64] tidygraph_1.2.0        parallel_4.2.0         RColorBrewer_1.1-2    
+    ##  [67] yaml_2.2.1             memoise_2.0.1          gridExtra_2.3         
+    ##  [70] ggplot2_3.3.5          downloader_0.4         ggfun_0.0.4           
+    ##  [73] yulab.utils_0.0.4      stringi_1.7.6          RSQLite_2.2.9         
+    ##  [76] S4Vectors_0.33.8       tidytree_0.3.6         BiocGenerics_0.41.2   
+    ##  [79] BiocParallel_1.29.8    GenomeInfoDb_1.31.1    rlang_0.4.12          
+    ##  [82] pkgconfig_2.0.3        bitops_1.0-7           evaluate_0.14         
+    ##  [85] lattice_0.20-45        purrr_0.3.4            treeio_1.19.1         
+    ##  [88] patchwork_1.1.1        shadowtext_0.1.0       bit_4.0.4             
+    ##  [91] tidyselect_1.1.1       GSEABase_1.57.0        plyr_1.8.6            
+    ##  [94] magrittr_2.0.1         R6_2.5.1               IRanges_2.29.1        
+    ##  [97] generics_0.1.1         DBI_1.1.2              pillar_1.6.4          
+    ## [100] withr_2.4.3            KEGGREST_1.35.0        RCurl_1.98-1.5        
+    ## [103] tibble_3.1.6           crayon_1.4.2           utf8_1.2.2            
+    ## [106] rmarkdown_2.11         viridis_0.6.2          grid_4.2.0            
+    ## [109] data.table_1.14.2      blob_1.2.2             forcats_0.5.1         
+    ## [112] digest_0.6.29          xtable_1.8-4           tidyr_1.1.4           
+    ## [115] gridGraphics_0.5-1     stats4_4.2.0           munsell_0.5.0         
+    ## [118] viridisLite_0.4.0      ggplotify_0.1.0
 
 ## References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-agarwal2015predicting" class="csl-entry">
+
+Agarwal, Vikram, George W Bell, Jin-Wu Nam, and David P Bartel. 2015.
+“Predicting Effective microRNA Target Sites in Mammalian mRNAs.” *Elife*
+4: e05005.
+
+</div>
 
 <div id="ref-ally2017comprehensive" class="csl-entry">
 
@@ -422,6 +516,16 @@ Pita-Juárez, Yered, Gabriel Altschuler, Sokratis Kariotis, Wenbin Wei,
 Katjuša Koler, Claire Green, Rudolph E Tanzi, and Winston Hide. 2018.
 “The Pathway Coexpression Network: Revealing Pathway Relationships.”
 *PLoS Computational Biology* 14 (3): e1006042.
+
+</div>
+
+<div id="ref-subramanian2005gene" class="csl-entry">
+
+Subramanian, Aravind, Pablo Tamayo, Vamsi K Mootha, Sayan Mukherjee,
+Benjamin L Ebert, Michael A Gillette, Amanda Paulovich, et al. 2005.
+“Gene Set Enrichment Analysis: A Knowledge-Based Approach for
+Interpreting Genome-Wide Expression Profiles.” *Proceedings of the
+National Academy of Sciences* 102 (43): 15545–50.
 
 </div>
 
