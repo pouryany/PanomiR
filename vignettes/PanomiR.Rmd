@@ -250,7 +250,7 @@ the following code
 
 
 
-```{r customized_mir, eval=FALSE}
+```{r customized_mir, eval = FALSE}
 
 
 # using an updated version of pcxn 
@@ -321,7 +321,7 @@ to create your desired gene sets.
 You can also use the following code chunk to create pathway-gene association
 tables from gmt files.
 
-```{r customized_gsc2, eval=FALSE}
+```{r customized_gsc2, eval = FALSE}
 
 library(GSEABase)
 
