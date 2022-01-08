@@ -298,7 +298,7 @@ own customized pathway-gene association table. This customized can then
 replaced `path_gene_table` input in functions described in sections 1,2, and 5
 of this manual.
 
-```{r customized_gsc, eval= FALSE}
+```{r customized_gsc}
 data("gscExample")
 
 newPathGeneTable <-tableFromGSC(gscExample, fromType = NULL)
