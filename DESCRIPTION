@@ -1,6 +1,6 @@
 Package: PanomiR
 Title: Inferring miRNAs targeting of pathway groups
-Version: 0.99.4
+Version: 0.99.5
 Authors@R: c(
     person("Pourya", "Naderi", email = "pouryany@gmail.com",
            role = c("aut", "cre")),
