@@ -301,7 +301,7 @@ of this manual.
 ```{r customized_gsc}
 data("gscExample")
 
-newPathGeneTable <-tableFromGSC(gscExample, fromType = NULL)
+newPathGeneTable <-tableFromGSC(gscExample)
 
 ```
 
