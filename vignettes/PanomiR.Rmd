@@ -307,7 +307,7 @@ newPathGeneTable <-tableFromGSC(gscExample)
 
 The the pathway correlation network in section 3 is build upon an MSigDB V6.2, 
 canonical pathways (cp) collection dataset that includes KEGG Pathways.
-KEGG prohibits distribution of its pathways by third parties. However, use can
+KEGG prohibits distribution of its pathways by third parties. You can
 access desired versions of MSigDB in gmt format via
 [this link](https://www.gsea-msigdb.org/gsea/downloads_archive.jsp)
 [@subramanian2005gene].
