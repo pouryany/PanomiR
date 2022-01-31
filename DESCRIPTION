@@ -1,12 +1,14 @@
 Package: PanomiR
 Title: Inferring miRNAs targeting of pathway groups
-Version: 0.99.6
+Version: 0.99.7
 Authors@R: c(
     person("Pourya", "Naderi", email = "pouryany@gmail.com",
            role = c("aut", "cre")),
-    person("Winston", "Hide", email = "whide@bidmc.harvard.edu",
+    person("Yue Yang (Alan)", "Teo", email = "yueyang.teo@epfl.ch",
            role = c("aut")),
     person("Ilya", "Sytchev", email = "isytchev@hsph.harvard.edu",
+           role = c("aut")),
+    person("Winston", "Hide", email = "whide@bidmc.harvard.edu",
            role = c("aut")))
 Description: PanomiR is a package to detect miRNAs that target groups of
     pathways from gene expression data. This package provides functionality 
@@ -19,6 +21,7 @@ Encoding: UTF-8
 RoxygenNote: 7.1.2
 Suggests:
     testthat (>= 3.0.0),
+    BiocStyle,
     knitr,
     rmarkdown
 Config/testthat/edition: 3

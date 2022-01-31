@@ -1,8 +1,9 @@
 ---
-title: "PanomiR Package Walkthrough"
+title: "PanomiR Package Vignette"
+author: "Pourya Naderi"
+package: PanomiR
 output: 
-  rmarkdown::html_vignette:
-    toc: true
+  BiocStyle::html_document
 bibliography: references.bib  
 vignette: >
   %\VignetteIndexEntry{PanomiR}
@@ -17,13 +18,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
+# Introduction
 
 PanomiR is a package for pathway and microRNA Analysis of gene expression data.
 This document provides details about how to install and utilize various 
 functionality in PanomiR.
 
-## Installation
+# Installation
 
 PanomiR can be accessed via Bioconductor. To install, start R (version >= 4.1.0)
 and run the following code.
@@ -41,7 +42,7 @@ You can also install the latest development version of PanomiR using GitHub.
 devtools::install_github("pouryany/PanomiR")
 ```
 
-## Overview
+# Overview
 
 PanomiR is a pipeline to prioritize disease-associated miRNAs based on activity 
 of disease-associated pathways. The input datasets for PanomiR are (a) a gene 
@@ -57,7 +58,7 @@ Individual steps of the workflow can be used in isolation to carry out different
 analyses. The following sections outline each step and material needed to
 execute PanomiR. 
 
-## 1. Pathway summarization
+# Pathway summarization
 
 PanomiR can generate pathway activity profiles given a gene expression dataset
 and a list of pathways.Pathway summaries are numbers that represent the overall
@@ -103,7 +104,7 @@ head(summaries)[,1:2]
 
 
 
-## 2. Differential Pathway activation
+# Differential Pathway activation
 
 Once you generate the pathway activity profiles, as discussed in the last
 section, there are several analysis that you can perform. We have bundled some 
@@ -132,7 +133,7 @@ de.paths <- output0$DEP
 head(de.paths,3)
 ```
 
-## 3. Finding clusters of pathways
+# Finding clusters of pathways
 
 PanomiR provides a function to find groups coordinated differentially 
 activated pathways based on a pathway co-expression network (PCxN) previously
@@ -177,7 +178,7 @@ head(pathwayClustsLIHC$Clustering)
 ```
 
 
-## 4. Prioritizing miRNAs per cluster of pathways.
+# Prioritizing miRNAs per cluster of pathways.
 
 PanomiR identifies miRNAs that target clusters of pathways, as defined in the 
 last section. In order to this, you would need a reference table of
@@ -187,7 +188,7 @@ This section provides an overview of prioritization process. Readers interested
 in knowing more about the technical details of PanomiR are refered to
 accompaniying publication (Work under preparation).
 
-### Enrichment reference
+## Enrichment reference
 Here, we provide a preprocessed small example table of miRNA-pathway enrichment
 in `miniTestsPanomiR$miniEnrich` object. This table contains enrichment analysis
 results using Fisher's Exact Test between MSigDB pathways and TargetScan miRNA
@@ -197,7 +198,7 @@ example table is contains only a full subset of the full pairwise enrichment.
 You can refer to [section 5](#geneset) of this manual on how to create full 
 tables and how to customize them to your specific gene expression data.
 
-### Generating targeting scores
+## Generating targeting scores
 PanomiR generates a score for individual miRNAs targeting a group of pathways.
 These scores are generated based on the reference enrichment table.
 We are interested in knowing to what extent each miRNA targets pathway clusters
@@ -207,7 +208,7 @@ The significance of observed scores from a given group of pathways (clusters
 in this case) is contrasted against the null distribution to generate a
 targeting p-value. These p-values are used to rank miRNAs per cluster.
 
-### Sampling parameter
+## Sampling parameter
 The above described process requires repeated sampling to empirically obtain the
 null distribution. The argument `sampRate` denotes the number of repeats in the
 process. Note that in the example below, we use a sampling rate of 50, the
@@ -240,7 +241,7 @@ head(output2$Cluster1)
 
 
 
-## 5. miRNA-Pathway enrichment tables 
+# miRNA-Pathway enrichment tables 
 
 PanomiR best performs on tissue/experiment-customized datasets. In order to do
 this, you need to create a customized enrichment table. You can simply do so by
@@ -287,7 +288,7 @@ tempEnrich <-miRNAPathwayEnrichment(targetScan_03[1:30],msigdb_c2[1:30])
 head(reportEnrichment(tempEnrich))
 ```
 
-## 6. Customized genesets and recommendations {#geneset}
+# Customized genesets and recommendations {#geneset}
 
 PanomiR can integrate genesets and pathways from external sources including
 those annotated in MSigDB. In order to do so, you need to provide a 
@@ -329,10 +330,10 @@ newPathGeneTable      <- tableFromGSC(yourGeneSetCollection)
 
 ```
 
-## Session info
+# Session info
 ```{r sessionInfo}
 sessionInfo()
 
 ```
 
-## References
+# References
