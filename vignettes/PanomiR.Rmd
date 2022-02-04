@@ -1,7 +1,6 @@
 ---
-title: "PanomiR Package Vignette"
-author: "Pourya Naderi"
-package: PanomiR
+title: "miRNA and pathway analysis with PanomiR"
+author: "Pourya Naderi, Alan Teo, Ilya Sytchev, and Winston Hide"
 output: 
   BiocStyle::html_document
 bibliography: references.bib  
@@ -26,7 +25,7 @@ functionality in PanomiR.
 
 # Installation
 
-PanomiR can be accessed via Bioconductor. To install, start R (version >= 4.1.0)
+PanomiR can be accessed via Bioconductor. To install, start R (version >= 4.2.0)
 and run the following code.
 
 ```{r installation_bioc, eval = FALSE}

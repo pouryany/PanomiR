@@ -1,7 +1,7 @@
 ---
 title: "README"
-author: "Pourya Naderi (Hide Lab)"
-date: "9/16/2021"
+author: "Pourya Naderi, Alan Teo, Ilya Sytchev, and Winston Hide"
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
 bibliography: vignettes/references.bib  
 output:
   md_document:

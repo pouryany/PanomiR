@@ -406,7 +406,7 @@ sessionInfo()
 
     ## R Under development (unstable) (2021-12-03 r81290)
     ## Platform: x86_64-apple-darwin17.0 (64-bit)
-    ## Running under: macOS Mojave 10.14.6
+    ## Running under: macOS Big Sur/Monterey 10.16
     ## 
     ## Matrix products: default
     ## BLAS:   /Library/Frameworks/R.framework/Versions/4.2/Resources/lib/libRblas.0.dylib
@@ -419,7 +419,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] PanomiR_0.99.1
+    ## [1] PanomiR_0.99.4
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] fgsea_1.21.0           colorspace_2.0-2       ggtree_3.3.1          
@@ -434,21 +434,21 @@ sessionInfo()
     ##  [28] httr_1.4.2             assertthat_0.2.1       Matrix_1.4-0          
     ##  [31] fastmap_1.1.0          lazyeval_0.2.2         cli_3.1.0             
     ##  [34] limma_3.51.2           tweenr_1.0.2           htmltools_0.5.2       
-    ##  [37] tools_4.2.0            igraph_1.2.10          gtable_0.3.0          
+    ##  [37] tools_4.2.0            igraph_1.2.11          gtable_0.3.0          
     ##  [40] glue_1.6.0             GenomeInfoDbData_1.2.7 reshape2_1.4.4        
     ##  [43] DO.db_2.9              dplyr_1.0.7            fastmatch_1.1-3       
     ##  [46] Rcpp_1.0.7             enrichplot_1.15.2      Biobase_2.55.0        
-    ##  [49] vctrs_0.3.8            Biostrings_2.63.0      ape_5.6               
+    ##  [49] vctrs_0.3.8            Biostrings_2.63.1      ape_5.6-1             
     ##  [52] nlme_3.1-153           ggraph_2.0.5           xfun_0.29             
     ##  [55] stringr_1.4.0          lifecycle_1.0.1        clusterProfiler_4.3.1 
-    ##  [58] XML_3.99-0.8           DOSE_3.21.1            org.Hs.eg.db_3.14.0   
+    ##  [58] XML_3.99-0.8           DOSE_3.21.2            org.Hs.eg.db_3.14.0   
     ##  [61] zlibbioc_1.41.0        MASS_7.3-54            scales_1.1.1          
     ##  [64] tidygraph_1.2.0        parallel_4.2.0         RColorBrewer_1.1-2    
     ##  [67] yaml_2.2.1             memoise_2.0.1          gridExtra_2.3         
     ##  [70] ggplot2_3.3.5          downloader_0.4         ggfun_0.0.4           
     ##  [73] yulab.utils_0.0.4      stringi_1.7.6          RSQLite_2.2.9         
-    ##  [76] S4Vectors_0.33.8       tidytree_0.3.6         BiocGenerics_0.41.2   
-    ##  [79] BiocParallel_1.29.8    GenomeInfoDb_1.31.1    rlang_0.4.12          
+    ##  [76] S4Vectors_0.33.9       tidytree_0.3.6         BiocGenerics_0.41.2   
+    ##  [79] BiocParallel_1.29.10   GenomeInfoDb_1.31.1    rlang_0.4.12          
     ##  [82] pkgconfig_2.0.3        bitops_1.0-7           evaluate_0.14         
     ##  [85] lattice_0.20-45        purrr_0.3.4            treeio_1.19.1         
     ##  [88] patchwork_1.1.1        shadowtext_0.1.0       bit_4.0.4             
