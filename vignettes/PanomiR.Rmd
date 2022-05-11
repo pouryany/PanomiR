@@ -5,7 +5,7 @@ output:
   BiocStyle::html_document
 bibliography: references.bib  
 vignette: >
-  %\VignetteIndexEntry{PanomiR}
+  %\VignetteIndexEntry{PanomiR Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
