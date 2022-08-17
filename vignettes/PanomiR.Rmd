@@ -19,9 +19,25 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-PanomiR is a package for pathway and microRNA Analysis of gene expression data.
-This document provides details about how to install and utilize various 
-functionality in PanomiR.
+MicroRNAs (miRNAs) can target co-expressed genes to coordinate multiple 
+pathways. “Pathway networks of miRNA Regulation” (PanomiR) is a
+framework to support the discovery of miRNA regulators based on their targeting
+of coordinated pathways. It analyzes and prioritizes multi-pathway dynamics
+of miRNA-orchestrated regulation, as opposed to investigating isolated
+miRNA-pathway interaction events. PanomiR uses predefined pathways, their 
+co-activation, gene expression, and annotated miRNA-mRNA interactions to extract
+miRNA-pathway targeting events. This vignette describes PanomiR’s functions
+and analysis tools to derive these multi-pathway targeting events. 
+
+If you use PanomiR for your research, please cite PanomiR's manuscript
+[@yeganeh2022panomir]. Please send any questions/suggestions you may have to
+`pnaderiy [at] bidmc [dot] harvard [dot] edu` or submit Github issues at
+[https://github.com/pouryany/PanomiR]().
+
+Naderi Yeganeh, Pourya, Yue Yang Teo, Dimitra Karagkouni,
+Yered Pita-Juarez, Sarah L. Morgan, Ioannis S. Vlachos, and Winston Hide.
+"PanomiR: A systems biology framework for analysis of multi-pathway targeting
+by miRNAs." bioRxiv (2022). doi: [https://doi.org/10.1101/2022.07.12.499819]().
 
 # Installation
 
@@ -43,28 +59,28 @@ devtools::install_github("pouryany/PanomiR")
 
 # Overview
 
-PanomiR is a pipeline to prioritize disease-associated miRNAs based on activity 
+PanomiR is a framework to prioritize disease-associated miRNAs using activity 
 of disease-associated pathways. The input datasets for PanomiR are (a) a gene 
-expression disease dataset along with covariates, (b) a background collection
-of pathways/genesets, and (c) a collection of miRNAs containing gene targets.
+expression dataset along with covariates such as disease-state and batch,
+(b) a background collection of pathways/genesets, and (c) a collection of
+miRNAs and their gene targets.
 
-The general workflow of PanomiR is (a) generation of pathway summary statistics 
-from gene expression data, (b) detection of differentially activated pathways,
-(c) finding coherent groups, or clusters, of differentially activated pathways,
-and (d) detecting miRNAs targeting each group of pathways. 
+The workflow of PanomiR includes (a) generation of pathway summary
+statistics from gene expression data, (b) detection of differentially activated
+pathways, (c) finding coherent groups, or clusters, of differentially activated
+pathways, and (d) detecting miRNAs that target each group of pathways. 
 
-Individual steps of the workflow can be used in isolation to carry out different
-analyses. The following sections outline each step and material needed to
+Individual steps of the workflow can be used in isolation to carry out specific
+analyses. The following sections outline each step and the material needed to
 execute PanomiR. 
 
 # Pathway summarization
 
-PanomiR can generate pathway activity profiles given a gene expression dataset
-and a list of pathways.Pathway summaries are numbers that represent the overall
-activity of genes that 
-belong to each pathway. These numbers are calculated based on a methodology
-previously described in part in  [@altschuler2013pathprinting;
-@joachim2018relative].
+PanomiR generates pathway activity summary profiles from gene expression data
+and a list of pathways. Pathway summaries are numbers that represent the overall
+activity of genes that belong to each pathway. These numbers are calculated
+based on a methodology previously described in part by Altschuler et al.
+[@altschuler2013pathprinting;@joachim2018relative].
 Briefly, genes in each sample are ranked by their expression values and then
 pathway summaries are calculated as the average rank-squared of genes within a 
 pathway. The summaries are then center and scaled (zNormalized) across samples.
@@ -80,10 +96,10 @@ this manual.
 
 This section uses a reduced example dataset from The Cancer Genome Atlas (TCGA)
 Liver Hepatocellular Carcinoma (LIHC) dataset to generate
-Pathway summary statistics [@ally2017comprehensive]. **Note:** Make sure that you
-select gene representation type that matches the rownames of your expression 
-data. The type can be modified using the `id` argument in the function below.
-The default value for this argument is `ENSEMBL`. 
+pathway summary statistics [@ally2017comprehensive]. **Note:** Make sure that
+you select a gene representation type that matches the rownames of your
+expression data. The type can be modified using the `id` argument in the
+function below. The default value for this argument is `ENSEMBL`. 
 
 ```{r load_package}
 library(PanomiR)
@@ -106,17 +122,18 @@ head(summaries)[,1:2]
 # Differential Pathway activation
 
 Once you generate the pathway activity profiles, as discussed in the last
-section, there are several analysis that you can perform. We have bundled some 
-of the most important ones into standalone functions. Here, we describe
-differential pathway activation profiling, which is examining differences in
-pathway activity profiles in user-determined conditions.
+section, there are several possible analyses that you can perform. We have
+bundled some of the most important ones into standalone functions. Here, we
+describe differential pathway activity profiling to determine dysregulatd
+pathways. This function analyzes differences in pathway activity profiles
+in user-determined conditions.
 
 At this stage you need to provide a pathway-gene association table, an
-expression dataset, and a covariates table. You need to specity what covariates
+expression dataset, and a covariates table. You need to specify covariates that
 you would like to contrast. You also need to provide a contrast, as formatted in
-limma. If the contrast is not provided, the function assumes the first two 
-levels of the provided contrast covariate. **Note:** make sure the contrast 
-covariate is formatted as factor.
+limma [@ritchie2015limma]. If the contrast is not provided, the function assumes
+the first two levels of the provided covariate are to be contrasted.
+**Note:** make sure the contrast covariate is formatted as factor.
 
 
 ```{r differential}
@@ -183,39 +200,42 @@ PanomiR identifies miRNAs that target clusters of pathways, as defined in the
 last section. In order to this, you would need a reference table of
 miRNA-Pathway association score (enrichment). We recommend using a customized
 miRNA-Pathway association table, tailored to your experimental data.
-This section provides an overview of prioritization process. Readers interested
-in knowing more about the technical details of PanomiR are refered to
-accompaniying publication (Work under preparation).
+This section provides an overview of prioritization process. Readers who 
+interested in knowing more about the technical details of PanomiR can access
+PanomiR's accompanying publication [@yeganeh2022panomir].
 
 ## Enrichment reference
-Here, we provide a preprocessed small example table of miRNA-pathway enrichment
+Here, we provide a pre-processed small example table of miRNA-pathway enrichment
 in `miniTestsPanomiR$miniEnrich` object. This table contains enrichment analysis
 results using Fisher's Exact Test between MSigDB pathways and TargetScan miRNA
-targets. The individual components are  accessible via `data(msigdb_c2)` and
+targets. The individual components are accessible via `data(msigdb_c2)` and
 `data(targetScan_03)` [@agarwal2015predicting; @liberzon2011molecular]. This
-example table is contains only a full subset of the full pairwise enrichment. 
-You can refer to [section 5](#geneset) of this manual on how to create full 
-tables and how to customize them to your specific gene expression data.
+example table contains only a subset of the full pairwise enrichment. 
+You can refer to [section 5](#geneset) of this manual to learn how to create
+enrichment tables and how to customize them to your specific gene expression
+data.
 
 ## Generating targeting scores
-PanomiR generates a score for individual miRNAs targeting a group of pathways.
-These scores are generated based on the reference enrichment table.
-We are interested in knowing to what extent each miRNA targets pathway clusters
-identified in the last step (see previous section). 
-PanomiR constructs a null distribution of this targeting score for each miRNA.
-The significance of observed scores from a given group of pathways (clusters
-in this case) is contrasted against the null distribution to generate a
-targeting p-value. These p-values are used to rank miRNAs per cluster.
+PanomiR generates individual scores for individual miRNAs, which quantify
+targeting a group of pathways. These scores are generated based on the reference
+enrichment table described in the previous section. We are interested in knowing
+to what extent each miRNA targets clusters of pathways identified in the last
+step (see previous section). 
+
+PanomiR constructs a null distribution of the targeting score for each miRNA.
+It then contrasts observed scores from a given group of pathways (clusters)
+against the null distribution in order to generate a targeting p-value.
+These p-values are used to rank miRNAs per cluster.
 
 ## Sampling parameter
-The above described process requires repeated sampling to empirically obtain the
+The process described above requires repeated sampling to empirically obtain the
 null distribution. The argument `sampRate` denotes the number of repeats in the
 process. Note that in the example below, we use a sampling rate of 50, the
-recommended rate is between 500-1000. Also, we set the saveSampling argument to
-FALSE. This argument, if set TRUE, ensures that the null distribution is obtain
-only once. This argument should be set to TRUE if you wish to save your sampling
-and check for different outputs from the clustering algorithms or pathway
-thresholds.
+recommended rate is between 500-1000. Also, we set the `saveSampling` argument
+to `FALSE`. This argument, when set `TRUE`, ensures that the null distribution
+is obtained only once. This argument should be set to TRUE if you wish to save
+your sampling and check for different outputs from the clustering algorithms or
+pathway thresholds.
 
 
 ```{r miRNA}
@@ -242,11 +262,11 @@ head(output2$Cluster1)
 
 # miRNA-Pathway enrichment tables 
 
-PanomiR best performs on tissue/experiment-customized datasets. In order to do
-this, you need to create a customized enrichment table. You can simply do so by
-using the pathway and miRNA list that we have provided as a part of the package.
-simply, plug in the name of the genes present (expressed) in your experiment in
-the following code
+We recommend using PanomiR with on tissue/experiment-customized datasets.
+In order to do this, you need to create a customized enrichment table.
+You can simply do so by using the pathway and miRNA list that we have provided
+as a part of the package. Simply, plug in the name of the genes that are present
+(expressed) in your experiment in the following code:
 
 
 
@@ -293,9 +313,9 @@ PanomiR can integrate genesets and pathways from external sources including
 those annotated in MSigDB. In order to do so, you need to provide a 
 `GeneSetCollection` object as defined in the `GSEABase` package. 
 
-The example below illustrates how to use external sources to create your 
-own customized pathway-gene association table. This customized can then
-replaced `path_gene_table` input in functions described in sections 1,2, and 5
+The example below illustrates using external sources to create your 
+own customized pathway-gene association table. This customized table can
+replace the `path_gene_table` input in sections 1, 2, and 5
 of this manual.
 
 ```{r customized_gsc}
